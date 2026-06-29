@@ -1,25 +1,99 @@
-<nav class="navbar navbar-expand-sm bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" [routerLink]="['home']">App</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold" [routerLink]="['/home']">
+      Tutorías
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav">
+
       <span class="navbar-toggler-icon"></span>
+
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
 
-      <div class="d-flex ms-auto gap-2">
-        @if (!autenticacionService.userLoggedIn()){
-          <button class="btn btn-outline-success" [routerLink]="['login']">Log in</button>
-          <button class="btn btn-outline-primary" [routerLink]="['registro']">Sign Up</button>
-        } @else {
-          <span>{{autenticacionService.userLogged()}}</span>
-          <a [routerLink]="['/home']" (click)="autenticacionService.logout()">Log out</a>
+      <!-- Menú izquierdo -->
+      <ul class="navbar-nav me-auto">
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/home"
+            routerLinkActive="active">
+
+            Inicio
+
+          </a>
+        </li>
+
+        @if(autenticacionService.userLoggedIn()){
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/solicitud-ayuda"
+            routerLinkActive="active">
+
+            Solicitudes de ayuda
+
+          </a>
+        </li>
+
         }
+
+      </ul>
+
+      <!-- Menú derecho -->
+      <div class="d-flex align-items-center gap-3">
+
+        @if(!autenticacionService.userLoggedIn()){
+
+        <button
+          class="btn btn-outline-light"
+          routerLink="/login">
+
+          Iniciar sesión
+
+        </button>
+
+        <button
+          class="btn btn-light text-primary"
+          routerLink="/registro">
+
+          Registrarse
+
+        </button>
+
+        }@else{
+
+        <span class="text-white">
+
+          Bienvenido,
+          <strong>{{autenticacionService.userLogged()}}</strong>
+
+        </span>
+
+        <button
+          class="btn btn-outline-light"
+          routerLink="/home"
+          (click)="autenticacionService.logout()">
+
+          Cerrar sesión
+
+        </button>
+
+        }
+
       </div>
-    
+
     </div>
 
   </div>
+
 </nav>
