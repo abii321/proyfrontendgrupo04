@@ -3,8 +3,8 @@ import { ChangeDetectorRef, Component, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
-
-declare const google: any;
+import { GoogleAuthService } from '../../services/google-auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
@@ -18,42 +18,33 @@ export class RegistroComponent implements AfterViewInit {
   banGoogle: boolean = false;
   googleToken: string = '';
 
-  constructor( private autenticacionService: AutenticacionService, private cdr: ChangeDetectorRef ) {
+  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
     this.usuario = new Usuario();
     this.usuario.rol = ''; 
   }
 
   ngAfterViewInit(): void {
-    this.inicializarBotonGoogle();
+    this.cargarBotonGoogle();
   }
 
-  inicializarBotonGoogle() {
-    if (typeof google !== 'undefined') {
-      // Inicializa el SDK de Google con el Client ID
-      google.accounts.id.initialize({
-        client_id: '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com',
-        callback: this.handleGoogleResponse.bind(this) // La función que va a recibir el token
-      });
+  cargarBotonGoogle() {
+    // función intermedia que guarda el token temporalmente
+    this.googleAuthService.inicializar(this.handleGoogleResponse.bind(this));
 
-      // botón de google
-      google.accounts.id.renderButton(
-        document.getElementById('googleBtnContainer'),
-        { theme: 'outline', size: 'large', text: 'signup_with' }
-      );
-    }
+    this.googleAuthService.renderButton("googleBtnContainer", "signup_with"); // en html
   }
 
   handleGoogleResponse(response: any) {
     console.log("¡Google respondió con éxito!");
     this.googleToken = response.credential; 
-    this.banGoogle = true;
+    this.banGoogle = true; // para mostrar el resto del formulario
     this.cdr.detectChanges(); 
   }
 
   cancelarGoogle() {
     this.banGoogle = false;
     this.googleToken = '';
-    setTimeout(() => this.inicializarBotonGoogle(), 50);
+    setTimeout(() => this.cargarBotonGoogle(), 50);
   }
   
   // Registro definitivo enviando el token al backend
@@ -65,11 +56,11 @@ export class RegistroComponent implements AfterViewInit {
       universidad: this.usuario.universidad,
       carrera: this.usuario.carrera
     };
-    //console.log(body);
 
     this.autenticacionService.postSignUpGoogle(body).subscribe(
       (result: any) => {
         console.log(result);
+        this.router.navigate(['/home']);
       },
       (error : any) => {
         console.error("Error al registrar con Google:", error);
@@ -81,7 +72,7 @@ export class RegistroComponent implements AfterViewInit {
     this.autenticacionService.postSignUpLocal(this.usuario).subscribe(
       ( result : any) => {
         console.log(result);
-        this.cdr.detectChanges();
+        this.router.navigate(['/home']);
       },
       ( error : any ) => {
         console.log(error);

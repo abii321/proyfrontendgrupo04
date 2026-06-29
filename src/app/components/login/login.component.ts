@@ -3,8 +3,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/co
 import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { ActivatedRoute, Router } from '@angular/router';
-
-declare const google: any;
+import { GoogleAuthService } from '../../services/google-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,15 +11,14 @@ declare const google: any;
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements AfterViewInit {
   email: string = '';
   password: string = '';
   msglogin!: string;
   googleToken: string = '';
   
-  constructor( private autenticacionService: AutenticacionService, 
-    private cdr: ChangeDetectorRef,
-    private router: Router ){ 
+  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService,
+    private cdr: ChangeDetectorRef, private router: Router,){ 
   }
 
   loginUsuario(){
@@ -38,25 +36,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
     )
   }
 
-
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
-    this.inicializarBotonGoogle();
+    this.cargarBotonGoogle();
   }
 
-  inicializarBotonGoogle() {
-    if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com', 
-        callback: this.loginUsuarioGoogle.bind(this)
-      });
-
-      google.accounts.id.renderButton(
-        document.getElementById('googleLoginBtn'),
-        { theme: 'outline', size: 'large', text: 'signin_with' } 
-      );
-    }
+  cargarBotonGoogle() {
+    this.googleAuthService.inicializar((response: any) => {
+      this.loginUsuarioGoogle(response);
+    });
+    this.googleAuthService.renderButton('googleLoginBtn', 'signin_with');
   }
 
   loginUsuarioGoogle( response: any) {
