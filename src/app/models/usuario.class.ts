@@ -11,5 +11,7 @@ export class Usuario {
     carrera!: string;
     
     constructor(){
+
+
     }
 }
