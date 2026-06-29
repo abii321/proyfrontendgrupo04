@@ -1,0 +1,33 @@
+<div class="container py-4 row">
+    <div class="col-md-4">
+
+    </div>
+
+    <div class="col-md-8">
+        <h3 class="pt-3">Inicia Sesion</h3>
+        <form class="form bg-light p-4 rounded shadow-sm" #loginForm="ngForm">
+
+            <!--Email-->
+            <div class="mb-3 row align-items-center">
+                <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
+                <div class="col-9 col-md-10">
+                    <input type="text" class="form-control" id="email" name="email" [(ngModel)]="email" required>
+                </div>
+            </div>
+            
+            <!--Password-->
+            <div class="mb-3 row align-items-center">
+                <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
+                <div class="col-9 col-md-10">
+                    <input type="text" class="form-control" id="password" name="password" [(ngModel)]="password" required>
+                </div>
+            </div>
+
+            <!--Enviar-->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary mt-3" [disabled]="loginForm.form.invalid"
+                    (click)="loginUsuario()">Iniciar Sesion</button>
+            </div>
+        </form>
+    </div>
+</div>
