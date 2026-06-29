@@ -1,0 +1,55 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Usuario } from '../models/usuario.class';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AutenticacionService {
+  urlHost : string = "http://localhost:3000/";
+  urlBase : string = this.urlHost + 'api/autenticacion/';
+
+  constructor( private http: HttpClient ){ }
+
+  postSignUpLocal( usuario: Usuario ): Observable<any>{
+    let httpOptions = {
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      })
+    };
+
+    return this.http.post(this.urlBase+"signUp", usuario, httpOptions);
+  }
+
+  postLoginLocal( email:string, password:string ): Observable<any>{
+    let httpOptions = {
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      })
+    };
+    let body = {
+      'email' : email,
+      'password' : password,
+    }
+
+    return this.http.post(this.urlBase+"login", body, httpOptions);
+  }
+
+  public userLoggedIn(){
+    var usuario = sessionStorage.getItem("usuario");
+    if(!usuario) return false;
+    return true;
+  }
+
+  public logout(){
+    sessionStorage.clear();
+  }
+
+  userLogged(){
+    const usuario = sessionStorage.getItem("usuario");
+    if(usuario) return JSON.parse(usuario).nombre;
+  }
+
+}
+
