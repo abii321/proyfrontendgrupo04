@@ -1,66 +1,64 @@
 <div class="container py-4 row">
-    <div class="col-md-4">
-
-    </div>
+    <div class="col-md-4"></div>
 
     <div class="col-md-8">
         <h3 class="pt-3">Registrate</h3>
-        <form class="form bg-light p-4 rounded shadow-sm" #registroForm="ngForm">
 
-            <!--Rol Usuario-->
+        <div id="googleBtnContainer" class="mb-3" [hidden]="banGoogle"></div>
+        
+        <button type="button" class="btn btn-sm btn-secondary mb-3" *ngIf="banGoogle" (click)="cancelarGoogle()">
+            Volver a cambiar de cuenta
+        </button>
+
+        <form class="form bg-light p-4 rounded shadow-sm" #registroForm="ngForm">
             <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Rol</label>
-                </div>
+                <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Rol</label></div>
                 <div class="col-9 col-md-10">
                     <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
-                        <option [value]="null" disabled>Selecciona una opcion</option>
+                        <option [value]="null" disabled selected>Selecciona una opcion</option>
                         <option value="alumno">Alumno</option>
                         <option value="profesor">Profesor</option>
                     </select>
                 </div>
             </div>
 
-            <!--Nombre-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="nombre" class="form-label fw-semibold">Nombre</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required>
+            <div *ngIf="!banGoogle">
+                <div class="mb-3 row align-items-center">
+                    <div class="col-3 col-md-2"><label for="nombre" class="form-label fw-semibold">Nombre</label></div>
+                    <div class="col-9 col-md-10">
+                        <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                    <div class="col-3 col-md-2"><label for="apellido" class="form-label fw-semibold">Apellido</label></div>
+                    <div class="col-9 col-md-10">
+                        <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                    <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
+                    <div class="col-9 col-md-10">
+                        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                    <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
+                    <div class="col-9 col-md-10">
+                        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required>
+                    </div>
                 </div>
             </div>
 
-            <!--Apellido-->
             <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="apellido" class="form-label fw-semibold">Apellido</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required>
-                </div>
-            </div>
-
-            <!--Email-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required>
-                </div>
-            </div>
-            
-            <!--Password-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required>
-                </div>
-            </div>
-
-            <!--Ubicacion-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="ubicacion" class="form-label fw-semibold">Ubicacion</label></div>
+                <div class="col-3 col-md-2"><label for="ubicacion" class="form-label fw-semibold">Ubicación</label></div>
                 <div class="col-9 col-md-10">
                     <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion">
                 </div>
             </div>
 
-            <!--Universidad-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="universidad" class="form-label fw-semibold">Universidad</label></div>
                 <div class="col-9 col-md-10">
@@ -68,7 +66,6 @@
                 </div>
             </div>
 
-            <!--Carrera-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="carrera" class="form-label fw-semibold">Carrera</label></div>
                 <div class="col-9 col-md-10">
@@ -76,10 +73,12 @@
                 </div>
             </div>
 
-            <!--Enviar-->
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary mt-3" [disabled]="registroForm.form.invalid"
-                    (click)="registrarUsuario()">Registrarse</button>
+                <button type="button" class="btn btn-primary mt-3" 
+                        [disabled]="registroForm.form.invalid"
+                        (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
+                    {{ banGoogle ? 'Completar Registro con Google' : 'Registrarse' }}
+                </button>
             </div>
         </form>
     </div>
