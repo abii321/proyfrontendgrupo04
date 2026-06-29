@@ -5,7 +5,7 @@ export class Usuario {
     email!: string;
     password!: string | null;
     rol!: string;
-    //foto!: string;
+    foto!: string;
     ubicacion!: string | null;
     universidad!: string;
     carrera!: string;

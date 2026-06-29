@@ -51,5 +51,13 @@ export class AutenticacionService {
     if(usuario) return JSON.parse(usuario).nombre;
   }
 
+  postSignUpGoogle(datosGoogle: any): Observable<any> {
+  let httpOptions = {
+    headers : new HttpHeaders({
+      'Content-Type':'application/json'
+    })
+  };
+  return this.http.post(this.urlBase + "signUpGoogle", datosGoogle, httpOptions);
+}
 }
 
