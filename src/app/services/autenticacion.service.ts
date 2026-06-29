@@ -52,12 +52,22 @@ export class AutenticacionService {
   }
 
   postSignUpGoogle(datosGoogle: any): Observable<any> {
-  let httpOptions = {
-    headers : new HttpHeaders({
-      'Content-Type':'application/json'
-    })
-  };
-  return this.http.post(this.urlBase + "signUpGoogle", datosGoogle, httpOptions);
-}
+    let httpOptions = {
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      })
+    };
+    return this.http.post(this.urlBase + "signUpGoogle", datosGoogle, httpOptions);
+  }
+
+  postLoginGoogle(datosGoogle: any): Observable<any> {
+    let httpOptions = {
+      headers : new HttpHeaders({
+        'Content-Type':'application/json'
+      })
+    };
+    return this.http.post(this.urlBase + "loginGoogle", datosGoogle, httpOptions);
+  }
+
 }
 

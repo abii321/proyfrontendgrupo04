@@ -77,7 +77,7 @@ export class RegistroComponent implements AfterViewInit {
     );
   }
 
-    registrarUsuarioLocal(){
+  registrarUsuarioLocal(){
     this.autenticacionService.postSignUpLocal(this.usuario).subscribe(
       ( result : any) => {
         console.log(result);
