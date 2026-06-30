@@ -8,13 +8,21 @@ declare const google: any;
 export class GoogleAuthService {
 
   private clientId = '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com';
+  private inicializado = false;
+  private callbackActual?: (response: any) => void;
 
   inicializar(callback: (response: any) => void) {
-    if (typeof google !== 'undefined') {
+    this.callbackActual = callback;
+    if (typeof google !== 'undefined' && !this.inicializado) {
       google.accounts.id.initialize({
         client_id: this.clientId,
-        callback: callback // Pasamos la función manejadora
+        callback: (response: any) => {
+          if (this.callbackActual) {
+            this.callbackActual(response);
+          }
+        }
       });
+      this.inicializado = true;
     }
   }
 

@@ -1,132 +1,79 @@
-<div class="container py-4 row">
-    <div class="col-md-4">imagen futura</div>
-        
-    <div class="col-md-8">
-        <h3 class="pt-3">Registrate</h3>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card bg-body-secondary border-0 p-4 p-md-5 shadow-sm">
+        <h3 class="fw-bold text-center mb-4">Registrarse</h3>
 
-        <div id="googleBtnContainer" class="mb-3" [hidden]="banGoogle"></div>
-        
-        <button type="button" class="btn btn-sm btn-secondary mb-3" *ngIf="banGoogle" (click)="cancelarGoogle()">
-            Volver a cambiar de cuenta
-        </button>
+        <div id="googleBtnContainer" class="d-flex justify-content-center mb-3" [hidden]="banGoogle"></div>
 
-        <form class="form bg-light p-4 rounded shadow-sm" #registroForm="ngForm">
+        @if (banGoogle) {
+          <button type="button" class="btn btn-sm btn-secondary mb-3 w-100" (click)="cancelarGoogle()">
+            Cambiar cuenta de Google
+          </button>
+        }
 
-            <!--Rol Usuario-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Rol</label></div>
-                <div class="col-9 col-md-10">
-                    <select class="form-select" name="rol" [(ngModel)]="usuario.rol" #rol="ngModel" required>
-                        <option [value]="null" disabled selected>Selecciona una opcion</option>
-                        <option value="alumno">Alumno</option>
-                        <option value="profesor">Profesor</option>
-                    </select>
-                    <div *ngIf="rol.invalid && (rol.touched || rol.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="rol.errors?.['required']">Campo obligatorio</div>
-                    </div>
-                </div>
+        <div class="text-center text-muted small mb-4" [hidden]="banGoogle">O usa el registro tradicional</div>
+
+        <form #registroForm="ngForm" class="row g-3">
+          <!-- Ocupación y Carrera (Grid) -->
+          <div class="col-md-6">
+            <label for="rol" class="form-label fw-semibold">Ocupación</label>
+            <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
+              <option [value]="null" disabled selected>Selecciona tu ocupación</option>
+              <option value="alumno">Alumno</option>
+              <option value="profesor">Profesor</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="carrera" class="form-label fw-semibold">Carrera</label>
+            <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required placeholder="APU">
+          </div>
+
+          <!-- Traditional Fields (Grid) -->
+          @if (!banGoogle) {
+            <div class="col-md-6">
+              <label for="nombre" class="form-label fw-semibold">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required placeholder="Juan">
             </div>
 
-            <div *ngIf="!banGoogle">
-                
-                <!--Nombre-->
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="nombre" class="form-label fw-semibold">Nombre</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" #nombre="ngModel" required minlength="4">
-                        <div *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="text-danger small mt-1">
-                            <div *ngIf="nombre.errors?.['required']">Campo obligatorio</div>
-                            <div *ngIf="nombre.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Apellido-->
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="apellido" class="form-label fw-semibold">Apellido</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" #apellido="ngModel" required minlength="4">
-                        <div *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="text-danger small mt-1">
-                            <div *ngIf="apellido.errors?.['required']">Campo obligatorio</div>
-                            <div *ngIf="apellido.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Email-->
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" #email="ngModel" required email>
-                        <div *ngIf="email.invalid && (email.touched || email.dirty)" class="text-danger small mt-1">
-                            <div *ngIf="email.errors?.['required']">Campo obligatorio</div>
-                            <div *ngIf="email.errors?.['email']">Formato invalido</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Password-->
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required
-                            #password="ngModel" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+_+\-\[\]\\\/]).{8,20}$">
-                        <div *ngIf="password.invalid && (password.touched || password.dirty)" class="text-danger small mt-1">
-                            <div *ngIf="password.errors?.['required']">Campo obligatorio</div>
-                            <div *ngIf="password.errors?.['pattern']">Debe tener entre 1 y 8 caracteres y al menos un símbolo especial</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="apellido" class="form-label fw-semibold">Apellido</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required placeholder="Pérez">
             </div>
 
-            <!--Ubicacion-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="ubicacion" class="form-label fw-semibold">Ubicación</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" #ubicacion="ngModel" required minlength="4">
-                    <div *ngIf="ubicacion.invalid && (ubicacion.touched || ubicacion.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="ubicacion.errors?.['required']">Campo obligatorio</div>
-                        <div *ngIf="ubicacion.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required placeholder="juanperez@test.com">
             </div>
 
-            <!--Universidad-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="universidad" class="form-label fw-semibold">Universidad</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" #uni="ngModel" required>
-                    <div *ngIf="uni.invalid && (uni.touched || uni.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="uni.errors?.['required']">Campo obligatorio</div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label fw-semibold">Contraseña</label>
+              <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required placeholder="••••••••">
             </div>
+          }
 
-            <!--Carrera-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="carrera" class="form-label fw-semibold">Carrera</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" #carrera="ngModel" required>
-                    <div *ngIf="carrera.invalid && (carrera.touched || carrera.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="carrera.errors?.['required']">Campo obligatorio</div>
-                    </div>
-                </div>
-            </div>
+          <!-- Academic / Location Fields (Grid) -->
+          <div class="col-md-6">
+            <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
+            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" placeholder="San Salvador de Jujuy">
+          </div>
 
+          <div class="col-md-6">
+            <label for="universidad" class="form-label fw-semibold">Universidad</label>
+            <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" required placeholder="UNJu">
+          </div>
 
-            <div class="text-danger" *ngIf="msg!=''">{{msg}}</div>
-
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary mt-3" 
-                        [disabled]="registroForm.form.invalid"
-                        (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal(registroForm)">
-                    {{ banGoogle ? 'Completar Registro con Google' : 'Registrarse' }}
-                </button>
-            </div>
+          <!-- Actions (Full width) -->
+          <div class="col-12 d-flex align-items-center justify-content-between pt-3">
+            <a [routerLink]="['/login']" class="small text-decoration-none">¿Ya tienes cuenta?</a>
+            <button type="button" class="btn btn-primary px-4" [disabled]="registroForm.form.invalid"
+                    (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
+              Registrarse
+            </button>
+          </div>
         </form>
-
-        <span>¿Ya tienes una cuenta?
-            <a [routerLink]="['/login']">Login</a>
-        </span>
+      </div>
     </div>
+  </div>
 </div>

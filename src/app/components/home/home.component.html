@@ -1,1 +1,168 @@
-<p>home works!</p>
+<div class="container py-5">
+  <!-- Saludo Principal -->
+  <div class="mb-4">
+    <h2 class="fw-bold">Bienvenido, {{ nombreCompleto }}</h2>
+    <p class="text-secondary mb-0">{{ universidad }} &bull; {{ carrera }}</p>
+  </div>
+
+  @if (rol === 'alumno') {
+    <!-- Panel del Alumno -->
+    <div class="row g-4 mb-4">
+      <!-- Metricas -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Tutorías Solicitadas</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ alumnoTutoriasSolicitadas }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Clases Completadas</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ alumnoTutoriasCompletadas }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Categorías de Interés</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ alumnoCategoriasConsultadas }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Próxima Sesión</div>
+          <p class="mb-0 text-secondary small">{{ alumnoProximaTutoria }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos Alumno (Lado a Lado) -->
+    <div class="row g-4 mb-4">
+      <!-- Gráfico Categorías (Dona) -->
+      <div class="col-md-6">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <h5 class="fw-bold mb-3">Tutorías por Categoría</h5>
+          <div style="display: block; height: 220px; position: relative;">
+            <canvas baseChart
+              [data]="alumnoDonaData"
+              [type]="'doughnut'"
+              [options]="chartOptionsDoughnut">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico Histórico (Barras) -->
+      <div class="col-md-6">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <h5 class="fw-bold mb-3">Solicitudes por Mes</h5>
+          <div style="display: block; height: 220px; position: relative;">
+            <canvas baseChart
+              [data]="alumnoBarrasData"
+              [type]="'bar'"
+              [options]="chartOptionsBar">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Alumno -->
+    <div class="card bg-body-secondary border-0 p-4">
+      <h5 class="fw-bold mb-3">Acciones Rápidas</h5>
+      <p class="text-secondary small">Solicita ayuda personalizada en las materias de tu interés, o revisa el estado actual de tus solicitudes previas en tiempo real.</p>
+      <div class="d-flex gap-2 flex-wrap pt-2">
+        <a class="btn btn-primary" [routerLink]="['/solicitud-ayuda']">Solicitar Nueva Tutoría</a>
+        <a class="btn btn-secondary" [routerLink]="['/respuesta-ayuda']">Ver Mis Solicitudes</a>
+      </div>
+    </div>
+  }
+
+  @if (rol === 'profesor') {
+    <!-- Panel del Profesor -->
+    <div class="row g-4 mb-4">
+      <!-- Metricas -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Tutorías por Dictar</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ profesorTutoriasPendientes }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Clases Dictadas</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ profesorTutoriasCompletadas }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Horas Acumuladas</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ profesorHorasDictadas }} hs</h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <div class="text-muted small fw-semibold mb-1">Calificación Promedio</div>
+          <h2 class="fw-bold mb-0 text-dark">{{ profesorCalificacionPromedio }} / 5.0</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos Profesor (Lado a Lado) -->
+    <div class="row g-4 mb-4">
+      <!-- Gráfico Horas (Barras) -->
+      <div class="col-md-7 col-lg-8">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <h5 class="fw-bold mb-3">Horas Dictadas por Mes</h5>
+          <div style="display: block; height: 220px; position: relative;">
+            <canvas baseChart
+              [data]="profesorBarrasData"
+              [type]="'bar'"
+              [options]="chartOptionsBar">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico Calificaciones (Dona) -->
+      <div class="col-md-5 col-lg-4">
+        <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
+          <h5 class="fw-bold mb-3">Distribución de Calificaciones</h5>
+          <div style="display: block; height: 220px; position: relative;">
+            <canvas baseChart
+              [data]="profesorDonaData"
+              [type]="'doughnut'"
+              [options]="chartOptionsDoughnut">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Profesor -->
+    <div class="card bg-body-secondary border-0 p-4">
+      <h5 class="fw-bold mb-3">Acciones Rápidas</h5>
+      <p class="text-secondary small">Revisa las solicitudes publicadas por los estudiantes o configura las categorías académicas en las que dictas tutorías.</p>
+      <div class="d-flex gap-2 flex-wrap pt-2">
+        <a class="btn btn-primary" [routerLink]="['/respuesta-ayuda']">Revisar Solicitudes</a>
+        <a class="btn btn-secondary" [routerLink]="['/home']">Configurar Categorías</a>
+      </div>
+    </div>
+  }
+
+  @if (rol === 'administrador') {
+    <!-- Panel del Administrador -->
+    <div class="card bg-body-secondary border-0 p-4 shadow-sm">
+      <h4 class="fw-bold mb-3">Panel de Administración</h4>
+      <p class="text-secondary">Monitoreo y moderación general del sistema de tutorías.</p>
+      <div class="d-flex gap-2">
+        <a class="btn btn-primary" [routerLink]="['/home']">Ver Estadísticas Generales</a>
+      </div>
+    </div>
+  }
+</div>
