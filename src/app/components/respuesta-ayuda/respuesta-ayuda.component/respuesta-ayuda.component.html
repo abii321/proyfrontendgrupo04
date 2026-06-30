@@ -1,1 +1,43 @@
-<p>respuesta-ayuda.component works!</p>
+<div class="container mt-4">
+
+  <!-- Encabezado de la solicitud -->
+  <h2 class="mb-3">{{solicitud.titulo}}</h2>
+
+  <p class="lead">{{solicitud.descripcion}}</p>
+
+  <p><strong>Precio:</strong> {{solicitud.precio | currency:'ARS'}}</p>
+
+  <p>
+    <strong>Estado:</strong>
+    <span class="badge bg-info">{{solicitud.estado}}</span>
+  </p>
+
+  <hr class="my-4">
+
+  <!-- Respuestas -->
+  <h3 class="mb-3">Respuestas</h3>
+
+  <div class="list-group mb-4">
+    <div class="list-group-item" *ngFor="let r of solicitud.respuestas">
+      {{r.respuesta}}
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Formulario de respuesta -->
+  <h4 class="mb-3">Responder</h4>
+
+  <div class="mb-3">
+    <textarea
+      class="form-control"
+      rows="3"
+      [(ngModel)]="respuesta.respuesta" name="respuesta">
+    </textarea>
+  </div>
+
+  <button class="btn btn-primary" (click)="guardar()">
+    <i class="bi bi-send"></i> Responder
+  </button>
+
+</div>

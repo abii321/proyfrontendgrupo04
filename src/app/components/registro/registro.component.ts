@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, AfterViewInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
 import { GoogleAuthService } from '../../services/google-auth.service';
@@ -17,6 +17,7 @@ export class RegistroComponent implements AfterViewInit {
   usuario: Usuario;
   banGoogle: boolean = false;
   googleToken: string = '';
+  msg: string = "";
 
   constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
     this.usuario = new Usuario();
@@ -68,15 +69,19 @@ export class RegistroComponent implements AfterViewInit {
     );
   }
 
-  registrarUsuarioLocal(){
+  registrarUsuarioLocal(form: NgForm){
     this.autenticacionService.postSignUpLocal(this.usuario).subscribe(
       ( result : any) => {
-        console.log(result);
-        this.router.navigate(['/home']);
+        form.reset();
+        this.msg = ""
+        this.cdr.detectChanges();
+        //this.router.navigate(['/login']);
       },
       ( error : any ) => {
-        console.log(error);
+        this.msg = "Error al registrar, este email ya pertenece a un usuario"
+        this.cdr.detectChanges();
       }
     )
   }
+  
 }
