@@ -1,6 +1,6 @@
 <div class="container py-4 row">
-    <div class="col-md-4"></div>
-
+    <div class="col-md-4">imagen futura</div>
+        
     <div class="col-md-8">
         <h3 class="pt-3">Registrate</h3>
 
@@ -11,75 +11,122 @@
         </button>
 
         <form class="form bg-light p-4 rounded shadow-sm" #registroForm="ngForm">
+
+            <!--Rol Usuario-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Rol</label></div>
                 <div class="col-9 col-md-10">
-                    <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
+                    <select class="form-select" name="rol" [(ngModel)]="usuario.rol" #rol="ngModel" required>
                         <option [value]="null" disabled selected>Selecciona una opcion</option>
                         <option value="alumno">Alumno</option>
                         <option value="profesor">Profesor</option>
                     </select>
+                    <div *ngIf="rol.invalid && (rol.touched || rol.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="rol.errors?.['required']">Campo obligatorio</div>
+                    </div>
                 </div>
             </div>
 
             <div *ngIf="!banGoogle">
+                
+                <!--Nombre-->
                 <div class="mb-3 row align-items-center">
                     <div class="col-3 col-md-2"><label for="nombre" class="form-label fw-semibold">Nombre</label></div>
                     <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required>
+                        <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" #nombre="ngModel" required minlength="4">
+                        <div *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="text-danger small mt-1">
+                            <div *ngIf="nombre.errors?.['required']">Campo obligatorio</div>
+                            <div *ngIf="nombre.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
+                        </div>
                     </div>
                 </div>
 
+                <!--Apellido-->
                 <div class="mb-3 row align-items-center">
                     <div class="col-3 col-md-2"><label for="apellido" class="form-label fw-semibold">Apellido</label></div>
                     <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required>
+                        <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" #apellido="ngModel" required minlength="4">
+                        <div *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="text-danger small mt-1">
+                            <div *ngIf="apellido.errors?.['required']">Campo obligatorio</div>
+                            <div *ngIf="apellido.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
+                        </div>
                     </div>
                 </div>
 
+                <!--Email-->
                 <div class="mb-3 row align-items-center">
                     <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
                     <div class="col-9 col-md-10">
-                        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required>
+                        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" #email="ngModel" required email>
+                        <div *ngIf="email.invalid && (email.touched || email.dirty)" class="text-danger small mt-1">
+                            <div *ngIf="email.errors?.['required']">Campo obligatorio</div>
+                            <div *ngIf="email.errors?.['email']">Formato invalido</div>
+                        </div>
                     </div>
                 </div>
 
+                <!--Password-->
                 <div class="mb-3 row align-items-center">
                     <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
                     <div class="col-9 col-md-10">
-                        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required>
+                        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required
+                            #password="ngModel" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+_+\-\[\]\\\/]).{8,20}$">
+                        <div *ngIf="password.invalid && (password.touched || password.dirty)" class="text-danger small mt-1">
+                            <div *ngIf="password.errors?.['required']">Campo obligatorio</div>
+                            <div *ngIf="password.errors?.['pattern']">Debe tener entre 1 y 8 caracteres y al menos un símbolo especial</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!--Ubicacion-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="ubicacion" class="form-label fw-semibold">Ubicación</label></div>
                 <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion">
+                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" #ubicacion="ngModel" required minlength="4">
+                    <div *ngIf="ubicacion.invalid && (ubicacion.touched || ubicacion.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="ubicacion.errors?.['required']">Campo obligatorio</div>
+                        <div *ngIf="ubicacion.errors?.['minlength']">Debe contener al menos 4 caracteres</div>
+                    </div>
                 </div>
             </div>
 
+            <!--Universidad-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="universidad" class="form-label fw-semibold">Universidad</label></div>
                 <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" required>
+                    <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" #uni="ngModel" required>
+                    <div *ngIf="uni.invalid && (uni.touched || uni.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="uni.errors?.['required']">Campo obligatorio</div>
+                    </div>
                 </div>
             </div>
 
+            <!--Carrera-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="carrera" class="form-label fw-semibold">Carrera</label></div>
                 <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required>
+                    <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" #carrera="ngModel" required>
+                    <div *ngIf="carrera.invalid && (carrera.touched || carrera.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="carrera.errors?.['required']">Campo obligatorio</div>
+                    </div>
                 </div>
             </div>
+
+
+            <div class="text-danger" *ngIf="msg!=''">{{msg}}</div>
 
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-primary mt-3" 
                         [disabled]="registroForm.form.invalid"
-                        (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
+                        (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal(registroForm)">
                     {{ banGoogle ? 'Completar Registro con Google' : 'Registrarse' }}
                 </button>
             </div>
         </form>
+
+        <span>¿Ya tienes una cuenta?
+            <a [routerLink]="['/login']">Login</a>
+        </span>
     </div>
 </div>
