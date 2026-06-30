@@ -1,36 +1,36 @@
-<div class="container py-4 row">
-    <div class="col-md-4">
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-5">
+      <div class="card bg-body-secondary border-0 p-4 p-md-5 shadow-sm">
+        <h3 class="fw-bold text-center mb-4">Iniciar Sesión</h3>
 
-    </div>
+        <div id="googleLoginBtn" class="d-flex justify-content-center mb-3"></div>
 
-    <div class="col-md-8">
-        <h3 class="pt-3">Inicia Sesion</h3>
+        <div class="text-center text-muted small mb-3">O entra con tu correo</div>
 
-        <div id="googleLoginBtn" class="mb-4"></div>
+        <form #loginForm="ngForm" (ngSubmit)="loginUsuario()">
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">Email</label>
+            <input type="email" class="form-control" id="email" name="email" [(ngModel)]="email" required placeholder="ejemplo@test.com">
+          </div>
 
-        <form class="form bg-light p-4 rounded shadow-sm" #loginForm="ngForm">
+          <div class="mb-4">
+            <label for="password" class="form-label fw-semibold">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••">
+          </div>
 
-            <!--Email-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="email" name="email" [(ngModel)]="email" required>
-                </div>
+          @if (msglogin) {
+            <div class="alert alert-danger py-2 small">
+              {{ msglogin }}
             </div>
-            
-            <!--Password-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="password" name="password" [(ngModel)]="password" required>
-                </div>
-            </div>
+          }
 
-            <!--Enviar-->
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary mt-3" [disabled]="loginForm.form.invalid"
-                    (click)="loginUsuario()">Iniciar Sesion</button>
-            </div>
+          <div class="d-flex align-items-center justify-content-between pt-2">
+            <a [routerLink]="['/registro']" class="small text-decoration-none">Crear cuenta</a>
+            <button type="submit" class="btn btn-primary px-4" [disabled]="loginForm.form.invalid">Ingresar</button>
+          </div>
         </form>
+      </div>
     </div>
+  </div>
 </div>

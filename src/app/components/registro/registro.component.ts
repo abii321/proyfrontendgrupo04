@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
 import { GoogleAuthService } from '../../services/google-auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })

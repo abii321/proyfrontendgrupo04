@@ -1,85 +1,79 @@
-<div class="container py-4 row">
-    <div class="col-md-4"></div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card bg-body-secondary border-0 p-4 p-md-5 shadow-sm">
+        <h3 class="fw-bold text-center mb-4">Registrarse</h3>
 
-    <div class="col-md-8">
-        <h3 class="pt-3">Registrate</h3>
+        <div id="googleBtnContainer" class="d-flex justify-content-center mb-3" [hidden]="banGoogle"></div>
 
-        <div id="googleBtnContainer" class="mb-3" [hidden]="banGoogle"></div>
-        
-        <button type="button" class="btn btn-sm btn-secondary mb-3" *ngIf="banGoogle" (click)="cancelarGoogle()">
-            Volver a cambiar de cuenta
-        </button>
+        @if (banGoogle) {
+          <button type="button" class="btn btn-sm btn-outline-secondary mb-3 w-100" (click)="cancelarGoogle()">
+            Cambiar cuenta de Google
+          </button>
+        }
 
-        <form class="form bg-light p-4 rounded shadow-sm" #registroForm="ngForm">
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Rol</label></div>
-                <div class="col-9 col-md-10">
-                    <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
-                        <option [value]="null" disabled selected>Selecciona una opcion</option>
-                        <option value="alumno">Alumno</option>
-                        <option value="profesor">Profesor</option>
-                    </select>
-                </div>
+        <div class="text-center text-muted small mb-4" [hidden]="banGoogle">O usa el registro tradicional</div>
+
+        <form #registroForm="ngForm" class="row g-3">
+          <!-- Ocupación y Carrera (Grid) -->
+          <div class="col-md-6">
+            <label for="rol" class="form-label fw-semibold">Ocupación</label>
+            <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
+              <option [value]="null" disabled selected>Selecciona tu ocupación</option>
+              <option value="alumno">Alumno</option>
+              <option value="profesor">Profesor</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="carrera" class="form-label fw-semibold">Carrera</label>
+            <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required placeholder="APU">
+          </div>
+
+          <!-- Traditional Fields (Grid) -->
+          @if (!banGoogle) {
+            <div class="col-md-6">
+              <label for="nombre" class="form-label fw-semibold">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required placeholder="Juan">
             </div>
 
-            <div *ngIf="!banGoogle">
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="nombre" class="form-label fw-semibold">Nombre</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="apellido" class="form-label fw-semibold">Apellido</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row align-items-center">
-                    <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                    <div class="col-9 col-md-10">
-                        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="apellido" class="form-label fw-semibold">Apellido</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required placeholder="Pérez">
             </div>
 
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="ubicacion" class="form-label fw-semibold">Ubicación</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion">
-                </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required placeholder="juanperez@test.com">
             </div>
 
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="universidad" class="form-label fw-semibold">Universidad</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" required>
-                </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label fw-semibold">Contraseña</label>
+              <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required placeholder="••••••••">
             </div>
+          }
 
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="carrera" class="form-label fw-semibold">Carrera</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required>
-                </div>
-            </div>
+          <!-- Academic / Location Fields (Grid) -->
+          <div class="col-md-6">
+            <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
+            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" placeholder="San Salvador de Jujuy">
+          </div>
 
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary mt-3" 
-                        [disabled]="registroForm.form.invalid"
-                        (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
-                    {{ banGoogle ? 'Completar Registro con Google' : 'Registrarse' }}
-                </button>
-            </div>
+          <div class="col-md-6">
+            <label for="universidad" class="form-label fw-semibold">Universidad</label>
+            <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" required placeholder="UNJu">
+          </div>
+
+          <!-- Actions (Full width) -->
+          <div class="col-12 d-flex align-items-center justify-content-between pt-3">
+            <a [routerLink]="['/login']" class="small text-decoration-none">¿Ya tienes cuenta?</a>
+            <button type="button" class="btn btn-primary px-4" [disabled]="registroForm.form.invalid"
+                    (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
+              Registrarse
+            </button>
+          </div>
         </form>
+      </div>
     </div>
+  </div>
 </div>

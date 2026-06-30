@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GoogleAuthService } from '../../services/google-auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ CommonModule, FormsModule ],
+  imports: [ CommonModule, FormsModule, RouterLink ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
