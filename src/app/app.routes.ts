@@ -5,6 +5,8 @@ import { LoginComponent } from './components/login/login.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { SolicitudAyudaComponent } from './components/solicitud-ayuda/solicitud-ayuda.component/solicitud-ayuda.component';
 import { RespuestaAyudaComponent } from './components/respuesta-ayuda/respuesta-ayuda.component/respuesta-ayuda.component';
+import { SolicitarTutoriaComponent } from './components/tutoria/solicitar-tutoria.component/solicitar-tutoria.component';
+import { GestionarTutoriasComponent } from './components/tutoria/gestionar-tutorias.component/gestionar-tutorias.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -13,6 +15,8 @@ export const routes: Routes = [
     { path: 'perfil', component: PerfilComponent },
     { path: 'solicitud-ayuda', component: SolicitudAyudaComponent },
     { path: 'solicitudes/:id', component: RespuestaAyudaComponent },
+    { path: 'solicitar-tutoria', component: SolicitarTutoriaComponent },
+    { path: 'gestionar-tutorias', component: GestionarTutoriasComponent },
     { path: '', pathMatch: 'full', redirectTo: 'login' },
     { path: '**', redirectTo: 'login' },
 ];
