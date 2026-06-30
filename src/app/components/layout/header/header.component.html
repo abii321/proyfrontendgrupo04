@@ -14,8 +14,23 @@
           <button class="btn btn-outline-success" [routerLink]="['login']">Log in</button>
           <button class="btn btn-outline-primary" [routerLink]="['registro']">Sign Up</button>
         } @else {
-          <span>{{autenticacionService.userLogged()}}</span>
-          <a [routerLink]="['/home']" (click)="autenticacionService.logout()">Log out</a>
+          <li class="nav-item dropdown list-unstyled">
+            <a class="nav-link dropdown-toggle fw-semibold text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i> {{ autenticacionService.userLogged() || 'Mi Cuenta' }}
+            </a>  
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+              <li> <span class="dropdown-header text-muted pb-2">Sesión activa</span> </li>
+              <li><hr class="dropdown-divider"></li>
+            
+              <li>
+                <button class="dropdown-item text-danger d-flex align-items-center gap-2" 
+                  [routerLink]="['/home']" (click)="autenticacionService.logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </li>
+            </ul>
+          </li>
         }
       </div>
     

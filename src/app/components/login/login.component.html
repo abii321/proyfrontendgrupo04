@@ -1,6 +1,6 @@
 <div class="container py-4 row">
     <div class="col-md-4">
-
+        imagen futura
     </div>
 
     <div class="col-md-8">
@@ -13,24 +13,38 @@
             <!--Email-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="email" name="email" [(ngModel)]="email" required>
+                    <div class="col-9 col-md-10"> <input type="email" class="form-control" id="email" name="email" [(ngModel)]="email" #emailM="ngModel" required email>
+                    <div *ngIf="emailM.invalid && (emailM.touched || emailM.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="emailM.errors?.['required']">Campo obligatorio</div>
+                        <div *ngIf="emailM.errors?.['email']">Formato invalido</div>
+                    </div>
                 </div>
             </div>
             
             <!--Password-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="text" class="form-control" id="password" name="password" [(ngModel)]="password" required>
+                    <div class="col-9 col-md-10"> <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required
+                        #passwordM="ngModel" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+_+\-\[\]\\\/]).{8,20}$">
+                    <div *ngIf="passwordM.invalid && (passwordM.touched || passwordM.dirty)" class="text-danger small mt-1">
+                        <div *ngIf="passwordM.errors?.['required']">Campo obligatorio</div>
+                        <div *ngIf="passwordM.errors?.['pattern']">Debe tener entre 1 y 8 caracteres y al menos un símbolo especial</div>
+                    </div>
                 </div>
             </div>
+
+            <div class="text-danger" *ngIf="msg!=''">{{msg}}</div>
 
             <!--Enviar-->
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-primary mt-3" [disabled]="loginForm.form.invalid"
-                    (click)="loginUsuario()">Iniciar Sesion</button>
+                    (click)="loginUsuario(loginForm)">Iniciar Sesion</button>
             </div>
         </form>
+
+        <span>¿Aun no te has registrado?
+            <a [routerLink]="['/registro']">Login</a>
+        </span>
+
     </div>
 </div>
