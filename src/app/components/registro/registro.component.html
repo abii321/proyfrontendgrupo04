@@ -7,15 +7,14 @@
         <div id="googleBtnContainer" class="d-flex justify-content-center mb-3" [hidden]="banGoogle"></div>
 
         @if (banGoogle) {
-          <button type="button" class="btn btn-sm btn-secondary mb-3 w-100" (click)="cancelarGoogle()">
-            Cambiar cuenta de Google
-          </button>
+        <button type="button" class="btn btn-sm btn-secondary mb-3 w-100" (click)="cancelarGoogle()">
+          Cambiar cuenta de Google
+        </button>
         }
 
         <div class="text-center text-muted small mb-4" [hidden]="banGoogle">O usa el registro tradicional</div>
 
         <form #registroForm="ngForm" class="row g-3">
-          <!-- Ocupación y Carrera (Grid) -->
           <div class="col-md-6">
             <label for="rol" class="form-label fw-semibold">Ocupación</label>
             <select class="form-select" name="rol" [(ngModel)]="usuario.rol" required>
@@ -27,48 +26,52 @@
 
           <div class="col-md-6">
             <label for="carrera" class="form-label fw-semibold">Carrera</label>
-            <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required placeholder="APU">
+            <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="usuario.carrera" required
+              placeholder="APU">
           </div>
 
-          <!-- Traditional Fields (Grid) -->
           @if (!banGoogle) {
-            <div class="col-md-6">
-              <label for="nombre" class="form-label fw-semibold">Nombre</label>
-              <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required placeholder="Juan">
-            </div>
+          <div class="col-md-6">
+            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" required
+              placeholder="Juan">
+          </div>
 
-            <div class="col-md-6">
-              <label for="apellido" class="form-label fw-semibold">Apellido</label>
-              <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" required placeholder="Pérez">
-            </div>
+          <div class="col-md-6">
+            <label for="apellido" class="form-label fw-semibold">Apellido</label>
+            <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="usuario.apellido"
+              required placeholder="Pérez">
+          </div>
 
-            <div class="col-md-6">
-              <label for="email" class="form-label fw-semibold">Email</label>
-              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required placeholder="juanperez@test.com">
-            </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label fw-semibold">Email</label>
+            <input type="email" class="form-control" id="email" name="email" [(ngModel)]="usuario.email" required
+              placeholder="juanperez@test.com">
+          </div>
 
-            <div class="col-md-6">
-              <label for="password" class="form-label fw-semibold">Contraseña</label>
-              <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password" required placeholder="••••••••">
-            </div>
+          <div class="col-md-6">
+            <label for="password" class="form-label fw-semibold">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="usuario.password"
+              required placeholder="••••••••">
+          </div>
           }
 
-          <!-- Academic / Location Fields (Grid) -->
           <div class="col-md-6">
             <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
-            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" placeholder="San Salvador de Jujuy">
+            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion"
+              placeholder="San Salvador de Jujuy">
           </div>
 
           <div class="col-md-6">
             <label for="universidad" class="form-label fw-semibold">Universidad</label>
-            <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="usuario.universidad" required placeholder="UNJu">
+            <input type="text" class="form-control" id="universidad" name="universidad"
+              [(ngModel)]="usuario.universidad" required placeholder="UNJu">
           </div>
 
-          <!-- Actions (Full width) -->
           <div class="col-12 d-flex align-items-center justify-content-between pt-3">
             <a [routerLink]="['/login']" class="small text-decoration-none">¿Ya tienes cuenta?</a>
             <button type="button" class="btn btn-primary px-4" [disabled]="registroForm.form.invalid"
-                    (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal()">
+              (click)="banGoogle ? registrarUsuarioGoogle() : registrarUsuarioLocal(registroForm)">
               Registrarse
             </button>
           </div>

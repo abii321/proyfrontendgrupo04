@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, AfterViewInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
@@ -12,14 +12,18 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })
-
 export class RegistroComponent implements AfterViewInit {
   usuario: Usuario;
   banGoogle: boolean = false;
   googleToken: string = '';
   msg: string = "";
 
-  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
+  private autenticacionService = inject(AutenticacionService);
+  private googleAuthService = inject(GoogleAuthService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  constructor() {
     this.usuario = new Usuario();
     this.usuario.rol = ''; 
   }
@@ -83,5 +87,4 @@ export class RegistroComponent implements AfterViewInit {
       }
     )
   }
-  
 }

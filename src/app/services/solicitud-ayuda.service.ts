@@ -34,7 +34,7 @@ export class SolicitudService {
       })
     };
 
-    return this.http.post(this.urlBase,solicitud, httpOptions
+    return this.http.post(this.urlBase, solicitud, httpOptions
     );
 
   }

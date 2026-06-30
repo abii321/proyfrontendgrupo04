@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Solicitud } from '../../../models/solicitud.class';
 import { Respuesta } from '../../../models/respuesta.class';
 import { ActivatedRoute } from '@angular/router';
@@ -14,44 +14,43 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './respuesta-ayuda.component.css',
   standalone: true
 })
-export class RespuestaAyudaComponent implements OnInit{
+export class RespuestaAyudaComponent implements OnInit {
 
-solicitud!:Solicitud;
+  solicitud!: Solicitud;
 
-respuesta=new Respuesta();
+  respuesta = new Respuesta();
 
-constructor(
+  private route = inject(ActivatedRoute);
+  private solicitudService = inject(SolicitudService);
+  private respuestaService = inject(RespuestaAyudaService);
 
-private route:ActivatedRoute,
+  ngOnInit() {
 
-private solicitudService:SolicitudService,
+    const id = this.route.snapshot.params['id'];
 
-private respuestaService:RespuestaAyudaService
+    this.cargarSolicitud(id);
 
-){}
+  }
 
-ngOnInit(){
+  cargarSolicitud(id: number | undefined) {
+    if (id === undefined) return;
+    this.solicitudService.getSolicitud(id).subscribe({
+      next: (result) => {
+        this.solicitud = result.data;
+      }
+    });
+  }
 
-const id=this.route.snapshot.params['id'];
-
-this.cargarSolicitud(id);
-
-}
-
-cargarSolicitud(id:number){
-
-this.solicitudService.getSolicitud(id).subscribe({
-
-next:(result)=>{
-
-this.solicitud=result.data;
-
-}
-
-});
-
-}
-
-
-
+  guardar() {
+    if (!this.respuesta.respuesta || this.solicitud.id === undefined) return;
+    this.respuesta.id_solicitud = this.solicitud.id;
+    this.respuestaService.createRespuesta(this.respuesta).subscribe({
+      next: (result) => {
+        alert('Respuesta enviada.');
+        this.respuesta = new Respuesta();
+        this.cargarSolicitud(this.solicitud.id);
+      },
+      error: (err) => console.error(err)
+    });
+  }
 }

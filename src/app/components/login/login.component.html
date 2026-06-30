@@ -8,21 +8,23 @@
 
         <div class="text-center text-muted small mb-3">O entra con tu correo</div>
 
-        <form #loginForm="ngForm" (ngSubmit)="loginUsuario()">
+        <form #loginForm="ngForm" (ngSubmit)="loginUsuario(loginForm)">
           <div class="mb-3">
             <label for="email" class="form-label fw-semibold">Email</label>
-            <input type="email" class="form-control" id="email" name="email" [(ngModel)]="email" required placeholder="ejemplo@test.com">
+            <input type="email" class="form-control" id="email" name="email" [(ngModel)]="email" required
+              placeholder="ejemplo@test.com">
           </div>
 
           <div class="mb-4">
             <label for="password" class="form-label fw-semibold">Contraseña</label>
-            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••">
+            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required
+              placeholder="••••••••">
           </div>
 
           @if (msglogin) {
-            <div class="alert alert-danger py-2 small">
-              {{ msglogin }}
-            </div>
+          <div class="alert alert-danger py-2 small">
+            {{ msglogin }}
+          </div>
           }
 
           <div class="d-flex align-items-center justify-content-between pt-2">

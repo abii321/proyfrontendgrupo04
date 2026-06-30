@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
@@ -23,7 +23,8 @@ export class PerfilComponent implements OnInit {
   msgSuccess: string = '';
   msgError: string = '';
 
-  constructor(public authService: AutenticacionService, private router: Router) { }
+  authService = inject(AutenticacionService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     if (!this.authService.userLoggedIn()) {
@@ -34,7 +35,7 @@ export class PerfilComponent implements OnInit {
     const userStr = sessionStorage.getItem('usuario');
     if (userStr) {
       const user = JSON.parse(userStr);
-      this.usuarioId = user.id || user.email; // usamos id de usuario si existe, o el email
+      this.usuarioId = user.id || user.email;
       this.email = user.email;
       this.rol = user.rol;
       this.nombre = user.nombre;
@@ -60,7 +61,6 @@ export class PerfilComponent implements OnInit {
     const userStr = sessionStorage.getItem('usuario');
     if (userStr) {
       const currentUser = JSON.parse(userStr);
-      // Para encontrar la ID de Sequelize adecuada
       const id = currentUser.id;
       if (!id) {
         this.msgError = 'ID de usuario no encontrado en la sesión.';
@@ -71,7 +71,6 @@ export class PerfilComponent implements OnInit {
         next: (result: any) => {
           if (result.status === '1') {
             this.msgSuccess = 'Perfil actualizado con éxito.';
-            // Actualizar sessionStorage con los nuevos datos combinados
             const updatedUser = { ...currentUser, ...body };
             sessionStorage.setItem('usuario', JSON.stringify(updatedUser));
           } else {

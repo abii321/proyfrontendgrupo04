@@ -18,9 +18,11 @@
   <h3 class="mb-3">Respuestas</h3>
 
   <div class="list-group mb-4">
-    <div class="list-group-item" *ngFor="let r of solicitud.respuestas">
-      {{r.respuesta}}
-    </div>
+    @for (r of solicitud.respuestas; track r.id) {
+      <div class="list-group-item">
+        {{r.respuesta}}
+      </div>
+    }
   </div>
 
   <hr class="my-4">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { BaseChartDirective } from 'ng2-charts';
@@ -15,13 +15,11 @@ export class HomeComponent implements OnInit {
   carrera: string = '';
   universidad: string = '';
 
-  // Estadísticas Alumno
   alumnoTutoriasSolicitadas = 6;
   alumnoTutoriasCompletadas = 4;
   alumnoProximaTutoria = 'Mañana a las 16:00 - Álgebra';
   alumnoCategoriasConsultadas = 2;
 
-  // Gráficos Alumno
   alumnoDonaData = {
     labels: ['Programación', 'Matemáticas', 'Inglés', 'Física'],
     datasets: [{ data: [3, 2, 1, 0], backgroundColor: ['#0d6efd', '#ffc107', '#198754', '#6c757d'] }]
@@ -32,13 +30,11 @@ export class HomeComponent implements OnInit {
     datasets: [{ data: [1, 2, 1, 2], label: 'Tutorías Solicitadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
   };
 
-  // Estadísticas Profesor
   profesorTutoriasPendientes = 2;
   profesorTutoriasCompletadas = 15;
   profesorHorasDictadas = 30;
   profesorCalificacionPromedio = 4.9;
 
-  // Gráficos Profesor
   profesorBarrasData = {
     labels: ['Marzo', 'Abril', 'Mayo', 'Junio'],
     datasets: [{ data: [5, 10, 8, 12], label: 'Horas Dictadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
@@ -49,7 +45,6 @@ export class HomeComponent implements OnInit {
     datasets: [{ data: [12, 2, 1], backgroundColor: ['#198754', '#ffc107', '#dc3545'] }]
   };
 
-  // Opciones compartidas con tipado const para evitar errores del compilador
   chartOptionsDoughnut = {
     responsive: true,
     maintainAspectRatio: false,
@@ -75,7 +70,8 @@ export class HomeComponent implements OnInit {
     }
   };
 
-  constructor(public authService: AutenticacionService, private router: Router) {}
+  authService = inject(AutenticacionService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     if (!this.authService.userLoggedIn()) {
