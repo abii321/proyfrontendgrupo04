@@ -1,0 +1,74 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card bg-body-secondary border-0 p-4 p-md-5 shadow-sm">
+        <h3 class="fw-bold text-center mb-4">Editar Perfil</h3>
+
+        <form #perfilForm="ngForm" (ngSubmit)="guardarCambios()" class="row g-3">
+          <!-- Ocupación y Email (Lectura únicamente) -->
+          <div class="col-md-6">
+            <label for="rol" class="form-label fw-semibold">Ocupación</label>
+            <input type="text" class="form-control bg-light" id="rol" name="rol" [value]="rol" readonly>
+          </div>
+
+          <div class="col-md-6">
+            <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+            <input type="email" class="form-control bg-light" id="email" name="email" [value]="email" readonly>
+          </div>
+
+          <!-- Nombre y Apellido (Editable) -->
+          <div class="col-md-6">
+            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="nombre" required placeholder="Nombre">
+          </div>
+
+          <div class="col-md-6">
+            <label for="apellido" class="form-label fw-semibold">Apellido</label>
+            <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="apellido" required placeholder="Apellido">
+          </div>
+
+          <!-- Datos Académicos y Ubicación (Editable) -->
+          <div class="col-md-6">
+            <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
+            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="ubicacion" placeholder="San Salvador de Jujuy">
+          </div>
+
+          <div class="col-md-6">
+            <label for="universidad" class="form-label fw-semibold">Universidad</label>
+            <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="universidad" required placeholder="Universidad">
+          </div>
+
+          <div class="col-12">
+            <label for="carrera" class="form-label fw-semibold">Carrera</label>
+            <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="carrera" required placeholder="Carrera">
+          </div>
+
+          <!-- Notificaciones de Éxito / Error -->
+          @if (msgSuccess) {
+            <div class="col-12">
+              <div class="alert alert-success py-2 px-3 small mb-0">
+                {{ msgSuccess }}
+              </div>
+            </div>
+          }
+
+          @if (msgError) {
+            <div class="col-12">
+              <div class="alert alert-danger py-2 px-3 small mb-0">
+                {{ msgError }}
+              </div>
+            </div>
+          }
+
+          <!-- Botones de Acción -->
+          <div class="col-12 d-flex align-items-center justify-content-between pt-3">
+            <a [routerLink]="['/home']" class="btn btn-sm btn-secondary px-3">Volver al Inicio</a>
+            <button type="submit" class="btn btn-primary px-4" [disabled]="perfilForm.form.invalid">
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

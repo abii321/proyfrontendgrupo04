@@ -12,24 +12,29 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         @if (autenticacionService.userLoggedIn()) {
-          <li class="nav-item">
-            <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']" routerLinkActive="active text-dark">Inicio</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']"
+            routerLinkActive="active text-dark">Inicio</a>
+        </li>
         }
       </ul>
 
       <div class="d-flex align-items-center gap-3 ms-auto">
         @if (!autenticacionService.userLoggedIn()){
-          <a class="btn btn-sm text-secondary text-decoration-none fw-semibold" [routerLink]="['login']">Iniciar Sesión</a>
-          <a class="btn btn-sm btn-primary py-2 px-3 fw-semibold text-white rounded-2" [routerLink]="['registro']" style="font-size: 13px;">Registrarse</a>
+        <a class="btn btn-sm text-secondary text-decoration-none fw-semibold" [routerLink]="['login']">Iniciar
+          Sesión</a>
+        <a class="btn btn-sm btn-primary py-2 px-3 fw-semibold text-white rounded-2" [routerLink]="['registro']"
+          style="font-size: 13px;">Registrarse</a>
         } @else {
-          <span class="text-secondary small d-flex align-items-center gap-2 fw-medium">
-            <i class="bi bi-person-circle fs-5 text-secondary"></i>
-            {{ autenticacionService.userLogged() }}
-          </span>
-          <button class="btn btn-sm btn-outline-secondary rounded-2 py-1 px-3" (click)="autenticacionService.logout()" [routerLink]="['/login']">
-            Salir
-          </button>
+        <a class="text-secondary small d-flex align-items-center gap-2 fw-medium text-decoration-none"
+          [routerLink]="['/perfil']" title="Ver Perfil">
+          <i class="bi bi-person-circle fs-5 text-secondary"></i>
+          {{ autenticacionService.userLogged() }}
+        </a>
+        <button class="btn btn-sm btn-secondary rounded-2 py-1 px-3" (click)="autenticacionService.logout()"
+          [routerLink]="['/login']">
+          Salir
+        </button>
         }
       </div>
 

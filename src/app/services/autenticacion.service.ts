@@ -69,5 +69,14 @@ export class AutenticacionService {
     return this.http.post(this.urlBase + "loginGoogle", datosGoogle, httpOptions);
   }
 
+  updateUsuario(id: string | number, datos: any): Observable<any> {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    return this.http.put(this.urlHost + 'api/usuario/' + id, datos, httpOptions);
+  }
+
 }
 
