@@ -1,29 +1,30 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-dark">Mis Solicitudes Pendientes</h3>
+        <h3 class="fw-bold text-dark">Mis Solicitudes de Tutoría</h3>
         <span class="badge bg-primary rounded-pill px-3 py-2">
-            {{ listaTutorias.length }} solicitudes
+            {{ listaTutorias.length }} registradas
         </span>
     </div>
 
-    <!-- Mensaje de estado vacío -->
     <div class="alert alert-light text-center py-5 border rounded-4 shadow-sm" *ngIf="listaTutorias.length === 0">
         <i class="bi bi-inbox fs-1 text-secondary mb-3 d-block"></i>
-        <h5 class="fw-bold text-dark">¡Todo al día!</h5>
-        <p class="text-secondary mb-0">No tenés solicitudes de tutoría pendientes en este momento.</p>
+        <h5 class="fw-bold text-dark">Bandeja vacía</h5>
+        <p class="text-secondary mb-0">No tenés solicitudes de tutoría asignadas en este momento.</p>
     </div>
 
-    <!-- Grilla de Tarjetas -->
     <div class="row g-4" *ngIf="listaTutorias.length > 0">
 
-        <!-- Iteración de Angular -->
         <div class="col-md-6 col-lg-4" *ngFor="let tutoria of listaTutorias">
             <div class="card h-100 border-0 shadow-sm rounded-4">
 
-                <!-- Etiqueta de Estado -->
                 <div class="card-header bg-transparent border-0 text-end pt-3 pe-3">
-                    <span class="badge bg-warning text-dark px-2 py-1 rounded-2 fw-semibold">
-                        <i class="bi bi-clock me-1"></i>{{ tutoria.estado | uppercase }}
+                    <span class="badge px-2 py-1 rounded-2 fw-semibold" [ngClass]="{
+                  'bg-warning text-dark': tutoria.estado === 'pendiente',
+                  'bg-success': tutoria.estado === 'aceptada',
+                  'bg-danger': tutoria.estado === 'rechazada',
+                  'bg-secondary': tutoria.estado === 'finalizada'
+                }">
+                        {{ tutoria.estado | uppercase }}
                     </span>
                 </div>
 
@@ -31,7 +32,7 @@
                     <h5 class="card-title fw-bold text-dark mb-1">
                         <i class="bi bi-person-circle text-primary me-2"></i>Alumno ID: {{ tutoria.alumno_id }}
                     </h5>
-                    <p class="text-secondary small mb-3">ID Categoría: {{ tutoria.categoria_id }}</p>
+                    <p class="text-secondary small mb-3">Categoría ID: {{ tutoria.categoria_id }}</p>
 
                     <div class="bg-light p-3 rounded-3 mb-4">
                         <p class="mb-1 text-dark fw-semibold"><i class="bi bi-calendar-event me-2"></i>Fecha Propuesta:
@@ -39,7 +40,6 @@
                         <p class="mb-0 text-primary">{{ tutoria.fecha_hora | date:'medium' }}</p>
                     </div>
 
-                    <!-- Acciones del Profesor (Aceptar o Rechazar) -->
                     <div class="d-flex gap-2 mt-auto" *ngIf="tutoria.estado === 'pendiente'">
                         <button class="btn btn-outline-danger w-50 fw-semibold" (click)="rechazarTutoria(tutoria)">
                             Rechazar
@@ -49,14 +49,13 @@
                         </button>
                     </div>
 
-                    <!-- Vista cuando ya está aceptada y tiene link -->
                     <div class="d-grid mt-auto" *ngIf="tutoria.estado === 'aceptada'">
                         <a [href]="tutoria.enlace_meet" target="_blank" class="btn btn-primary fw-bold shadow-sm"
                             *ngIf="tutoria.enlace_meet">
                             <i class="bi bi-camera-video me-2"></i>Unirse al Meet
                         </a>
                         <p class="text-center text-muted small mb-0 mt-2" *ngIf="!tutoria.enlace_meet">
-                            Generando enlace...
+                            Sin enlace disponible.
                         </p>
                     </div>
 
