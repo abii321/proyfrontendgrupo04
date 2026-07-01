@@ -6,6 +6,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TutoriaService {
+  obtenerProfesores() {
+    throw new Error('Method not implemented.');
+  }
+  obtenerCategorias() {
+    throw new Error('Method not implemented.');
+  }
   // Ajustá el puerto y la ruta según tu backend
   private apiUrl = 'http://localhost:3000/api/tutorias'; 
 
