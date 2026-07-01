@@ -1,6 +1,6 @@
 export class Respuesta {
 
-    id!: number;
+    id?: number;
 
     id_solicitud!: number;
 
@@ -10,9 +10,9 @@ export class Respuesta {
 
     archivoAdjunto!: string;
 
-    fecha_creacion!: Date;
+    fecha_creacion?: Date;
 
-    fecha_actualizacion!: Date;
+    fecha_actualizacion?: Date;
 
     constructor(){}
 
