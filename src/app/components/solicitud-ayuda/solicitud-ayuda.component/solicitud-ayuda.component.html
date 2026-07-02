@@ -1,65 +1,73 @@
 <div class="container mt-4">
 
-  <h2 class="mb-4">Nueva Solicitud</h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Solicitudes de Ayuda</h2>
+    @if (rolUsuario === 'alumno') {
+    <a routerLink="/solicitud-ayuda/nueva" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Nueva Solicitud
+    </a>
+    }
+  </div>
 
-  <!-- Formulario -->
-  <form>
-    <div class="mb-3">
-      <label class="form-label">Título</label>
-      <input type="text" class="form-control" [(ngModel)]="solicitud.titulo" name="titulo">
+  @if (solicitudes.length === 0) {
+  <div class="alert alert-info">No hay solicitudes publicadas todavía.</div>
+  }
+
+  <div class="row">
+    @for (s of solicitudes; track s.id) {
+    <div class="col-12 mb-3">
+      <div class="card shadow-sm" [class.border-success]="s.estado === 'ABIERTA'"
+        [class.border-secondary]="s.estado === 'CERRADA'" [class.border-info]="s.estado === 'RESUELTA'">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ s.titulo }}</h5>
+          <span class="badge" [class.bg-success]="s.estado === 'ABIERTA'" [class.bg-secondary]="s.estado === 'CERRADA'"
+            [class.bg-info]="s.estado === 'RESUELTA'">
+            {{ s.estado }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <p class="card-text texto-recortado">{{ s.descripcion }}</p>
+
+          <div class="d-flex gap-3 text-muted small mb-3">
+            <span><i class="bi bi-tag"></i> {{ getNombreCategoria(s.id_categoria) }}</span>
+            <span><i class="bi bi-cash"></i> $ {{ s.precio | number:'1.0-2' }}</span>
+            <span><i class="bi bi-calendar"></i> {{ s.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          @if (s.archivoAdjunto) {
+          <div class="mb-2">
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-paperclip"></i> Tiene archivo adjunto
+            </span>
+          </div>
+          }
+
+          <div class="d-flex gap-2 flex-wrap">
+
+            <a [routerLink]="['/solicitudes', s.id]" class="btn btn-outline-secondary btn-sm">
+              <i class="bi bi-eye"></i> Ver respuestas
+            </a>
+
+            @if (esDueno(s) && s.estado === 'ABIERTA') {
+            <button class="btn btn-outline-warning btn-sm" (click)="cerrar(s.id!)">
+              <i class="bi bi-lock"></i> Cerrar
+            </button>
+            }
+
+            @if (esDueno(s) || rolUsuario === 'admin') {
+            <button class="btn btn-outline-danger btn-sm" (click)="eliminar(s.id)">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+            }
+
+          </div>
+        </div>
+
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Descripción</label>
-      <textarea class="form-control" rows="3" [(ngModel)]="solicitud.descripcion" name="descripcion"></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Precio</label>
-      <input type="number" class="form-control" [(ngModel)]="solicitud.precio" name="precio">
-    </div>
-
-    <button type="button" class="btn btn-success" (click)="guardar()">
-      <i class="bi bi-plus-circle"></i> Crear
-    </button>
-  </form>
-
-  <hr class="my-4">
-
-  <!-- Tabla -->
-  <h3 class="mb-3">Solicitudes</h3>
-
-  <div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Título</th>
-          <th>Precio</th>
-          <th>Estado</th>
-          <th class="text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (s of solicitudes; track s.id) {
-          <tr>
-            <td>{{s.titulo}}</td>
-            <td>{{s.precio | currency:'ARS'}}</td>
-            <td>
-              <span class="badge bg-info">{{s.estado}}</span>
-            </td>
-            <td class="text-center">
-              <a [routerLink]="['/solicitudes', s.id]" class="btn btn-secondary btn-sm me-2">
-                <i class="bi bi-eye"></i> Ver Respuestas
-              </a>
-              <button class="btn btn-danger btn-sm" (click)="eliminar(s.id)">
-                <i class="bi bi-trash"></i> Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    }
   </div>
 
 </div>
-

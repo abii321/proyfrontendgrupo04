@@ -64,7 +64,7 @@ export class SolicitudService {
     };
 
     return this.http.put(
-      this.urlBase + "cerrar/" + id,
+      this.urlBase + id + "/cerrar",
       {},
       httpOptions
     );
@@ -79,4 +79,7 @@ export class SolicitudService {
 
   }
 
+  getCategorias(): Observable<any> {
+    return this.http.get(this.urlHost + 'api/categoria');
+  }
 }
