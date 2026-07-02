@@ -1,0 +1,6 @@
+.texto-recortado {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;     /* máximo 3 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
