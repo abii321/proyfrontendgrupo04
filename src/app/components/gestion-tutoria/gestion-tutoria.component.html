@@ -1,0 +1,160 @@
+<div class="container py-5 estilo-formal">
+
+    @if (rol === 'alumno') {
+    <div class="mb-5 text-center">
+        <h2 class="fw-light mb-2 text-dark">A veces lo que te falta no es estudiar más, sino que te lo expliquen
+            distinto</h2>
+        <p class="text-muted">Agendá tu tutoría personalizada y encontrá esa explicación que finalmente te haga clic.
+        </p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="tarjeta-delicada p-4 p-md-5 shadow-sm">
+
+                <div class="border-bottom pb-3 mb-4">
+                    <h4 class="fw-normal mb-2">¡Asegurá tu espacio con {{ profesorSeleccionado.nombre }}!</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (cat of profesorSeleccionado.categorias; track cat) {
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary border fw-normal">{{ cat }}</span>
+                        }
+                    </div>
+                </div>
+
+                <form (ngSubmit)="solicitarYPagar()" #formSolicitud="ngForm">
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-muted">Modalidad de la clase</label>
+                        <select class="form-select shadow-none" name="modalidad" [(ngModel)]="solicitud.modalidad"
+                            required>
+                            <option value="virtual">Virtual (Videollamada)</option>
+                            <option value="presencial">Presencial (+20% de recargo por viáticos)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-muted">Fecha y Hora Propuesta</label>
+                        <input type="datetime-local" class="form-control shadow-none" name="fechaHora"
+                            [(ngModel)]="solicitud.fechaHora" (change)="validarHorario()" required>
+
+                        @if (errorDisponibilidad) {
+                        <div class="text-danger small mt-2 fw-semibold">
+                            <i class="bi bi-x-circle me-1"></i>{{ errorDisponibilidad }}
+                        </div>
+                        } @else {
+                        <div class="form-text small">La fecha debe coincidir con la disponibilidad del profesor.</div>
+                        }
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label small fw-semibold text-muted">Temas a tratar (Opcional)</label>
+                        <textarea class="form-control shadow-none" rows="3" name="mensaje"
+                            [(ngModel)]="solicitud.mensaje" placeholder="Describe en qué necesitas ayuda..."></textarea>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-elegante btn-lg fw-normal py-3"
+                            [disabled]="formSolicitud.invalid || errorDisponibilidad !== ''">
+                            Solicitar y Abonar <strong>${{ precioFinal }}</strong>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+
+            <div class="tarjeta-delicada p-4 mb-4 shadow-sm">
+                <h5 class="fw-normal mb-1">Mi Agenda Personal</h5>
+                <p class="small text-muted mb-3">Revisá tus tiempos libres antes de agendar.</p>
+
+                <div class="ratio ratio-4x3 bg-light rounded" style="border: 1px solid #eaeaea; overflow: hidden;">
+                    <div
+                        class="d-flex flex-column align-items-center justify-content-center text-muted p-3 text-center">
+                        <i class="bi bi-calendar3 fs-1 mb-2"></i>
+                        <span class="small">Google Calendar del Alumno<br>(Requiere vinculación OAuth)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tarjeta-delicada p-4 shadow-sm">
+                <h5 class="fw-normal mb-4">Preguntas Frecuentes</h5>
+                <div class="accordion" id="accordionFAQ">
+                    <div class="accordion-item border-0 border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed shadow-none px-2" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ¿Qué pasa si el profesor cancela?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                            <div class="accordion-body text-muted small px-2">
+                                El dinero retenido se devolverá automáticamente a tu cuenta.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (rol === 'profesor') {
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="tarjeta-delicada p-4 shadow-sm">
+                <h4 class="fw-normal mb-4 border-bottom pb-3">Mi Disponibilidad Semanal</h4>
+
+                <div class="mb-4">
+                    <h6 class="fw-semibold text-muted mb-3">Horarios Activos:</h6>
+                    @if (horariosProfesor.length === 0) {
+                    <div class="alert alert-light border small text-center text-muted">No tienes horarios configurados.
+                    </div>
+                    }
+                    <ul class="list-group list-group-flush border rounded">
+                        @for (horario of horariosProfesor; track $index) {
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                            <span><strong class="text-capitalize">{{ horario.diaSemana }}</strong>: de {{
+                                horario.horaInicio }} a {{ horario.horaFin }}</span>
+                            <button class="btn btn-sm btn-outline-danger shadow-none border-0"
+                                (click)="eliminarHorario($index)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="bg-light p-3 rounded border">
+                    <h6 class="fw-semibold text-muted small mb-3">Agregar nuevo bloque de horario</h6>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small">Día</label>
+                            <select class="form-select shadow-none" [(ngModel)]="nuevoHorario.diaSemana">
+                                <option value="lunes">Lunes</option>
+                                <option value="martes">Martes</option>
+                                <option value="miércoles">Miércoles</option>
+                                <option value="jueves">Jueves</option>
+                                <option value="viernes">Viernes</option>
+                                <option value="sábado">Sábado</option>
+                                <option value="domingo">Domingo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Desde</label>
+                            <input type="time" class="form-control shadow-none" [(ngModel)]="nuevoHorario.horaInicio">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Hasta</label>
+                            <input type="time" class="form-control shadow-none" [(ngModel)]="nuevoHorario.horaFin">
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button class="btn btn-elegante fw-normal" (click)="agregarHorario()">Sumar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>

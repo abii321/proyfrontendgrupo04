@@ -1,0 +1,48 @@
+/* Importamos una fuente elegante y fina de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
+.estilo-formal {
+    font-family: 'Montserrat', sans-serif;
+    color: #4a4a4a;
+    /* Un gris oscuro más opaco y elegante que el negro puro */
+}
+
+/* Suavizamos las tarjetas para que no sean agresivas a la vista */
+.tarjeta-delicada {
+    background-color: #ecf7ffb9;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+}
+
+/* Personalizamos el acordeón (Preguntas Frecuentes) para que sea sutil */
+.accordion-button {
+    font-weight: 500;
+    color: #586470;
+    background-color: transparent;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f0f4f8;
+    /* Un tono opaco muy sutil */
+    color: #2c3e50;
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Botón principal más sobrio */
+.btn-elegante {
+    background-color: #5a6b7c;
+    /* Un azul/gris opaco */
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-elegante:hover {
+    background-color: #42505c;
+    color: white;
+}
