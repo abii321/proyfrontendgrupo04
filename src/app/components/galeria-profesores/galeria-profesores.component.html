@@ -1,145 +1,139 @@
-<div class="container py-4">
-  <div class="row mb-4 align-items-center">
-    <div class="col-md-8">
-      <h2 class="fw-bold mb-1 text-dark">Galería de Profesores</h2>
-      <p class="text-muted mb-0">Selecciona una categoría para filtrar los tutores disponibles. Haz clic en una tarjeta para ver más detalles.</p>
-    </div>
-    <div class="col-md-4 mt-3 mt-md-0">
-      <label for="categoriaSelect" class="form-label fw-semibold small text-muted mb-1">Filtrar por Categoría</label>
-      <select id="categoriaSelect" class="form-select border shadow-sm" [(ngModel)]="filtroCategoria">
-        <option value="">Todas las categorías</option>
-        @for (cat of categorias; track cat.id) {
-          <option [value]="cat.nombre">{{ cat.nombre }}</option>
-        }
-      </select>
-    </div>
-  </div>
-
-  <div class="row g-4">
-    @for (profesor of profesoresFiltrados; track profesor.id) {
-      <div class="col-md-6 col-lg-4">
-        <div 
-          class="card h-100 border bg-light shadow-sm text-decoration-none" 
-          style="cursor: pointer;"
-          (click)="abrirModal(profesor)"
-        >
-          <div class="card-body">
-            <div class="d-flex align-items-center gap-3">
-              <div class="d-flex align-items-center justify-content-center bg-secondary-subtle rounded-3 text-secondary" style="width: 55px; height: 55px; min-width: 55px;">
-                <i class="bi bi-person-square fs-3"></i>
-              </div>
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <h5 class="card-title fw-bold mb-0 text-dark" style="font-size: 1.05rem;">{{ profesor.nombre }} {{ profesor.apellido }}</h5>
-                </div>
-                <div class="d-flex flex-wrap gap-1 mb-2">
-                  @for (cat of profesor.categoriasEnseniadas; track cat.id) {
-                    <span class="badge bg-primary rounded-pill" style="font-size: 0.75rem;">{{ cat.nombre }}</span>
-                  }
-                </div>
-                <div class="d-flex align-items-center gap-1 text-secondary small">
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <span class="fw-bold text-dark">{{ profesor.rating || '5.0' }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="container-fluid py-5 estilo-profesional">
+  <div class="container">
+    <div class="row mb-5 align-items-end">
+      <div class="col-md-8">
+        <h2 class="fw-bold mb-2 texto-primario">Nuestros Tutores</h2>
+        <p class="texto-mutado mb-0 fs-6">Encontrá al profesional ideal para tu próxima clase. Hacé clic en un perfil para ver su información detallada y agendar.</p>
       </div>
-    } @empty {
-      <div class="col-12 py-5 text-center">
-        <h4 class="fw-bold text-dark">No se encontraron profesores</h4>
-        <p class="text-muted">Prueba seleccionando otra categoría en el menú desplegable.</p>
+      <div class="col-md-4 mt-4 mt-md-0">
+        <label for="categoriaSelect" class="form-label fw-semibold small texto-mutado mb-2 text-uppercase espaciado-letras">Filtrar por especialidad</label>
+        <select id="categoriaSelect" class="form-select select-sobrio shadow-none" [(ngModel)]="filtroCategoria">
+          <option value="">Todas las especialidades</option>
+          @for (cat of categorias; track cat.id) {
+            <option [value]="cat.nombre">{{ cat.nombre }}</option>
+          }
+        </select>
       </div>
-    }
-  </div>
+    </div>
 
-  @if (profesorSeleccionado) {
-    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.55);" (click)="cerrarModal()">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title fw-bold">Detalles del Profesor</h5>
-            <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
-          </div>
-          <div class="modal-body p-4">
-            <div class="d-flex gap-3 mb-4">
-              <div class="d-flex align-items-center justify-content-center bg-secondary-subtle rounded-3 text-secondary border" style="width: 90px; height: 90px; min-width: 90px;">
-                <i class="bi bi-person-square fs-1"></i>
-              </div>
-              <div class="d-flex flex-column justify-content-center">
-                <h4 class="fw-bold mb-1 text-dark">{{ profesorSeleccionado.nombre }} {{ profesorSeleccionado.apellido }}</h4>
-                <div class="d-flex flex-wrap gap-1 mt-1">
-                  @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
-                    <span class="badge bg-primary px-3 py-1.5 rounded-2">{{ cat.nombre }}</span>
-                  }
+    <div class="row g-4">
+      @for (profesor of profesoresFiltrados; track profesor.id) {
+        <div class="col-md-6">
+          <div 
+            class="card h-100 border-0 shadow-sm tarjeta-acordeon" 
+            [class.expandida]="profesorSeleccionado?.id === profesor.id"
+            (click)="toggleProfesor(profesor)"
+          >
+            <div class="card-body p-4 p-md-5">
+              
+              <!-- CABECERA DE LA TARJETA -->
+              <div class="d-flex align-items-start gap-4">
+                <div class="avatar-sobrio d-flex align-items-center justify-content-center rounded-4 shadow-sm">
+                  <i class="bi bi-person fs-2"></i>
                 </div>
-              </div>
-            </div>
-            <p class="mb-2"><strong>Carrera:</strong> {{ profesorSeleccionado.carrera }}</p>
-            <p class="mb-2"><strong>Universidad:</strong> {{ profesorSeleccionado.universidad }}</p>
-            <p class="mb-2"><strong>Clases dictadas:</strong> {{ profesorSeleccionado.tutoriasDictadas || '0' }}</p>
-            <p class="mb-2">
-              <strong>Calificación promedio:</strong> 
-              <i class="bi bi-star-fill text-warning me-1"></i>{{ profesorSeleccionado.rating || '5.0' }} / 5.0
-            </p>
-            <hr>
-            <p class="mb-3 text-secondary"><em>"{{ profesorSeleccionado.biografia || profesorSeleccionado.descripcion || 'Sin descripción disponible.' }}"</em></p>
-            <hr>
-            <div class="bg-light p-3 rounded-2 border">
-              <h6 class="fw-bold text-dark mb-1">Información de Contacto</h6>
-              <p class="mb-0 text-muted small">
-                <i class="bi bi-envelope-fill me-1 text-primary"></i> 
-                <a href="mailto:{{ profesorSeleccionado.email }}" class="text-decoration-none fw-semibold">
-                  {{ profesorSeleccionado.email }}
-                </a>
-              </p>
-            </div>
-            <div class="mt-4 pt-3 border-top">
-              <h6 class="fw-bold text-dark mb-2">Opiniones de Alumnos</h6>
-              @if (profesorSeleccionado.opiniones && profesorSeleccionado.opiniones.length > 0) {
-                <div class="d-flex flex-column gap-2" style="max-height: 200px; overflow-y: auto;">
-                  @for (opinion of profesorSeleccionado.opiniones; track opinion.id) {
-                    <div class="bg-light p-3 rounded border small">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-semibold text-primary">{{ opinion.alumno }}</span>
-                        <span class="text-warning">
-                          @for (star of [1, 2, 3, 4, 5]; track star) {
-                            <i class="bi" [ngClass]="opinion.calificacion >= star ? 'bi-star-fill' : 'bi-star'"></i>
-                          }
-                        </span>
-                      </div>
-                      <p class="mb-0 text-dark-emphasis italic">
-                        "{{ opinion.comentario || 'Sin comentario adicional.' }}"
-                      </p>
+                
+                <div class="flex-grow-1">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h5 class="card-title fw-bold mb-0 texto-primario fs-5">{{ profesor.nombre }} {{ profesor.apellido }}</h5>
+                    <div class="circulo-flecha d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chevron-down icono-flecha text-white" 
+                           [class.rotada]="profesorSeleccionado?.id === profesor.id"></i>
                     </div>
-                  }
+                  </div>
+                  
+                  <div class="d-flex align-items-center gap-2 mb-3 small">
+                    <span class="texto-destacado fw-semibold"><i class="bi bi-star-fill me-1"></i>{{ profesor.rating || '5.0' }}</span>
+                    <span class="texto-mutado opacity-50">|</span>
+                    <span class="texto-mutado">{{ profesor.tutoriasDictadas || '0' }} clases dictadas</span>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    @for (cat of profesor.categoriasEnseniadas; track cat.id) {
+                      <span class="badge badge-sobrio fw-medium">{{ cat.nombre }}</span>
+                    }
+                  </div>
                 </div>
-              } @else {
-                <div class="alert alert-secondary py-2 px-3 small text-center mb-0">
-                  Este profesor aún no ha recibido calificaciones.
+              </div>
+
+              <!-- CONTENIDO QUE SE DESLIZA (Animación fluida) -->
+              <div class="wrapper-colapsable">
+                <div class="contenido-expandido pt-4 mt-4 border-top border-opacity-10">
+                  
+                  <div class="row mb-4 g-3">
+                    <div class="col-sm-6">
+                      <div class="caja-info p-3 rounded-4 h-100">
+                        <p class="mb-1 small texto-mutado text-uppercase espaciado-letras"><i class="bi bi-building me-1"></i> Universidad</p>
+                        <p class="mb-0 fw-semibold texto-primario">{{ profesor.universidad || 'No especificada' }}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="caja-info p-3 rounded-4 h-100">
+                        <p class="mb-1 small texto-mutado text-uppercase espaciado-letras"><i class="bi bi-book me-1"></i> Carrera</p>
+                        <p class="mb-0 fw-semibold texto-primario">{{ profesor.carrera || 'No especificada' }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="caja-bio p-4 mb-4 rounded-4 position-relative">
+                    <i class="bi bi-quote position-absolute top-0 start-0 translate-middle ms-4 mt-2 fs-1 texto-mutado opacity-25"></i>
+                    <p class="mb-0 texto-secundario fst-italic position-relative z-1" style="line-height: 1.6;">
+                      {{ profesor.biografia || profesor.descripcion || 'El profesor aún no ha escrito su biografía profesional.' }}
+                    </p>
+                  </div>
+
+                  <div class="mb-4">
+                    <p class="mb-3 small texto-mutado text-uppercase espaciado-letras fw-semibold">Últimas opiniones</p>
+                    @if (profesor.opiniones && profesor.opiniones.length > 0) {
+                      <div class="d-flex flex-column gap-3">
+                        @for (opinion of getOpiniones(profesor); track opinion.id) {
+                          <div class="opinion-item p-3 rounded-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <span class="fw-bold texto-primario small">{{ opinion.alumno }}</span>
+                              <span class="texto-destacado" style="font-size: 0.75rem;">
+                                <i class="bi bi-star-fill"></i> {{ opinion.calificacion }}
+                              </span>
+                            </div>
+                            <p class="mb-0 texto-secundario small">"{{ opinion.comentario }}"</p>
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <div class="opinion-item p-3 rounded-4 text-center">
+                        <p class="small texto-mutado mb-0">No hay opiniones recientes.</p>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="mt-4 text-end" (click)="$event.stopPropagation()">
+                    @if (esNivelCompatible(profesor)) {
+                      <a class="btn btn-sobrio w-100 py-3 shadow-sm d-flex justify-content-center align-items-center gap-2" 
+                          [routerLink]="['/gestion-tutoria']" [queryParams]="{ profesorId: profesor.id }">
+                        <span>Ver disponibilidad y agendar</span>
+                        <i class="bi bi-arrow-right"></i>
+                      </a>
+                    } @else {
+                      <div class="text-danger small fw-medium mb-2 text-center bg-danger bg-opacity-10 p-2 rounded-3">
+                        <i class="bi bi-exclamation-circle me-1"></i> El nivel académico no coincide con tu perfil.
+                      </div>
+                      <button class="btn btn-desactivado w-100 py-3" disabled>Agendar Tutoría</button>
+                    }
+                  </div>
+
                 </div>
-              }
+              </div>
+
             </div>
           </div>
-          <div class="modal-footer flex-column align-items-stretch">
-            @if (esNivelCompatible(profesorSeleccionado)) {
-              <a class="btn btn-primary fw-semibold w-100" [routerLink]="['/gestion-tutoria']" [queryParams]="{ profesorId: profesorSeleccionado.id }" (click)="cerrarModal()">
-                <i class="bi bi-calendar-event me-2"></i>Gestionar Tutoría
-              </a>
-            } @else {
-              <div class="text-danger small fw-semibold text-center mb-2">
-                <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                El nivel académico del profesor no coincide con tu nivel ({{ alumnoNivelAcademico }}).
-              </div>
-              <button class="btn btn-primary fw-semibold w-100" disabled>
-                <i class="bi bi-calendar-event me-2"></i>Gestionar Tutoría (No Compatible)
-              </button>
-            }
-            <button type="button" class="btn btn-secondary w-100 mt-2" (click)="cerrarModal()">Cerrar</button>
-          </div>
         </div>
-      </div>
+      } @empty {
+        <div class="col-12 py-5 text-center mt-5">
+          <div class="avatar-sobrio d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-search fs-1"></i>
+          </div>
+          <h4 class="fw-bold texto-primario">No encontramos resultados</h4>
+          <p class="texto-mutado">Probá seleccionando otra especialidad o limpiando los filtros.</p>
+        </div>
+      }
     </div>
-  }
+  </div>
 </div>

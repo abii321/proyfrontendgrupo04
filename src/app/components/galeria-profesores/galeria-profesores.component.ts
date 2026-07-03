@@ -67,12 +67,14 @@ export class GaleriaProfesoresComponent implements OnInit {
     );
   }
 
-  abrirModal(profesor: any): void {
-    this.profesorSeleccionado = profesor;
-  }
-
-  cerrarModal(): void {
-    this.profesorSeleccionado = null;
+  toggleProfesor(profesor: any) {
+    // Si hace clic en el mismo que ya está abierto, lo cierra.
+    // Si hace clic en otro, lo abre.
+    if (this.profesorSeleccionado?.id === profesor.id) {
+      this.profesorSeleccionado = null;
+    } else {
+      this.profesorSeleccionado = profesor;
+    }
   }
 
   esNivelCompatible(profesor: any): boolean {
@@ -84,5 +86,10 @@ export class GaleriaProfesoresComponent implements OnInit {
     }
     const levelKey = this.alumnoNivelAcademico as keyof typeof profesor.perfilProfesor;
     return !!profesor.perfilProfesor[levelKey];
+  }
+  // Función para evitar el error 'unknown' del slice en el HTML
+  getOpiniones(profesor: any): any[] {
+    if (!profesor.opiniones) return [];
+    return profesor.opiniones.slice(0, 2);
   }
 }

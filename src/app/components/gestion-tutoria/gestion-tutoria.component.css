@@ -1,48 +1,134 @@
-/* Importamos una fuente elegante y fina de Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-.estilo-formal {
-    font-family: 'Montserrat', sans-serif;
-    color: #4a4a4a;
-    /* Un gris oscuro más opaco y elegante que el negro puro */
+.estilo-profesional {
+    font-family: 'Outfit', sans-serif;
+    background-color: #EFEFE9; /* Fondo hueso/arena mate */
+    min-height: 100vh;
+    color: #2D4243;
 }
 
-/* Suavizamos las tarjetas para que no sean agresivas a la vista */
+/* --- COLORES DE TEXTO --- */
+.texto-primario {
+    color: #2D4243 !important; /* Verde oscuro grisáceo */
+}
+
+.texto-secundario {
+    color: #5C6B73 !important; /* Pizarra */
+}
+
+.texto-mutado {
+    color: #8C999A !important; /* Gris verdoso suave */
+}
+
+.espaciado-letras {
+    letter-spacing: 0.6px;
+}
+
+/* --- TARJETAS --- */
 .tarjeta-delicada {
-    background-color: #ecf7ffb9;
-    border: 1px solid #eaeaea;
-    border-radius: 12px;
+    background: #FDFDFD;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    box-shadow: 0 10px 30px rgba(45, 66, 67, 0.04) !important;
+    transition: transform 0.3s ease;
 }
 
-/* Personalizamos el acordeón (Preguntas Frecuentes) para que sea sutil */
+/* --- COMPONENTES DE FORMULARIO --- */
+.form-control, .form-select {
+    border: 2px solid #DCE0D9;
+    border-radius: 12px;
+    padding: 0.75rem 1.2rem;
+    color: #2D4243;
+    background-color: #FAFAFA;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #A3B19B; /* Verde salvia */
+    box-shadow: 0 0 0 4px rgba(163, 177, 155, 0.2);
+    background-color: #ffffff;
+}
+
+/* --- BADGES Y ALERTAS --- */
+.badge-materia {
+    background-color: #DDA7A5; /* Rosa polvoriento */
+    color: #ffffff;
+    font-weight: 500;
+    padding: 0.5em 1.2em;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.badge-precio {
+    background-color: #ffffff; /* Fondo blanco para que resalte */
+    color: #2D4243; /* Letra oscura */
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombrita sutil */
+}
+
+.caja-agenda-activa {
+    background-color: #EBF0F0; /* Celeste tiza */
+    border: 1px solid #E2E8E8;
+    border-radius: 16px;
+}
+
+.caja-agenda-desvinculada {
+    background-color: #F4F5F0;
+    border: 1px solid #EBECE8;
+    border-radius: 16px;
+}
+
+/* --- BOTONES --- */
+.btn-primary {
+    background-color: #6C8484; /* Turquesa mate */
+    color: #ffffff !important; /* FORZAMOS LA LETRA BLANCA */
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover:not([disabled]) {
+    background-color: #556B6B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 132, 132, 0.25);
+}
+
+.btn-primary:disabled {
+    background-color: #DCE0D9;
+    color: #8C999A;
+}
+
+.btn-outline-danger {
+    color: #DDA7A5;
+    border: 1px solid #DDA7A5;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-outline-danger:hover {
+    background-color: #DDA7A5;
+    color: #ffffff;
+    border-color: #DDA7A5;
+}
+
+/* --- ACORDEÓN DE PREGUNTAS --- */
+.accordion-button:not(.collapsed) {
+    background-color: transparent;
+    color: #2D4243;
+    box-shadow: none;
+}
+
 .accordion-button {
     font-weight: 500;
-    color: #586470;
-    background-color: transparent;
-}
-
-.accordion-button:not(.collapsed) {
-    background-color: #f0f4f8;
-    /* Un tono opaco muy sutil */
-    color: #2c3e50;
-    box-shadow: none;
-}
-
-.accordion-button:focus {
-    box-shadow: none;
-    border-color: transparent;
-}
-
-/* Botón principal más sobrio */
-.btn-elegante {
-    background-color: #5a6b7c;
-    /* Un azul/gris opaco */
-    border: none;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.btn-elegante:hover {
-    background-color: #42505c;
-    color: white;
+    color: #5C6B73;
 }
