@@ -58,7 +58,9 @@ export class RegistroComponent implements AfterViewInit {
       rol: this.usuario.rol,
       ubicacion: this.usuario.ubicacion,
       universidad: this.usuario.universidad,
-      carrera: this.usuario.carrera
+      carrera: this.usuario.carrera,
+      genero: this.usuario.genero,
+      perfilProfesor: this.perfilProfesor,
     };
 
     this.autenticacionService.postSignUpGoogle(body).subscribe(
