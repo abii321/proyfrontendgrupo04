@@ -13,36 +13,23 @@ export class TutoriaService {
     throw new Error('Method not implemented.');
   }
   // Ajustá el puerto y la ruta según tu backend
-  private apiUrl = 'http://localhost:3000/api/tutoria'; 
+  private apiUrl = 'http://localhost:3000/api/tutorias'; 
 
   constructor(private http: HttpClient) { }
 
-  obtenerProfesores() { throw new Error('Method not implemented.'); }
-  obtenerCategorias() { throw new Error('Method not implemented.'); }
-
-  // --- MÉTODOS DE TUTORÍAS ---
+  //  Para que el Alumno pida la tutoría
   solicitarTutoria(datosTutoria: any): Observable<any> {
-    return this.http.post(this.apiUrlTutorias, datosTutoria);
+    return this.http.post(this.apiUrl, datosTutoria);
   }
 
+  //  Para que el Profesor vea las solicitudes
   obtenerTutorias(): Observable<any> {
-    return this.http.get(this.apiUrlTutorias);
+    return this.http.get(this.apiUrl);
   }
 
+  //  Para que el Profesor acepte y dispare el Calendar
   responderTutoria(id: number, estadoActualizado: any): Observable<any> {
-    return this.http.put(`${this.apiUrlTutorias}/${id}`, estadoActualizado);
-  }
-
-  // --- MÉTODOS DE HORARIOS ---
-  obtenerHorariosProfesor(profesorId: number): Observable<any> {
-    return this.http.get(`${this.apiUrlHorarios}/profesor/${profesorId}`);
-  }
-
-  crearHorario(datosHorario: any): Observable<any> {
-    return this.http.post(this.apiUrlHorarios, datosHorario);
-  }
-
-  eliminarHorario(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrlHorarios}/${id}`);
+    return this.http.put(`${this.apiUrl}/${id}`, estadoActualizado);
   }
 }
+
