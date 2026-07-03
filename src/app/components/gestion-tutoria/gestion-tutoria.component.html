@@ -117,7 +117,7 @@
                             <span><strong class="text-capitalize">{{ horario.diaSemana }}</strong>: de {{
                                 horario.horaInicio }} a {{ horario.horaFin }}</span>
                             <button class="btn btn-sm btn-outline-danger shadow-none border-0"
-                                (click)="eliminarHorario($index)">
+                                (click)="eliminarHorario($index, horario.id)">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </li>
