@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.class';
+import { PerfilProfesor } from '../models/perfil-profesor.class';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,20 @@ export class AutenticacionService {
 
   private http = inject(HttpClient);
 
-  postSignUpLocal( usuario: Usuario ): Observable<any>{
+  postRegistroLocal( usuario: Usuario, perfilProfesor: PerfilProfesor ): Observable<any>{
     let httpOptions = {
       headers : new HttpHeaders({
         'Content-Type':'application/json'
       })
     };
+    
+    let body = {
+      'usuario': usuario, 
+      'perfilProfesor': perfilProfesor
+    }
 
-    return this.http.post(this.urlBase+"signUp", usuario, httpOptions);
+    console.log(body);
+    return this.http.post(this.urlBase+"signUp", body, httpOptions);
   }
 
   postLoginLocal( email:string, password:string ): Observable<any>{
