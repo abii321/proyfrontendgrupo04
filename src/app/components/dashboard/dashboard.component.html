@@ -131,6 +131,7 @@
                         <th scope="col">Alumno</th>
                         <th scope="col">Profesor</th>
                         <th scope="col">Categoría</th>
+                        <th scope="col">Modalidad</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Fecha</th>
                     </tr>
@@ -138,7 +139,7 @@
                 <tbody>
                     @if (tutorials.length === 0) {
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-5">
+                        <td colspan="7" class="text-center text-muted py-5">
                             <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                             No se encontraron tutorías.
                         </td>
@@ -150,6 +151,11 @@
                         <td>{{ tutorial.alumno?.nombre }} {{ tutorial.alumno?.apellido }}</td>
                         <td>{{ tutorial.profesor?.nombre }} {{ tutorial.profesor?.apellido }}</td>
                         <td>{{ tutorial.categoria?.nombre }}</td>
+                        <td>
+                            <span class="badge-modalidad badge-modalidad--{{ tutorial.modalidad | lowercase }}">
+                                {{ tutorial.modalidad }}
+                            </span>
+                        </td>
                         <td>
                             <span class="badge-estado badge-estado--{{ tutorial.estado | lowercase }}">
                                 {{ tutorial.estado }}

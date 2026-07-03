@@ -96,6 +96,25 @@
     color: #b02a37;
 }
 
+/* Badges de modalidad */
+.badge-modalidad {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.badge-modalidad--virtual {
+    background-color: rgba(13, 110, 253, 0.12);
+    color: #0a58ca;
+}
+
+.badge-modalidad--presencial {
+    background-color: rgba(111, 66, 193, 0.12);
+    color: #52318c;
+}
+
 /* Limitar la altura de los canvases de Chart.js */
 canvas {
     max-height: 260px;

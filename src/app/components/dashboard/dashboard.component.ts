@@ -202,12 +202,13 @@ export class DashboardComponent implements OnInit {
 
     autoTable(doc, {
       startY: 22,
-      head: [['#', 'Alumno', 'Profesor', 'Categoría', 'Estado', 'Fecha']],
+      head: [['#', 'Alumno', 'Profesor', 'Categoría', 'Modalidad', 'Estado', 'Fecha']],
       body: this.tutorials.map(t => [
         t.id,
         `${t.alumno?.nombre ?? ''} ${t.alumno?.apellido ?? ''}`,
         `${t.profesor?.nombre ?? ''} ${t.profesor?.apellido ?? ''}`,
         t.categoria?.nombre ?? '',
+        t.modalidad,
         t.estado,
         new Date(t.createdAt).toLocaleDateString()
       ]),
@@ -225,6 +226,7 @@ export class DashboardComponent implements OnInit {
       'Alumno': `${t.alumno?.nombre ?? ''} ${t.alumno?.apellido ?? ''}`,
       'Profesor': `${t.profesor?.nombre ?? ''} ${t.profesor?.apellido ?? ''}`,
       'Categoría': t.categoria?.nombre ?? '',
+      'Modalidad': t.modalidad,
       'Estado': t.estado,
       'Fecha': new Date(t.createdAt).toLocaleDateString()
     }));

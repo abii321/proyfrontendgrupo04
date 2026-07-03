@@ -33,6 +33,7 @@ export interface TutorialCategory {
 export interface FullTutorial {
     id: number;
     estado: string;
+    modalidad: string;
     createdAt: string;
     alumno?: TutorialUser;
     profesor?: TutorialUser;
