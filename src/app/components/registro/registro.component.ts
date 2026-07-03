@@ -1,31 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, AfterViewInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, AfterViewInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
 import { GoogleAuthService } from '../../services/google-auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { PerfilProfesor } from '../../models/perfil-profesor.class';
 
 @Component({
   selector: 'app-registro',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink ],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })
+
 export class RegistroComponent implements AfterViewInit {
   usuario: Usuario;
+  perfilProfesor: PerfilProfesor;
   banGoogle: boolean = false;
   googleToken: string = '';
   msg: string = "";
 
-  private autenticacionService = inject(AutenticacionService);
-  private googleAuthService = inject(GoogleAuthService);
-  private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
-
-  constructor() {
+  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
     this.usuario = new Usuario();
     this.usuario.rol = ''; 
+    this.perfilProfesor = new PerfilProfesor();
   }
 
   ngAfterViewInit(): void {
@@ -59,7 +58,9 @@ export class RegistroComponent implements AfterViewInit {
       rol: this.usuario.rol,
       ubicacion: this.usuario.ubicacion,
       universidad: this.usuario.universidad,
-      carrera: this.usuario.carrera
+      carrera: this.usuario.carrera,
+      genero: this.usuario.genero,
+      perfilProfesor: this.perfilProfesor,
     };
 
     this.autenticacionService.postSignUpGoogle(body).subscribe(
@@ -74,7 +75,7 @@ export class RegistroComponent implements AfterViewInit {
   }
 
   registrarUsuarioLocal(form: NgForm){
-    this.autenticacionService.postSignUpLocal(this.usuario).subscribe(
+    this.autenticacionService.postRegistroLocal(this.usuario, this.perfilProfesor).subscribe(
       ( result : any) => {
         form.reset();
         this.msg = ""
@@ -87,4 +88,12 @@ export class RegistroComponent implements AfterViewInit {
       }
     )
   }
+
+  algunNivelSeleccionado(): boolean {
+    return this.perfilProfesor.primario || 
+           this.perfilProfesor.secundario || 
+           this.perfilProfesor.universitario || 
+           this.perfilProfesor.doctorado;
+}
+  
 }

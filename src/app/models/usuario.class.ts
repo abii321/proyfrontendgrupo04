@@ -1,10 +1,11 @@
 export class Usuario {
     idUsuario!: number;
+    rol!: string;
     nombre!: string;
     apellido!: string;
     email!: string;
-    password!: string | null;
-    rol!: string;
+    contrasenia!: string | null;
+    genero!: string;
     foto!: string;
     ubicacion!: string | null;
     universidad!: string;

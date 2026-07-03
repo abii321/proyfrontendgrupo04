@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GoogleAuthService } from '../../services/google-auth.service';
 
 @Component({
@@ -17,11 +17,10 @@ export class LoginComponent implements AfterViewInit {
   msglogin!: string;
   googleToken: string = '';
   msg: string = "";
-
-  autenticacionService = inject(AutenticacionService);
-  private googleAuthService = inject(GoogleAuthService);
-  private cdr = inject(ChangeDetectorRef);
-  private router = inject(Router);
+  
+  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService,
+    private cdr: ChangeDetectorRef, private router: Router,){ 
+  }
 
   loginUsuario( form: NgForm){
     this.autenticacionService.postLoginLocal(this.email, this.password).subscribe(
@@ -71,4 +70,5 @@ export class LoginComponent implements AfterViewInit {
       }
     );
   }
+
 }
