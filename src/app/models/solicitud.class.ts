@@ -4,7 +4,6 @@ export class Solicitud {
   id_categoria: number = 0;
   titulo: string = '';
   descripcion: string = '';
-  precio: number = 0;
   archivoAdjunto: string = '';
   estado: string = 'ABIERTA';
   respuestas: any[] = [];
