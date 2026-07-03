@@ -47,6 +47,50 @@
                             <input class="form-control" type="file" id="archivo" (change)="capturarArchivo($event)">
                         </div>
 
+                         <div
+                            class="alert alert-info"
+                            *ngIf="nuevaTutoria.precio > 0">
+
+                            <h5 class="mb-2">
+
+                                Precio de la tutoría
+
+                            </h5>
+
+                            <h3>
+
+                                $ {{ nuevaTutoria.precio }}
+
+                            </h3>
+
+                            <small>
+
+                                Al presionar el botón se abrirá Mercado Pago
+                                para realizar el pago de la tutoría.
+
+                            </small>
+
+                        </div>
+
+                        <!-- Botón -->
+
+                        <div class="d-grid">
+
+                            <button
+                                class="btn btn-success btn-lg"
+
+                                [disabled]="!tutoriaForm.valid"
+
+                                type="submit">
+
+                                <i class="bi bi-credit-card me-2"></i>
+
+                                Solicitar Tutoría y Pagar
+
+                            </button>
+
+                        </div>
+
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary btn-lg fw-bold"
                                 [disabled]="!tutoriaForm.valid">

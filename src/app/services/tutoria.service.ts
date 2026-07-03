@@ -13,7 +13,7 @@ export class TutoriaService {
     throw new Error('Method not implemented.');
   }
   // Ajustá el puerto y la ruta según tu backend
-  private apiUrl = 'http://localhost:3000/api/tutorias'; 
+  private apiUrl = 'http://localhost:3000/api/tutoria'; 
 
   constructor(private http: HttpClient) { }
 

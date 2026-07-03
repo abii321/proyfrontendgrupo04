@@ -27,39 +27,88 @@ export class GestionarTutoriasComponent implements OnInit {
     });
   }
 
-  aceptarTutoria(tutoria: any) {
-    const actualizacion = { ...tutoria, estado: 'aceptada' };
+   aceptarTutoria(tutoria: any) {
 
-    this.tutoriaService.responderTutoria(tutoria.id, actualizacion).subscribe({
+    if (!tutoria.pagada) {
+
+      alert('La tutoría aún no fue abonada.');
+
+      return;
+
+    }
+
+    const actualizacion = {
+
+      ...tutoria,
+
+      estado: 'aceptada'
+
+    };
+
+    this.tutoriaService.responderTutoria(
+      tutoria.id,
+      actualizacion
+    ).subscribe({
+
       next: (res: any) => {
-        alert('Tutoría aceptada. ¡Evento creado en Calendar!');
+
         tutoria.estado = 'aceptada';
-        tutoria.enlace_meet = res.enlace_meet; 
+        tutoria.enlace_meet = res.enlace_meet;
+
+        alert('Tutoría aceptada correctamente.');
+
       },
-      error: (err: any) => alert('Hubo un error al aceptar la tutoría.')
+
+      error: (err: any) => {
+
+        console.error(err);
+
+        alert('Error al aceptar la tutoría.');
+
+      }
+
     });
+
   }
   rechazarTutoria(tutoria: any) {
-    // 1. Pedimos confirmación antes de hacer la acción
-    const confirmar = confirm('¿Estás seguro de que querés rechazar esta solicitud de tutoría?');
-    
-    if (confirmar) {
-      // 2. Preparamos el objeto con el estado actualizado a 'rechazada'
-      const actualizacion = { ...tutoria, estado: 'rechazada' };
 
-      // 3. Enviamos la petición al backend
-      this.tutoriaService.responderTutoria(tutoria.id, actualizacion).subscribe({
-        next: (res: any) => {
-          alert('La tutoría fue rechazada.');
-          
-          // 4. Actualizamos el estado visualmente para que desaparezcan los botones en el HTML
-          tutoria.estado = 'rechazada'; 
-        },
-        error: (err: any) => {
-          console.error('Error al rechazar:', err);
-          alert('Hubo un error al intentar rechazar la tutoría.');
-        }
-      });
-    }
+    const confirmar = confirm(
+      '¿Deseás rechazar esta tutoría?'
+    );
+
+    if (!confirmar) return;
+
+    const actualizacion = {
+
+      ...tutoria,
+
+      estado: 'rechazada'
+
+    };
+
+    this.tutoriaService.responderTutoria(
+      tutoria.id,
+      actualizacion
+    ).subscribe({
+
+      next: () => {
+
+        tutoria.estado = 'rechazada';
+
+        alert('Tutoría rechazada.');
+
+      },
+
+      error: (err: any) => {
+
+        console.error(err);
+
+        alert('Error al rechazar la tutoría.');
+
+      }
+
+    });
+
   }
+
 }
