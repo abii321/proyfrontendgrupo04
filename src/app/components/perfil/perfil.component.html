@@ -2,46 +2,113 @@
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
       <div class="card bg-body-secondary border-0 p-4 p-md-5 shadow-sm">
-        <h3 class="fw-bold text-center mb-4">Editar Perfil</h3>
+        <h3 class="fw-bold text-center mb-4 text-dark">Editar Perfil</h3>
 
         <form #perfilForm="ngForm" (ngSubmit)="guardarCambios()" class="row g-3">
           <!-- Ocupación y Email (Lectura únicamente) -->
           <div class="col-md-6">
-            <label for="rol" class="form-label fw-semibold">Ocupación</label>
+            <label for="rol" class="form-label fw-semibold text-dark">Ocupación</label>
             <input type="text" class="form-control bg-light" id="rol" name="rol" [value]="rol" readonly>
           </div>
 
           <div class="col-md-6">
-            <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+            <label for="email" class="form-label fw-semibold text-dark">Correo Electrónico</label>
             <input type="email" class="form-control bg-light" id="email" name="email" [value]="email" readonly>
           </div>
 
           <!-- Nombre y Apellido (Editable) -->
           <div class="col-md-6">
-            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+            <label for="nombre" class="form-label fw-semibold text-dark">Nombre</label>
             <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="nombre" required placeholder="Nombre">
           </div>
 
           <div class="col-md-6">
-            <label for="apellido" class="form-label fw-semibold">Apellido</label>
+            <label for="apellido" class="form-label fw-semibold text-dark">Apellido</label>
             <input type="text" class="form-control" id="apellido" name="apellido" [(ngModel)]="apellido" required placeholder="Apellido">
           </div>
 
           <!-- Datos Académicos y Ubicación (Editable) -->
           <div class="col-md-6">
-            <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
+            <label for="ubicacion" class="form-label fw-semibold text-dark">Ubicación</label>
             <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="ubicacion" placeholder="San Salvador de Jujuy">
           </div>
 
           <div class="col-md-6">
-            <label for="universidad" class="form-label fw-semibold">Universidad</label>
+            <label for="universidad" class="form-label fw-semibold text-dark">Universidad</label>
             <input type="text" class="form-control" id="universidad" name="universidad" [(ngModel)]="universidad" required placeholder="Universidad">
           </div>
 
           <div class="col-12">
-            <label for="carrera" class="form-label fw-semibold">Carrera</label>
+            <label for="carrera" class="form-label fw-semibold text-dark">Carrera</label>
             <input type="text" class="form-control" id="carrera" name="carrera" [(ngModel)]="carrera" required placeholder="Carrera">
           </div>
+
+          <!-- Campos específicos por Rol -->
+          @if (rol === 'profesor') {
+            <!-- Biografía -->
+            <div class="col-12">
+              <label for="biografia" class="form-label fw-semibold text-dark">Biografía / Presentación</label>
+              <textarea class="form-control" id="biografia" name="biografia" [(ngModel)]="biografia" rows="4" placeholder="Escribe una breve presentación sobre ti, tu experiencia y metodología de enseñanza..."></textarea>
+            </div>
+
+            <!-- Tarifa por Hora -->
+            <div class="col-md-6">
+              <label for="tarifaBase" class="form-label fw-semibold text-dark">Tarifa por Hora ($)</label>
+              <input type="number" class="form-control" id="tarifaBase" name="tarifaBase" [(ngModel)]="tarifaBase" required min="0">
+            </div>
+
+            <!-- Nivel de Enseñanza (Checkboxes) -->
+            <div class="col-12">
+              <label class="form-label fw-semibold d-block text-dark">Nivel de Enseñanza</label>
+              <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="primario" name="primario" [(ngModel)]="perfilProfesor.primario">
+                  <label class="form-check-label text-dark" for="primario">Primario</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="secundario" name="secundario" [(ngModel)]="perfilProfesor.secundario">
+                  <label class="form-check-label text-dark" for="secundario">Secundario</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="universitario" name="universitario" [(ngModel)]="perfilProfesor.universitario">
+                  <label class="form-check-label text-dark" for="universitario">Universitario</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="doctorado" name="doctorado" [(ngModel)]="perfilProfesor.doctorado">
+                  <label class="form-check-label text-dark" for="doctorado">Doctorado</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categorías Enseñadas -->
+            <div class="col-12">
+              <label class="form-label fw-semibold d-block text-dark mb-2">Categorías que Dictas</label>
+              <div class="row g-2 bg-light p-3 rounded-2 border">
+                @for (cat of todasCategorias; track cat.id) {
+                  <div class="col-6 col-sm-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" [id]="'cat_' + cat.id" [name]="'cat_' + cat.id" [(ngModel)]="categoriasSeleccionadas[cat.id]">
+                      <label class="form-check-label text-dark small" [for]="'cat_' + cat.id">{{ cat.nombre }}</label>
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="col-12 text-muted small">Cargando categorías...</div>
+                }
+              </div>
+            </div>
+          } @else if (rol === 'alumno') {
+            <!-- Nivel Académico (Select) -->
+            <div class="col-md-6">
+              <label for="nivelAcademicoSelect" class="form-label fw-semibold text-dark">Nivel Académico</label>
+              <select id="nivelAcademicoSelect" name="nivelAcademico" class="form-select" [(ngModel)]="nivelAcademico">
+                <option value="">Selecciona tu nivel</option>
+                <option value="primario">Primario</option>
+                <option value="secundario">Secundario</option>
+                <option value="universitario">Universitario</option>
+                <option value="doctorado">Doctorado</option>
+              </select>
+            </div>
+          }
 
           <!-- Notificaciones de Éxito / Error -->
           @if (msgSuccess) {

@@ -6,30 +6,50 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TutoriaService {
-  obtenerProfesores() {
-    throw new Error('Method not implemented.');
-  }
-  obtenerCategorias() {
-    throw new Error('Method not implemented.');
-  }
-  // Ajustá el puerto y la ruta según tu backend
-  private apiUrl = 'http://localhost:3000/api/tutorias'; 
+  private urlHost = 'http://localhost:3000/';
+  private apiUrl = this.urlHost + 'api/tutoria'; 
 
   constructor(private http: HttpClient) { }
 
-  //  Para que el Alumno pida la tutoría
+  obtenerProfesores(): Observable<any> {
+    return this.http.get(this.urlHost + 'api/usuario?rol=profesor');
+  }
+
+  obtenerUsuarios(): Observable<any> {
+    return this.http.get(this.urlHost + 'api/usuario');
+  }
+
+  obtenerCategorias(): Observable<any> {
+    return this.http.get(this.urlHost + 'api/categoria');
+  }
+
   solicitarTutoria(datosTutoria: any): Observable<any> {
     return this.http.post(this.apiUrl, datosTutoria);
   }
 
-  //  Para que el Profesor vea las solicitudes
   obtenerTutorias(): Observable<any> {
     return this.http.get(this.apiUrl);
   }
 
-  //  Para que el Profesor acepte y dispare el Calendar
   responderTutoria(id: number, estadoActualizado: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, estadoActualizado);
   }
-}
 
+  asociarProfesorCategoria(profesorId: number, categoriaId: number): Observable<any> {
+    return this.http.post(this.urlHost + 'api/categoria/profesor', { profesor_id: profesorId, categoria_id: categoriaId });
+  }
+
+  desasociarProfesorCategoria(profesorId: number, categoriaId: number): Observable<any> {
+    return this.http.delete(this.urlHost + 'api/categoria/profesor', {
+      body: { profesor_id: profesorId, categoria_id: categoriaId }
+    });
+  }
+
+  agregarHorario(usuarioId: number, diaSemana: string, horaInicio: string, horaFin: string): Observable<any> {
+    return this.http.post(this.urlHost + 'api/usuario/horario', { usuario_id: usuarioId, diaSemana, horaInicio, horaFin });
+  }
+
+  eliminarHorario(horarioId: number): Observable<any> {
+    return this.http.delete(`${this.urlHost}api/usuario/horario/${horarioId}`);
+  }
+}

@@ -1,6 +1,35 @@
-<div class="container"> </div>
-<div class="d-grid mt-3">
-    <button class="btn btn-primary fw-bold" [routerLink]="['/gestion-tutoria']">
-        <i class="bi bi-calendar-plus me-2"></i>Solicitar Tutoría
-    </button>
+<div class="container py-5">
+  <div class="mb-4">
+    <h2 class="fw-bold">Bienvenido, {{ nombreCompleto }}</h2>
+    <p class="text-secondary mb-0">{{ universidad }} &bull; {{ carrera }}</p>
+  </div>
+
+  <div class="card bg-body-secondary border-0 p-4 shadow-sm" style="max-width: 600px;">
+    <h5 class="fw-bold mb-2">Acciones Rápidas</h5>
+    <p class="text-secondary small mb-3">Gestiona tus actividades académicas de forma rápida y sencilla.</p>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-primary fw-semibold" [routerLink]="rol === 'profesor' ? ['/gestion-tutoria'] : ['/solicitar-tutoria']">
+        <i class="bi bi-person-video3 me-2"></i>Tutorías
+      </a>
+      @if (rol !== 'profesor') {
+        <a class="btn btn-secondary fw-semibold" [routerLink]="['/solicitud-ayuda']">
+          <i class="bi bi-journal-check me-2"></i>Tareas
+        </a>
+      }
+    </div>
+
+    @if (proveedorAuth !== 'Google') {
+      <div class="mt-4 pt-3 border-top w-100">
+        <h6 class="fw-bold text-dark mb-1">Integración con Google</h6>
+        <p class="text-secondary small mb-2">Vincula tu cuenta con Google para habilitar el uso de Google Calendar y generar enlaces de Google Meet para tus tutorías.</p>
+        <div id="googleLinkBtn"></div>
+      </div>
+    } @else {
+      <div class="mt-4 pt-3 border-top w-100">
+        <div class="d-flex align-items-center text-success small fw-semibold">
+          <i class="bi bi-check-circle-fill me-2 text-success"></i>Cuenta vinculada a Google Calendar activa.
+        </div>
+      </div>
+    }
+  </div>
 </div>
