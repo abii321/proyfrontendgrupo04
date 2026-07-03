@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-body-secondary border-bottom py-3 px-4">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-dark" style="letter-spacing: -0.5px;"> App </a>
+    <a class="navbar-brand fw-bold text-dark" style="letter-spacing: -0.5px;"
+      [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">Tutorias<span
+        class="text-primary">.</span>com</a>
 
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -9,30 +11,35 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
+      @if (autenticacionService.userLoggedIn()) {
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        
-        <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']"
-            routerLinkActive="active text-dark">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitar-tutoria']"
-            routerLinkActive="active text-dark">Tutorias</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
-            routerLinkActive="active text-dark">Tareas</a>
-        </li>
 
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary"
-            routerLinkActive="active text-dark" [routerLink]="['mis-solicitudes']">Mis solicitudes</a>
+          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']" routerLinkActive="active text-dark"
+            [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 fw-medium text-secondary" 
+             [routerLink]="autenticacionService.getUserRole() === 'profesor' ? ['gestion-tutoria'] : ['solicitar-tutoria']"
+             routerLinkActive="active text-dark">Tutorias</a>
+        </li>
+        @if (autenticacionService.getUserRole() !== 'profesor') {
+          <li class="nav-item">
+            <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
+              routerLinkActive="active text-dark">Tareas</a>
+          </li>
+        }
+
+        <li class="nav-item">
+          <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"
+            [routerLink]="['mis-solicitudes']">Mis solicitudes</a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3 fw-medium text-secondary"
             routerLinkActive="active text-dark" [routerLink]="['dashboard']">Dashboard</a>
         </li>
       </ul>
+      }
 
       <div class="d-flex align-items-center gap-3 ms-auto">
         @if (!autenticacionService.userLoggedIn()){

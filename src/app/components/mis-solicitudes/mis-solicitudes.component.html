@@ -39,7 +39,7 @@
     </div>
 
     <!-- Gráficos Alumno (Lado a Lado) -->
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-5">
         <!-- Gráfico Categorías (Dona) -->
         <div class="col-md-6">
             <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
@@ -62,8 +62,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Acciones Alumno -->
     }
 
     @if (rol === 'profesor') {
@@ -100,7 +98,7 @@
     </div>
 
     <!-- Gráficos Profesor (Lado a Lado) -->
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-5">
         <!-- Gráfico Horas (Barras) -->
         <div class="col-md-7 col-lg-8">
             <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
@@ -123,27 +121,282 @@
             </div>
         </div>
     </div>
-
-    <!-- Acciones Profesor -->
-    <div class="card bg-body-secondary border-0 p-4">
-        <h5 class="fw-bold mb-3">Acciones Rápidas</h5>
-        <p class="text-secondary small">Gestiona tus tutorías asignadas o configura las categorías académicas de tu
-            interés.</p>
-        <div class="d-flex gap-2 flex-wrap pt-2">
-            <a class="btn btn-primary" [routerLink]="['/home']">Mis Tutorías</a>
-            <a class="btn btn-secondary" [routerLink]="['/home']">Configurar Categorías</a>
-        </div>
-    </div>
     }
 
-    @if (rol === 'administrador') {
-    <!-- Panel del Administrador -->
-    <div class="card bg-body-secondary border-0 p-4 shadow-sm">
-        <h4 class="fw-bold mb-3">Panel de Administración</h4>
-        <p class="text-secondary">Monitoreo y moderación general del sistema de tutorías.</p>
-        <div class="d-flex gap-2">
-            <a class="btn btn-primary" [routerLink]="['/home']">Ver Estadísticas Generales</a>
+    <!-- SECCIÓN MINI GALERÍA -->
+    <div class="mt-4">
+        <!-- Título de la Sección -->
+        <div class="d-flex align-items-center mb-4">
+            <h3 class="fw-bold text-dark mb-0">
+                <i class="bi bi-grid-fill text-primary me-2"></i>Mi Galería de Actividades
+            </h3>
         </div>
+
+        <!-- Mini Galería: Tutorías (Tanto Alumno como Profesor) -->
+        <div class="card border-0 shadow-sm bg-body-secondary p-4 mb-4">
+            <h5 class="fw-bold text-dark mb-3">
+                <i class="bi bi-calendar-check-fill text-primary me-2"></i>Mis Tutorías (API)
+            </h5>
+            <div class="row g-3">
+                @for (tutoria of misTutorias; track tutoria.id) {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm bg-white p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                                    {{ tutoria.categoria?.nombre || 'Tutoría' }}
+                                </span>
+                                <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold" 
+                                      [ngClass]="{
+                                        'bg-warning-subtle text-warning border border-warning-subtle': tutoria.estado === 'pendiente',
+                                        'bg-success-subtle text-success border border-success-subtle': tutoria.estado === 'aceptada' || tutoria.estado === 'aprobada',
+                                        'bg-danger-subtle text-danger border border-danger-subtle': tutoria.estado === 'rechazada',
+                                        'bg-info-subtle text-info border border-info-subtle': tutoria.estado === 'finalizada' || tutoria.estado === 'completada'
+                                      }" style="font-size: 0.75rem;">
+                                    {{ tutoria.estado }}
+                                </span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">
+                                {{ rol === 'alumno' ? 'Docente: ' + (tutoria.profesor?.nombre + ' ' + tutoria.profesor?.apellido) : 'Estudiante: ' + (tutoria.alumno?.nombre + ' ' + tutoria.alumno?.apellido) }}
+                            </h6>
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-clock me-1 text-primary"></i>
+                                {{ tutoria.fecha_hora | date:'medium' }}
+                            </p>
+                            <button class="btn btn-outline-primary btn-sm fw-semibold w-100 mt-auto" (click)="verDetalleTutoria(tutoria)">
+                                <i class="bi bi-eye-fill me-1"></i>Ver Detalle y Acciones
+                            </button>
+                        </div>
+                    </div>
+                } @empty {
+                    <div class="col-12 text-muted py-4 text-center">
+                        <i class="bi bi-calendar-x text-muted display-6 d-block mb-2"></i>
+                        No tienes tutorías registradas.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Mini Galería: Tareas (Sólo Alumno) -->
+        @if (rol === 'alumno') {
+            <div class="card border-0 shadow-sm bg-body-secondary p-4 mb-4">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>Mis Tareas Académicas
+                </h5>
+                <div class="row g-3">
+                    @for (tarea of misTareas; track tarea.id) {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm bg-white p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2.5 py-1 rounded text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                                        {{ getNombreCategoria(tarea.id_categoria) }}
+                                    </span>
+                                    <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold"
+                                          [ngClass]="{
+                                            'bg-warning-subtle text-warning border border-warning-subtle': tarea.estado === 'ABIERTA',
+                                            'bg-success-subtle text-success border border-success-subtle': tarea.estado === 'CERRADA'
+                                          }" style="font-size: 0.75rem;">
+                                        {{ tarea.estado }}
+                                    </span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">{{ tarea.titulo }}</h6>
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-currency-dollar me-1 text-primary"></i>
+                                    Presupuesto: ${{ tarea.precio }}
+                                </p>
+                                <button class="btn btn-outline-primary btn-sm fw-semibold w-100 mt-auto" (click)="verDetalleTarea(tarea)">
+                                    <i class="bi bi-eye-fill me-1"></i>Ver Detalle
+                                </button>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="col-12 text-muted py-4 text-center">
+                            <i class="bi bi-bookmark-x text-muted display-6 d-block mb-2"></i>
+                            No tienes tareas registradas.
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
+
+    <!-- MODAL DETALLE TUTORÍA -->
+    @if (tutoriaSeleccionada) {
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-primary text-white border-0 py-3">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-calendar-check me-2"></i>Detalle de Tutoría
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalTutoria()"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <span class="badge bg-primary text-white px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                                {{ tutoriaSeleccionada.categoria?.nombre || 'Tutoría' }}
+                            </span>
+                            <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold ms-2"
+                                  [ngClass]="{
+                                    'bg-warning-subtle text-warning border border-warning-subtle': tutoriaSeleccionada.estado === 'pendiente',
+                                    'bg-success-subtle text-success border border-success-subtle': tutoriaSeleccionada.estado === 'aceptada' || tutoriaSeleccionada.estado === 'aprobada',
+                                    'bg-danger-subtle text-danger border border-danger-subtle': tutoriaSeleccionada.estado === 'rechazada',
+                                    'bg-info-subtle text-info border border-info-subtle': tutoriaSeleccionada.estado === 'finalizada' || tutoriaSeleccionada.estado === 'completada'
+                                  }" style="font-size: 0.75rem;">
+                                {{ tutoriaSeleccionada.estado }}
+                            </span>
+                        </div>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
+                                <span class="text-muted small">Profesor</span>
+                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.profesor?.nombre }} {{ tutoriaSeleccionada.profesor?.apellido }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
+                                <span class="text-muted small">Alumno</span>
+                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.alumno?.nombre }} {{ tutoriaSeleccionada.alumno?.apellido }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
+                                <span class="text-muted small">Fecha y Hora</span>
+                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.fecha_hora | date:'medium' }}</span>
+                            </li>
+                            @if (tutoriaSeleccionada.enlace_meet) {
+                                <li class="list-group-item bg-transparent px-0 py-2">
+                                    <span class="text-muted small d-block mb-1">Enlace de la Clase (Meet)</span>
+                                    <a [href]="tutoriaSeleccionada.enlace_meet" target="_blank" class="btn btn-sm btn-success w-100 fw-semibold">
+                                        <i class="bi bi-camera-video-fill me-1"></i>Unirse a Google Meet
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <div class="bg-light p-3 rounded-3 border">
+                            <span class="text-muted small d-block mb-1 fw-semibold">Mensaje / Consulta:</span>
+                            <p class="mb-0 text-dark small" style="white-space: pre-wrap;">{{ tutoriaSeleccionada.mensaje || 'Sin mensaje de consulta.' }}</p>
+                        </div>
+
+                        <!-- ACCIONES EXCLUSIVAS DEL PROFESOR -->
+                        @if (rol === 'profesor') {
+                            <div class="mt-4 pt-3 border-top">
+                                <h6 class="fw-bold text-dark mb-2">Acciones del Profesor</h6>
+                                
+                                @if (tutoriaSeleccionada.estado === 'pendiente') {
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success flex-grow-1 fw-semibold" (click)="actualizarEstadoTutoria('aceptada')">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Aceptar Tutoría
+                                        </button>
+                                        <button class="btn btn-danger flex-grow-1 fw-semibold" (click)="actualizarEstadoTutoria('rechazada')">
+                                            <i class="bi bi-x-circle-fill me-1"></i>Rechazar
+                                        </button>
+                                    </div>
+                                } @else if (tutoriaSeleccionada.estado === 'aceptada') {
+                                    <button class="btn btn-info w-100 text-white fw-semibold" (click)="actualizarEstadoTutoria('finalizada')">
+                                        <i class="bi bi-flag-fill me-1"></i>Marcar como Finalizada
+                                    </button>
+                                } @else {
+                                    <div class="alert alert-secondary py-2 px-3 small text-center mb-0">
+                                        No hay acciones disponibles para esta tutoría (estado: {{ tutoriaSeleccionada.estado }}).
+                                    </div>
+                                }
+                            </div>
+                        } @else if (rol === 'alumno') {
+                            @if (tutoriaSeleccionada.estado === 'finalizada' || tutoriaSeleccionada.estado === 'completada') {
+                                <div class="mt-4 pt-3 border-top">
+                                    <h6 class="fw-bold text-dark mb-2">Calificación de la Tutoría</h6>
+                                    @if (!tutoriaSeleccionada.calificacion) {
+                                        <div class="bg-light p-3 rounded-3 border">
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold text-muted d-block mb-1">Puntuación:</label>
+                                                <div class="d-flex gap-1">
+                                                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                                                        <button type="button" class="btn btn-sm btn-outline-warning border-0 fs-5 p-0" 
+                                                                (click)="seleccionarPuntuacion(star)">
+                                                            <i class="bi" [ngClass]="nuevaPuntuacion >= star ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="nuevoComentario" class="form-label small fw-semibold text-muted">Comentario (Opcional):</label>
+                                                <textarea id="nuevoComentario" class="form-control form-control-sm" rows="2" 
+                                                          [(ngModel)]="nuevoComentario" placeholder="Deja tu comentario sobre la tutoría..."></textarea>
+                                            </div>
+                                            <button class="btn btn-warning btn-sm w-100 text-white fw-semibold shadow-sm" 
+                                                    (click)="enviarCalificacionDesdeModal()" [disabled]="nuevaPuntuacion === 0">
+                                                Enviar Calificación
+                                            </button>
+                                        </div>
+                                    } @else {
+                                        <div class="bg-warning-subtle p-3 rounded-3 border border-warning-subtle text-dark">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <span class="fs-5 fw-bold text-warning me-2">{{ getStars(tutoriaSeleccionada.calificacion.calificacion) }}</span>
+                                                <span class="badge bg-warning text-dark">{{ tutoriaSeleccionada.calificacion.calificacion }} / 5</span>
+                                            </div>
+                                            @if (tutoriaSeleccionada.calificacion.comentario) {
+                                                <p class="mb-0 small">
+                                                    <strong>Comentario:</strong> {{ tutoriaSeleccionada.calificacion.comentario }}
+                                                </p>
+                                            } @else {
+                                                <p class="mb-0 small text-muted italic">Sin comentario adicional.</p>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-secondary w-100" (click)="cerrarModalTutoria()">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- MODAL DETALLE TAREA -->
+    @if (tareaSeleccionada) {
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-secondary text-white border-0 py-3">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-journal-bookmark me-2"></i>Detalle de Tarea
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalTarea()"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <span class="badge bg-secondary text-white px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                                {{ getNombreCategoria(tareaSeleccionada.id_categoria) }}
+                            </span>
+                            <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold ms-2"
+                                  [ngClass]="{
+                                    'bg-warning-subtle text-warning border border-warning-subtle': tareaSeleccionada.estado === 'ABIERTA',
+                                    'bg-success-subtle text-success border border-success-subtle': tareaSeleccionada.estado === 'CERRADA'
+                                  }" style="font-size: 0.75rem;">
+                                {{ tareaSeleccionada.estado }}
+                            </span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3">{{ tareaSeleccionada.titulo }}</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
+                                <span class="text-muted small">Presupuesto</span>
+                                <span class="fw-semibold text-success">${{ tareaSeleccionada.precio }}</span>
+                            </li>
+                            @if (tareaSeleccionada.archivoAdjunto) {
+                                <li class="list-group-item bg-transparent px-0 py-2">
+                                    <span class="text-muted small d-block mb-1">Archivo Adjunto</span>
+                                    <span class="text-dark small">{{ tareaSeleccionada.archivoAdjunto }}</span>
+                                </li>
+                            }
+                        </ul>
+                        <div class="bg-light p-3 rounded-3 border">
+                            <span class="text-muted small d-block mb-1 fw-semibold">Descripción del Práctico:</span>
+                            <p class="mb-0 text-dark small" style="white-space: pre-wrap;">{{ tareaSeleccionada.descripcion }}</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-secondary w-100" (click)="cerrarModalTarea()">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>

@@ -33,6 +33,11 @@ export interface TutorialCategory {
 export interface FullTutorial {
     id: number;
     estado: string;
+    modalidad: 'virtual' | 'presencial';
+    precio_acordado: number;
+    preference_id?: string;
+    payment_id?: string;
+    pagada: boolean;
     createdAt: string;
     alumno?: TutorialUser;
     profesor?: TutorialUser;
