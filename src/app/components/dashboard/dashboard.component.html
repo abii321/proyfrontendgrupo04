@@ -1,0 +1,167 @@
+<div class="container py-5 dashboard-container">
+
+    <!-- Page header -->
+    <div class="mb-5">
+        <h2 class="fw-light text-dark">Panel de Administración</h2>
+        <p class="text-muted">Resumen de las métricas clave y datos de la plataforma.</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-sm-6 col-xl-3">
+            <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="kpi-icon">
+                        <i class="bi bi-people fs-3"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0">Total de Usuarios</p>
+                        <h3 class="fw-light mb-0">{{ summary.totalUsers }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="kpi-icon">
+                        <i class="bi bi-journal-bookmark fs-3"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0">Total de Tutorías</p>
+                        <h3 class="fw-light mb-0">{{ summary.totalTutorials }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="kpi-icon">
+                        <i class="bi bi-question-circle fs-3"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0">Solicitudes de Ayuda</p>
+                        <h3 class="fw-light mb-0">{{ summary.totalHelpRequests }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="kpi-icon">
+                        <i class="bi bi-tags fs-3"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted small mb-0">Categorías</p>
+                        <h3 class="fw-light mb-0">{{ summary.totalCategories }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-5">
+
+        <!-- Bar Chart: usuarios por rol -->
+        <div class="col-lg-4">
+            <div class="tarjeta-delicada p-4 shadow-sm h-100">
+                <h6 class="fw-semibold text-muted mb-3">
+                    <i class="bi bi-bar-chart me-2"></i>Usuarios por Rol
+                </h6>
+                <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Pie Chart: solicitudes por estado -->
+        <div class="col-lg-4">
+            <div class="tarjeta-delicada p-4 shadow-sm h-100">
+                <h6 class="fw-semibold text-muted mb-3">
+                    <i class="bi bi-pie-chart me-2"></i>Solicitudes de Ayuda por Estado
+                </h6>
+                <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" type="pie">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Line Chart: tutorias por mes -->
+        <div class="col-lg-4">
+            <div class="tarjeta-delicada p-4 shadow-sm h-100">
+                <h6 class="fw-semibold text-muted mb-3">
+                    <i class="bi bi-graph-up me-2"></i>Tutorías por Mes
+                </h6>
+                <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line">
+                </canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Data Table Section -->
+    <div class="tarjeta-delicada p-4 shadow-sm">
+
+        <!-- Table header -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 border-bottom pb-3">
+            <h6 class="fw-semibold text-muted mb-0">
+                <i class="bi bi-table me-2"></i>Listado de Tutorías
+            </h6>
+            <div class="d-flex gap-2">
+                <button class="btn btn-elegante btn-sm" id="btn-export-pdf" (click)="exportToPDF()">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+                </button>
+                <button class="btn btn-elegante btn-sm" id="btn-export-excel" (click)="exportToExcel()">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
+                </button>
+            </div>
+        </div>
+
+        <!--
+            TODO: instalar angular-datatables para activar filtros, búsqueda y paginación:
+            Luego importar DataTablesModule, agregar [datatable] y [dtOptions]="dtOptions" en la tabla,
+            y usar Subject<void>() como dtTrigger en el componente.
+        -->
+        <div class="table-responsive">
+            <table class="table table-hover table-borderless align-middle" id="tutorials-table">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Alumno</th>
+                        <th scope="col">Profesor</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (tutorials.length === 0) {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No se encontraron tutorías.
+                        </td>
+                    </tr>
+                    }
+                    @for (tutorial of tutorials; track tutorial.id) {
+                    <tr>
+                        <td class="text-muted small">{{ tutorial.id }}</td>
+                        <td>{{ tutorial.alumno?.nombre }} {{ tutorial.alumno?.apellido }}</td>
+                        <td>{{ tutorial.profesor?.nombre }} {{ tutorial.profesor?.apellido }}</td>
+                        <td>{{ tutorial.categoria?.nombre }}</td>
+                        <td>
+                            <span class="badge-estado badge-estado--{{ tutorial.estado | lowercase }}">
+                                {{ tutorial.estado }}
+                            </span>
+                        </td>
+                        <td class="text-muted small">{{ tutorial.createdAt | date:'mediumDate' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>

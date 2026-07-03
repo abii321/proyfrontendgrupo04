@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
+.dashboard-container {
+    font-family: 'Montserrat', sans-serif;
+    color: #4a4a4a;
+}
+
+.tarjeta-delicada {
+    background-color: #ecf7ffb9;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+}
+
+/* KPI cards: hover con elevación */
+.kpi-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: default;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(90, 107, 124, 0.15) !important;
+}
+
+/* Icono de cada KPI card */
+.kpi-icon {
+    width: 52px;
+    height: 52px;
+    background-color: rgba(90, 107, 124, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5a6b7c;
+    flex-shrink: 0;
+}
+
+
+.btn-elegante {
+    background-color: #5a6b7c;
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-elegante:hover {
+    background-color: #42505c;
+    color: white;
+}
+
+/* Encabezado de la tabla */
+.table-header th {
+    color: #5a6b7c;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #eaeaea;
+    padding-top: 10px;
+}
+
+/* Filas de la tabla */
+.table tbody tr {
+    border-bottom: 1px solid #f0f4f8;
+    transition: background-color 0.15s ease;
+    font-size: 0.88rem;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(90, 107, 124, 0.05);
+}
+
+/* Badges de estado */
+.badge-estado {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.badge-estado--pendiente {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: #856404;
+}
+
+.badge-estado--aceptada,
+.badge-estado--completada {
+    background-color: rgba(25, 135, 84, 0.12);
+    color: #146c43;
+}
+
+.badge-estado--rechazada,
+.badge-estado--cancelada {
+    background-color: rgba(220, 53, 69, 0.12);
+    color: #b02a37;
+}
+
+/* Limitar la altura de los canvases de Chart.js */
+canvas {
+    max-height: 260px;
+}

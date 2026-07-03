@@ -8,6 +8,7 @@ import { RespuestaAyudaComponent } from './components/respuesta-ayuda/respuesta-
 import { GestionTutoriaComponent } from './components/gestion-tutoria/gestion-tutoria.component';
 import { MisSolicitudesComponent } from './components/mis-solicitudes/mis-solicitudes.component';
 import { CrearSolicitudComponent } from './components/solicitud-ayuda/crear-solicitud/crear-solicitud.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -20,6 +21,7 @@ export const routes: Routes = [
     { path: 'mis-solicitudes', component: MisSolicitudesComponent },
     { path: 'gestion-tutoria', component: GestionTutoriaComponent },
     //{ path: 'gestionar-tutorias', component: GestionarTutoriasComponent },
+    { path: 'dashboard', component: DashboardComponent },
 
     { path: '**', pathMatch: 'full', redirectTo: 'home' },
 ];
