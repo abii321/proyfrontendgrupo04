@@ -1,102 +1,214 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
+.container-fluid-custom {
+    background-color: #EFEFE9;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
 .dashboard-container {
-    font-family: 'Montserrat', sans-serif;
-    color: #4a4a4a;
+    font-family: 'Outfit', sans-serif;
+    background-color: #EFEFE9;
+    color: #2D4243;
+    min-height: 100vh;
 }
 
+/* --- PALETA DE COLORES --- */
+/* #2D4243  — verde oscuro grisáceo (texto primario) */
+/* #5C6B73  — pizarra medio       (texto secundario) */
+/* #8C999A  — gris verdoso claro  (texto mutado)     */
+/* #DDA77B  — ocre/naranja pastel (acento destacado) */
+/* #A3B19B  — verde salvia        (acento principal) */
+/* #9EADC8  — azul polvoriento    (iconos)           */
+/* #6C8484  — turquesa oscuro     (botón principal)  */
+
+/* --- TARJETAS --- */
 .tarjeta-delicada {
-    background-color: #ecf7ffb9;
-    border: 1px solid #eaeaea;
-    border-radius: 12px;
+    background-color: #FDFDFD;
+    border: 2px solid transparent !important;
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* KPI cards: hover con elevación */
+/* --- KPI CARDS --- */
 .kpi-card {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
     cursor: default;
 }
 
 .kpi-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(90, 107, 124, 0.15) !important;
+    box-shadow: 0 15px 30px rgba(45, 66, 67, 0.08) !important;
+    border-color: #A3B19B !important;
 }
 
 /* Icono de cada KPI card */
 .kpi-icon {
     width: 52px;
     height: 52px;
-    background-color: rgba(90, 107, 124, 0.1);
-    border-radius: 12px;
+    min-width: 52px;
+    background-color: #9EADC8;
+    color: #ffffff;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5a6b7c;
     flex-shrink: 0;
 }
 
+.kpi-icon--success {
+    background-color: #A3B19B;
+    /* Verde salvia */
+}
 
+.kpi-icon--warning {
+    background-color: #DDA77B;
+    /* Naranja/ocre pastel */
+}
+
+.kpi-icon--info {
+    background-color: #6C8484;
+    /* Turquesa oscuro */
+}
+
+.kpi-icon--primary {
+    background-color: #DDA7A5;
+    /* Dusty rose */
+}
+
+.texto-primario {
+    color: #2D4243 !important;
+    /* Verde oscuro grisáceo */
+}
+
+/* Texto dentro de las KPI cards */
+.kpi-card .text-muted {
+    color: #8C999A !important;
+    font-size: 0.83rem;
+    letter-spacing: 0.4px;
+}
+
+.kpi-card h3 {
+    color: #2D4243;
+    font-weight: 600;
+}
+
+/* Título de cada sección (gráficos, tabla) */
+h6.fw-semibold {
+    color: #5C6B73;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* --- BOTONES DE EXPORTACIÓN --- */
 .btn-elegante {
-    background-color: #5a6b7c;
+    background-color: #6C8484;
     border: none;
-    color: white;
+    color: #ffffff;
+    border-radius: 12px;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-elegante:hover {
-    background-color: #42505c;
-    color: white;
+    background-color: #556B6B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 132, 132, 0.3);
+    color: #ffffff;
 }
 
-/* Encabezado de la tabla */
+/* --- TABLA --- */
 .table-header th {
-    color: #5a6b7c;
+    color: #5C6B73;
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #eaeaea;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #EBECE8;
     padding-top: 10px;
+    vertical-align: middle;
 }
 
-/* Filas de la tabla */
 .table tbody tr {
-    border-bottom: 1px solid #f0f4f8;
+    border-bottom: 1px solid #F4F5F0;
     transition: background-color 0.15s ease;
     font-size: 0.88rem;
+    color: #2D4243;
 }
 
 .table tbody tr:hover {
-    background-color: rgba(90, 107, 124, 0.05);
+    background-color: #F4F5F0;
 }
 
-/* Badges de estado */
+/* --- BADGE DE ESTADO --- */
 .badge-estado {
-    padding: 3px 10px;
-    border-radius: 20px;
+    padding: 4px 12px;
+    border-radius: 8px;
     font-size: 0.78rem;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: capitalize;
+    letter-spacing: 0.2px;
 }
 
 .badge-estado--pendiente {
-    background-color: rgba(255, 193, 7, 0.15);
-    color: #856404;
+    background-color: rgba(221, 167, 123, 0.2);
+    color: #9B6A3A;
 }
 
 .badge-estado--aceptada,
-.badge-estado--completada {
-    background-color: rgba(25, 135, 84, 0.12);
-    color: #146c43;
+.badge-estado--finalizada {
+    background-color: rgba(163, 177, 155, 0.25);
+    color: #4A6040;
 }
 
 .badge-estado--rechazada,
 .badge-estado--cancelada {
-    background-color: rgba(220, 53, 69, 0.12);
-    color: #b02a37;
+    background-color: rgba(221, 167, 165, 0.25);
+    /* dusty rose con opacidad */
+    color: #8B3F3D;
 }
 
-/* Limitar la altura de los canvases de Chart.js */
+/* --- BADGE DE MODALIDAD --- */
+.badge-modalidad {
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.2px;
+}
+
+.badge-modalidad--virtual {
+    background-color: rgba(158, 173, 200, 0.25);
+    /* azul polvoriento */
+    color: #4A5F7A;
+}
+
+.badge-modalidad--presencial {
+    background-color: rgba(108, 132, 132, 0.15);
+    /* turquesa oscuro */
+    color: #3D5C5C;
+}
+
+/* --- BADGE PAGADA --- */
+.badge-pagada--si {
+    background-color: rgba(163, 177, 155, 0.25);
+    color: #4A6040;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-pagada--no {
+    background-color: rgba(221, 167, 165, 0.25);
+    color: #8B3F3D;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* --- CANVASES DE CHART.JS --- */
 canvas {
     max-height: 260px;
 }
