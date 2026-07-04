@@ -14,7 +14,8 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']" routerLinkActive="active text-dark" >Inicio</a>
+          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']"
+            routerLinkActive="active text-dark">Inicio</a>
         </li>
         <!--<li class="nav-item">
           <a class="nav-link px-3 fw-medium text-secondary" 
@@ -22,19 +23,20 @@
              routerLinkActive="active text-dark">App</a>
         </li>
         @if (autenticacionService.getUserRole() !== 'profesor') {-->
-          <li class="nav-item">
-            <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
-              routerLinkActive="active text-dark">Tareas</a>
-          </li>
-        <!--}-->
+
+        <li class="nav-item">
+          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
+            routerLinkActive="active text-dark">Tareas</a>
+        </li>
+        
 
         <li class="nav-item">
           <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"
             [routerLink]="['mis-solicitudes']">Mis solicitudes</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary"
-            routerLinkActive="active text-dark" [routerLink]="['dashboard']">Dashboard</a>
+          <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"
+            [routerLink]="['dashboard']">Dashboard</a>
         </li>
       </ul>
       }
