@@ -1,8 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-body-secondary border-bottom py-3 px-4">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold text-dark" style="letter-spacing: -0.5px;"
-      [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">Tutorias<span
-        class="text-primary">.</span>com</a>
+      [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">App</a>
 
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,20 +14,19 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']" routerLinkActive="active text-dark"
-            [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']" routerLinkActive="active text-dark" >Inicio</a>
         </li>
-        <li class="nav-item">
+        <!--<li class="nav-item">
           <a class="nav-link px-3 fw-medium text-secondary" 
-             [routerLink]="autenticacionService.getUserRole() === 'profesor' ? ['gestion-tutoria'] : ['solicitar-tutoria']"
-             routerLinkActive="active text-dark">Tutorias</a>
+             [routerLink]="autenticacionService.getUserRole() === 'profesor' ? ['gestion-tutoria'] : ['solicitar-tutoria']"*/
+             routerLinkActive="active text-dark">App</a>
         </li>
-        @if (autenticacionService.getUserRole() !== 'profesor') {
+        @if (autenticacionService.getUserRole() !== 'profesor') {-->
           <li class="nav-item">
             <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
               routerLinkActive="active text-dark">Tareas</a>
           </li>
-        }
+        <!--}-->
 
         <li class="nav-item">
           <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"

@@ -60,9 +60,6 @@ export class RegistroComponent implements AfterViewInit {
       universidad: this.usuario.universidad,
       carrera: this.usuario.carrera,
       genero: this.usuario.genero,
-      perfilProfesor: this.perfilProfesor,
-      tarifaBase: this.usuario.tarifaBase,
-      nivelAcademico: this.usuario.nivelAcademico,
     };
 
     this.autenticacionService.postSignUpGoogle(body).subscribe(
@@ -77,7 +74,7 @@ export class RegistroComponent implements AfterViewInit {
   }
 
   registrarUsuarioLocal(form: NgForm){
-    this.autenticacionService.postRegistroLocal(this.usuario, this.perfilProfesor).subscribe(
+    this.autenticacionService.postRegistroLocal(this.usuario).subscribe(
       ( result : any) => {
         form.reset();
         this.msg = ""
@@ -91,11 +88,4 @@ export class RegistroComponent implements AfterViewInit {
     )
   }
 
-  algunNivelSeleccionado(): boolean {
-    return this.perfilProfesor.primario || 
-           this.perfilProfesor.secundario || 
-           this.perfilProfesor.universitario || 
-           this.perfilProfesor.doctorado;
-}
-  
 }
