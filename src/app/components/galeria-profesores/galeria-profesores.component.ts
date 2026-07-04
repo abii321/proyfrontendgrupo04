@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TutoriaService } from '../../services/tutoria.service';
 import { AutenticacionService } from '../../services/autenticacion.service';
+// 1. Importar el nuevo servicio
+import { CategoriaService } from '../../services/categoria.service'; 
 
 @Component({
   selector: 'app-galeria-profesores',
@@ -15,20 +17,21 @@ import { AutenticacionService } from '../../services/autenticacion.service';
 export class GaleriaProfesoresComponent implements OnInit {
   private tutoriaService = inject(TutoriaService);
   private autenticacionService = inject(AutenticacionService);
+  // 2. Inyectar el servicio de categorías
+  private categoriaService = inject(CategoriaService); 
 
   rol: string = '';
   categorias: any[] = [];
   profesores: any[] = [];
   filtroCategoria: string = '';
   profesorSeleccionado: any = null;
-  alumnoNivelAcademico: string = 'universitario'; // Valor por defecto
+  alumnoNivelAcademico: string = 'universitario';
 
   ngOnInit() {
-    // Obtenemos los datos del usuario logueado directamente del sessionStorage
     const userStr = sessionStorage.getItem('usuario');
     if (userStr) {
       const user = JSON.parse(userStr);
-      this.rol = user.rol || ''; // Sacamos el rol de acá
+      this.rol = user.rol || '';
       this.alumnoNivelAcademico = user.nivelAcademico || 'universitario';
     }
 
@@ -37,8 +40,12 @@ export class GaleriaProfesoresComponent implements OnInit {
   }
 
   cargarCategorias() {
-    this.tutoriaService.obtenerCategorias().subscribe({
-      next: (res: any[]) => this.categorias = res,
+    // 3. Usar el nuevo servicio en vez del viejo tutoriaService
+    this.categoriaService.obtenerCategorias().subscribe({
+      next: (res: any) => {
+        // Depende de cómo envíe el backend (res o res.data)
+        this.categorias = res.data || res; 
+      },
       error: (err: any) => console.error('Error al cargar categorías:', err)
     });
   }
@@ -73,13 +80,11 @@ export class GaleriaProfesoresComponent implements OnInit {
   }
 
   esNivelCompatible(profesor: any): boolean {
-    // Si el profesor no definió nivel, asumimos que es compatible por precaución
     if (!profesor.nivelAcademico) return true;
     
     const nivelProfe = profesor.nivelAcademico.toLowerCase();
     const nivelAlumno = this.alumnoNivelAcademico.toLowerCase();
 
-    // Lógica básica: El profesor debe tener el mismo o mayor nivel
     const niveles = ['primario', 'secundario', 'terciario', 'universitario', 'doctorado'];
     return niveles.indexOf(nivelProfe) >= niveles.indexOf(nivelAlumno);
   }
