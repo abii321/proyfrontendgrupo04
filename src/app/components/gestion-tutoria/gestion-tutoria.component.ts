@@ -50,7 +50,6 @@ export class GestionTutoriaComponent implements OnInit {
 
   errorDisponibilidad: string = '';
 
-  // --- CONSTRUCTOR CLÁSICO ---
   constructor(
     private route: ActivatedRoute,
     private router: Router,

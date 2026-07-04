@@ -1,9 +1,10 @@
 <div class="container-fluid py-5 estilo-profesional">
   <div class="container">
-    <div class="row mb-5 align-items-end">
+    
+    <div class="row mb-5 align-items-end border-bottom pb-4 border-opacity-10">
       <div class="col-md-8">
-        <h2 class="fw-bold mb-2 texto-primario">Nuestros Tutores</h2>
-        <p class="texto-mutado mb-0 fs-6">Encontrá al profesional ideal para tu próxima clase. Hacé clic en un perfil para ver su información detallada y agendar.</p>
+        <h2 class="fw-bold mb-2 texto-primario">Red de Tutores Académicos</h2>
+        <p class="texto-secundario mb-0 fs-6">Una comunidad de profesionales listos para ayudarte. Hacé clic en un perfil para conocer su trayectoria.</p>
       </div>
       <div class="col-md-4 mt-4 mt-md-0">
         <label for="categoriaSelect" class="form-label fw-semibold small texto-mutado mb-2 text-uppercase espaciado-letras">Filtrar por especialidad</label>
@@ -26,7 +27,6 @@
           >
             <div class="card-body p-4 p-md-5">
               
-              <!-- CABECERA DE LA TARJETA -->
               <div class="d-flex align-items-start gap-4">
                 <div class="avatar-sobrio d-flex align-items-center justify-content-center rounded-4 shadow-sm">
                   <i class="bi bi-person fs-2"></i>
@@ -55,7 +55,6 @@
                 </div>
               </div>
 
-              <!-- CONTENIDO QUE SE DESLIZA (Animación fluida) -->
               <div class="wrapper-colapsable">
                 <div class="contenido-expandido pt-4 mt-4 border-top border-opacity-10">
                   
@@ -83,7 +82,7 @@
 
                   <div class="mb-4">
                     <p class="mb-3 small texto-mutado text-uppercase espaciado-letras fw-semibold">Últimas opiniones</p>
-                    @if (profesor.opiniones && profesor.opiniones.length > 0) {
+                    @if (getOpiniones(profesor).length > 0) {
                       <div class="d-flex flex-column gap-3">
                         @for (opinion of getOpiniones(profesor); track opinion.id) {
                           <div class="opinion-item p-3 rounded-4">
@@ -104,20 +103,22 @@
                     }
                   </div>
 
-                  <div class="mt-4 text-end" (click)="$event.stopPropagation()">
-                    @if (esNivelCompatible(profesor)) {
-                      <a class="btn btn-sobrio w-100 py-3 shadow-sm d-flex justify-content-center align-items-center gap-2" 
-                          [routerLink]="['/gestion-tutoria']" [queryParams]="{ profesorId: profesor.id }">
-                        <span>Ver disponibilidad y agendar</span>
-                        <i class="bi bi-arrow-right"></i>
-                      </a>
-                    } @else {
-                      <div class="text-danger small fw-medium mb-2 text-center bg-danger bg-opacity-10 p-2 rounded-3">
-                        <i class="bi bi-exclamation-circle me-1"></i> El nivel académico no coincide con tu perfil.
-                      </div>
-                      <button class="btn btn-desactivado w-100 py-3" disabled>Agendar Tutoría</button>
-                    }
-                  </div>
+                  @if (rol === 'alumno') {
+                    <div class="mt-4 text-end" (click)="$event.stopPropagation()">
+                      @if (esNivelCompatible(profesor)) {
+                        <a class="btn btn-sobrio w-100 py-3 shadow-sm d-flex justify-content-center align-items-center gap-2" 
+                           [routerLink]="['/gestion-tutoria']" [queryParams]="{ profesorId: profesor.id }">
+                          <span>Solicitar y agendar tutoría</span>
+                          <i class="bi bi-arrow-right"></i>
+                        </a>
+                      } @else {
+                        <div class="text-danger small fw-medium mb-2 text-center bg-danger bg-opacity-10 p-2 rounded-3">
+                          <i class="bi bi-exclamation-circle me-1"></i> El nivel académico no coincide con tu perfil.
+                        </div>
+                        <button class="btn btn-desactivado w-100 py-3" disabled>Agendar Tutoría</button>
+                      }
+                    </div>
+                  }
 
                 </div>
               </div>
