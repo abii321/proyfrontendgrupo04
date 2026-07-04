@@ -39,24 +39,33 @@
       </ul>
       }
 
-      <div class="d-flex align-items-center gap-3 ms-auto">
+      <div class="d-flex ms-auto gap-2">
         @if (!autenticacionService.userLoggedIn()){
-        <a class="btn btn-sm text-secondary text-decoration-none fw-semibold" [routerLink]="['login']">Iniciar
-          Sesión</a>
-        <a class="btn btn-sm btn-primary py-2 px-3 fw-semibold text-white rounded-2" [routerLink]="['registro']"
-          style="font-size: 13px;">Registrarse</a>
+          <a class="btn btn-sm text-secondary text-decoration-none fw-semibold" [routerLink]="['login']">Iniciar Sesión</a>
+          <a class="btn btn-sm btn-primary py-2 px-3 fw-semibold text-white rounded-2" [routerLink]="['registro']" style="font-size: 13px;">Registrarse</a>
         } @else {
-        <a class="text-secondary small d-flex align-items-center gap-2 fw-medium text-decoration-none"
-          [routerLink]="['/perfil']" title="Ver Perfil">
-          <i class="bi bi-person-circle fs-5 text-secondary"></i>
-          {{ autenticacionService.userLogged() }}
-        </a>
-        <button class="btn btn-sm btn-secondary rounded-2 py-1 px-3" (click)="autenticacionService.logout()"
-          [routerLink]="['/login']">
-          Salir
-        </button>
+          <li class="nav-item dropdown list-unstyled">
+            <a class="nav-link dropdown-toggle fw-semibold text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i> {{ autenticacionService.userLogged() || 'Mi Cuenta' }}
+            </a>  
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+              <li>
+                <button class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/perfil']"> <span>Editar perfil</span> </button>
+              </li>
+              
+              <li> <span class="dropdown-header text-muted pb-2">Sesión activa</span> </li>
+              
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item text-danger d-flex align-items-center gap-2" 
+                  [routerLink]="['/home']" (click)="autenticacionService.logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </li>
+            </ul>
+          </li>
         }
-
       </div>
 
     </div>
