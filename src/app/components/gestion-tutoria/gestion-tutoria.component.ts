@@ -269,7 +269,7 @@ export class GestionTutoriaComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         this.tutoriaService.eliminarHorario(id).subscribe({
           next: () => {

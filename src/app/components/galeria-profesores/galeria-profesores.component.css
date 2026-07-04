@@ -1,1 +1,159 @@
 /* Estilos de la galería delegados completamente a Bootstrap */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+.estilo-profesional {
+    /* La fuente Outfit es redondita, súper amigable y moderna */
+    font-family: 'Outfit', sans-serif;
+    background-color: #EFEFE9; /* Un color hueso/arena muy suave de fondo */
+    min-height: 100vh;
+}
+
+/* --- PALETA DE COLORES OPACOS/AESTHETIC --- */
+.texto-primario {
+    color: #2D4243 !important; /* Verde oscuro grisáceo */
+}
+
+.texto-secundario {
+    color: #5C6B73 !important; /* Pizarra medio */
+}
+
+.texto-mutado {
+    color: #8C999A !important; /* Gris verdoso claro */
+}
+
+.texto-destacado {
+    color: #DDA77B !important; /* Ocre/Naranja pastel apagado */
+}
+
+.espaciado-letras {
+    letter-spacing: 0.8px;
+}
+
+/* --- FORMULARIOS --- */
+.select-sobrio {
+    border: 2px solid #DCE0D9;
+    border-radius: 12px;
+    padding: 0.7rem 1.2rem;
+    color: #2D4243;
+    background-color: #FAFAFA;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.select-sobrio:focus {
+    border-color: #A3B19B; /* Verde salvia */
+    box-shadow: 0 0 0 4px rgba(163, 177, 155, 0.2);
+}
+
+/* --- TARJETAS --- */
+.tarjeta-acordeon {
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #FDFDFD;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 2px solid transparent !important;
+}
+
+.tarjeta-acordeon:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(45, 66, 67, 0.08) !important;
+}
+
+/* Borde cuando se expande */
+.tarjeta-acordeon.expandida {
+    border-color: #A3B19B !important; /* Borde verde salvia */
+    box-shadow: 0 10px 40px rgba(163, 177, 155, 0.15) !important;
+}
+
+/* --- ELEMENTOS DE DISEÑO INTERNO --- */
+.avatar-sobrio {
+    background-color: #9EADC8; /* Azul polvoriento (Dusty Blue) */
+    color: #ffffff;
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+}
+
+.circulo-flecha {
+    background-color: #DCE0D9;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.tarjeta-acordeon.expandida .circulo-flecha {
+    background-color: #A3B19B; /* Pasa a verde salvia al abrir */
+}
+
+.icono-flecha {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icono-flecha.rotada {
+    transform: rotate(180deg);
+}
+
+.badge-sobrio {
+    background-color: #DDA7A5; /* Rosa polvoriento (Dusty Rose) */
+    color: #ffffff;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+}
+
+/* Cajas de información interna */
+.caja-info {
+    background-color: #F4F5F0; /* Gris súper clarito con toque cálido */
+    border: 1px solid #EBECE8;
+}
+
+.caja-bio {
+    background-color: #EBF0F0; /* Celeste tiza muy claro */
+    border: 1px solid #E2E8E8;
+}
+
+.opinion-item {
+    background-color: #F9F9F8;
+    border: 1px solid #EBECE8;
+}
+
+/* --- LA ANIMACIÓN MAGICA FLUIDA --- */
+.wrapper-colapsable {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-in-out;
+}
+
+.tarjeta-acordeon.expandida .wrapper-colapsable {
+    max-height: 1200px; /* Le damos margen suficiente para que entre todo el contenido */
+    opacity: 1;
+}
+
+/* --- BOTONES --- */
+.btn-sobrio {
+    background-color: #6C8484; /* Turquesa oscuro mate */
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s;
+}
+
+.btn-sobrio:hover {
+    background-color: #556B6B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 132, 132, 0.3);
+    color: #ffffff;
+}
+
+.btn-desactivado {
+    background-color: #E2E8E8;
+    color: #A1B0B0;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+}

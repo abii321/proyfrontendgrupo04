@@ -45,12 +45,12 @@ export class RespuestaAyudaComponent implements OnInit {
   }
  pagarRespuesta(respuesta: Respuesta) {
 
-  if (!respuesta.id) {
-    alert("La respuesta no tiene un ID válido.");
+  if (!respuesta.id || !respuesta.precio || respuesta.precio <= 0) {
+    alert("La respuesta no tiene un ID o precio válido para pagar.");
     return;
   }
 
-  this.mercadoPagoService.crearPreferencia(respuesta.id).subscribe({
+  this.mercadoPagoService.crearPreferencia(respuesta.id, respuesta.precio).subscribe({
 
     next: (result: any) => {
 
@@ -125,9 +125,15 @@ guardar() {
 
       alert(result.msg);
 
+      const respuestaCreada = result.data || this.respuesta;
+
       this.respuesta = new Respuesta();
 
       this.cargarSolicitud(this.solicitud.id);
+
+      if (respuestaCreada?.id) {
+        this.pagarRespuesta(respuestaCreada);
+      }
 
     },
 
@@ -141,4 +147,4 @@ guardar() {
 
   });
 
-}
+}}

@@ -9,6 +9,7 @@ export class Solicitud {
   respuestas: any[] = [];
   fecha_creacion?: Date;
   fecha_actualizacion?: Date;
+  precio?: number;
 
 
 }

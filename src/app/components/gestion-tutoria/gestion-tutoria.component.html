@@ -1,192 +1,251 @@
-<div class="container py-5 estilo-formal">
+<div class="container-fluid py-5 estilo-profesional">
+    <div class="container">
 
-    @if (rol === 'alumno') {
-    <div class="mb-5 text-center">
-        <h2 class="fw-light mb-2 text-dark">A veces lo que te falta no es estudiar más, sino que te lo expliquen distinto</h2>
-        <p class="text-muted">Agendá tu tutoría personalizada y encontrá esa explicación que finalmente te haga clic.</p>
-    </div>
-
-    <div class="row g-5">
-        <div class="col-lg-7">
-            <div class="tarjeta-delicada p-4 p-md-5 shadow-sm bg-body-secondary rounded">
-
-                <div class="border-bottom pb-3 mb-4">
-                    <h4 class="fw-normal mb-2 text-dark">¡Asegurá tu espacio con {{ profesorSeleccionado.nombre }}!</h4>
-                    <div class="d-flex flex-wrap gap-2">
-                        @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
-                            <span class="badge bg-primary text-white border fw-normal">{{ cat.nombre }}</span>
-                        } @empty {
-                            <span class="text-muted small">El profesor no tiene materias registradas</span>
-                        }
-                    </div>
-                </div>
-
-                <form (ngSubmit)="solicitarYPagar()" #formSolicitud="ngForm">
-
-                    <div class="mb-4">
-                        <label class="form-label small fw-semibold text-dark">Materia / Categoría</label>
-                        <select class="form-select shadow-none" name="categoriaId" [(ngModel)]="solicitud.categoriaId" required>
-                            <option value="" disabled selected>Selecciona una materia</option>
-                            @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
-                              <option [value]="cat.id">{{ cat.nombre }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label small fw-semibold text-dark">Modalidad de la clase</label>
-                        <select class="form-select shadow-none" name="modalidad" [(ngModel)]="solicitud.modalidad" required>
-                            <option value="virtual">Virtual (Videollamada)</option>
-                            <option value="presencial">Presencial (+20% de recargo por viáticos)</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label small fw-semibold text-dark">Fecha y Hora Propuesta</label>
-                        <input type="datetime-local" class="form-control shadow-none" name="fechaHora"
-                            [(ngModel)]="solicitud.fechaHora" (change)="validarHorario()" required>
-
-                        @if (errorDisponibilidad) {
-                        <div class="text-danger small mt-2 fw-semibold">
-                            <i class="bi bi-x-circle me-1"></i>{{ errorDisponibilidad }}
-                        </div>
-                        } @else {
-                        <div class="form-text small text-muted">La fecha debe coincidir con la disponibilidad del profesor.</div>
-                        }
-                    </div>
-
-                    <div class="mb-5">
-                        <label class="form-label small fw-semibold text-dark">Temas a tratar (Opcional)</label>
-                        <textarea class="form-control shadow-none" rows="3" name="mensaje"
-                            [(ngModel)]="solicitud.mensaje" placeholder="Describe en qué necesitas ayuda..."></textarea>
-                    </div>
-
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg fw-normal py-3"
-                            [disabled]="formSolicitud.invalid || errorDisponibilidad !== ''">
-                            Solicitar tutoría <strong>${{ precioFinal }}</strong>
-                        </button>
-                    </div>
-                </form>
-            </div>
+        @if (rol === 'alumno') {
+        <div class="mb-5 text-center">
+            <h2 class="fw-bold mb-2 texto-primario">A veces lo que te falta no es estudiar más, sino que te lo expliquen
+                distinto</h2>
+            <p class="texto-secundario fs-5">Agendá tu tutoría personalizada y encontrá esa explicación que finalmente
+                te haga clic.</p>
         </div>
 
-        <div class="col-lg-5">
-            <div class="tarjeta-delicada p-4 mb-4 shadow-sm bg-body-secondary rounded">
-                <h5 class="fw-normal mb-1 text-dark">Disponibilidad del Profesor</h5>
-                <p class="small text-muted mb-3">Horas publicadas en las que dicta clases.</p>
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="tarjeta-delicada p-4 p-md-5">
 
-                <ul class="list-group list-group-flush border rounded mb-3 bg-white">
-                    @for (horario of horariosProfesor; track horario.id) {
-                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                        <span class="text-dark"><strong class="text-capitalize">{{ horario.diaSemana }}</strong>: de {{ horario.horaInicio }} a {{ horario.horaFin }}</span>
-                    </li>
-                    } @empty {
-                    <li class="list-group-item text-muted text-center py-3">El profesor no ha definido horarios todavía.</li>
-                    }
-                </ul>
+                    <div class="border-bottom pb-4 mb-4">
+                        <h4 class="fw-bold mb-3 texto-primario">¡Asegurá tu espacio con {{ profesorSeleccionado.nombre
+                            }}!</h4>
+                        <div class="d-flex flex-wrap gap-2">
+                            @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
+                            <span class="badge badge-materia">{{ cat.nombre }}</span>
+                            } @empty {
+                            <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>El profesor no tiene
+                                materias registradas</span>
+                            }
+                        </div>
+                    </div>
 
-                <h5 class="fw-normal mb-1 text-dark">Mi Agenda Personal</h5>
-                <p class="small text-muted mb-3">Revisá tus tiempos libres antes de agendar.</p>
+                    <form (ngSubmit)="solicitarYPagar()" #formSolicitud="ngForm">
 
-                @if (alumnoProveedorAuth === 'Google' && alumnoEmail) {
-                  <div class="card border-0 shadow-sm bg-white p-3 mb-3 text-center">
-                      <i class="bi bi-calendar-check text-success display-6 mb-2"></i>
-                      <h6 class="fw-bold text-dark mb-1">Calendario de Google Activo</h6>
-                      <p class="text-muted small mb-3">Tu cuenta está vinculada a <strong>{{ alumnoEmail }}</strong>.</p>
-                      <a href="https://calendar.google.com/" target="_blank" class="btn btn-sm btn-outline-success w-100 fw-semibold">
-                          <i class="bi bi-box-arrow-up-right me-1"></i>Abrir Google Calendar
-                      </a>
-                  </div>
-                } @else {
-                  <div class="card border-0 shadow-sm bg-light p-3 mb-3 text-center">
-                      <i class="bi bi-calendar3 text-muted display-6 mb-2"></i>
-                      <h6 class="fw-bold text-dark mb-1">Google Calendar Desvinculado</h6>
-                      <p class="text-muted small mb-3">Vincula tu cuenta de Google en el panel principal para sincronizar eventos.</p>
-                      <button class="btn btn-sm btn-secondary w-100 fw-semibold" disabled>
-                          <i class="bi bi-lock-fill me-1"></i>Requiere Vinculación
-                      </button>
-                  </div>
-                }
+                        <div class="mb-4">
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Materia
+                                / Categoría</label>
+                            <select class="form-select shadow-none" name="categoriaId"
+                                [(ngModel)]="solicitud.categoriaId" required>
+                                <option value="" disabled selected>Selecciona una materia</option>
+                                @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
+                                <option [value]="cat.id">{{ cat.nombre }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Modalidad
+                                de la clase</label>
+                            <select class="form-select shadow-none" name="modalidad" [(ngModel)]="solicitud.modalidad"
+                                required>
+                                <option value="virtual">💻 Virtual (Videollamada por Google Meet)</option>
+                                <option value="presencial">☕ Presencial (+20% de recargo por viáticos)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Fecha
+                                y Hora Propuesta</label>
+                            <input type="datetime-local" class="form-control shadow-none" name="fechaHora"
+                                [(ngModel)]="solicitud.fechaHora" (change)="validarHorario()" required>
+
+                            @if (errorDisponibilidad) {
+                            <div class="text-danger small mt-2 fw-medium p-2 bg-danger bg-opacity-10 rounded-3">
+                                <i class="bi bi-x-circle-fill me-2"></i>{{ errorDisponibilidad }}
+                            </div>
+                            } @else {
+                            <div class="form-text small texto-mutado mt-2"><i class="bi bi-calendar-check me-1"></i>La
+                                fecha debe coincidir con la disponibilidad del profesor.</div>
+                            }
+                        </div>
+
+                        <div class="mb-5">
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Temas
+                                a tratar (Opcional)</label>
+                            <textarea class="form-control shadow-none" rows="3" name="mensaje"
+                                [(ngModel)]="solicitud.mensaje"
+                                placeholder="Describe en qué necesitasayuda..."></textarea>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit"
+                                class="btn btn-primary btn-lg py-3 d-flex justify-content-center align-items-center gap-2"
+                                [disabled]="formSolicitud.invalid || errorDisponibilidad !== ''">
+                                <span>Solicitar tutoría</span>
+                                <span class="badge-precio ms-2">${{ precioFinal }}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div class="tarjeta-delicada p-4 shadow-sm bg-body-secondary rounded">
-                <h5 class="fw-normal mb-4 text-dark">Preguntas Frecuentes</h5>
-                <div class="accordion" id="accordionFAQ">
-                    <div class="accordion-item border-0 border-bottom bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed shadow-none px-2 bg-transparent text-dark" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq1">
-                                ¿Qué pasa si el profesor cancela?
-                            </button>
-                        </h2>
-                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                            <div class="accordion-body text-muted small px-2">
-                                La tutoría se marcará como rechazada o finalizada y podrás contactarte.
+            <div class="col-lg-5">
+
+                <div class="tarjeta-delicada p-4 mb-4">
+                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i
+                            class="bi bi-clock text-primary me-2"></i>Disponibilidad del Profesor</h5>
+                    <p class="small texto-mutado mb-3">Horas publicadas en las que dicta clases.</p>
+
+                    <ul class="list-group list-group-flush border rounded-4 bg-white overflow-hidden">
+                        @for (horario of horariosProfesor; track horario.id) {
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom border-opacity-10">
+                            <span class="texto-secundario"><strong class="text-capitalize text-primary">{{
+                                    horario.diaSemana }}</strong>: de {{ horario.horaInicio }} a {{ horario.horaFin }}
+                                hs</span>
+                        </li>
+                        } @empty {
+                        <li class="list-group-item texto-mutado text-center py-4 bg-light">El profesor no ha definido
+                            horarios todavía.</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="tarjeta-delicada p-4 mb-4">
+                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i
+                            class="bi bi-calendar3 text-primary me-2"></i>Mi Agenda Personal</h5>
+                    <p class="small texto-mutado mb-3">Revisá tus tiempos libres antes de agendar.</p>
+
+                    @if (alumnoProveedorAuth === 'Google' && alumnoEmail) {
+                    <div class="caja-agenda-activa p-4 text-center">
+                        <i class="bi bi-google text-success fs-3 mb-2 d-block"></i>
+                        <h6 class="fw-bold texto-primario mb-1">Calendario de Google Activo</h6>
+                        <p class="texto-secundario small mb-3">Tu cuenta está vinculada a <strong>{{ alumnoEmail
+                                }}</strong>.</p>
+                        <a href="https://calendar.google.com/" target="_blank"
+                            class="btn btn-primary btn-sm w-100 rounded-pill">
+                            Abrir Google Calendar
+                        </a>
+                    </div>
+                    } @else {
+                    <div class="caja-agenda-desvinculada p-4 text-center">
+                        <i class="bi bi-calendar-x text-muted fs-3 mb-2 d-block"></i>
+                        <h6 class="fw-bold texto-secundario mb-1">Google Calendar Desvinculado</h6>
+                        <p class="texto-mutado small mb-0">Vincula tu cuenta de Google en el panel principal para
+                            sincronizar eventos.</p>
+                    </div>
+                    }
+                </div>
+
+                <div class="tarjeta-delicada p-4">
+                    <h5 class="fw-bold mb-4 texto-primario d-flex align-items-center"><i
+                            class="bi bi-question-circle text-primary me-2"></i>Preguntas Frecuentes</h5>
+                    <div class="accordion accordion-flush" id="accordionFAQ">
+                        <div class="accordion-item bg-transparent">
+                            <h2 class="accordion-header">
+                                <button
+                                    class="accordion-button collapsed shadow-none px-0 bg-transparent texto-primario"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    ¿Qué pasa si el profesor cancela?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body texto-secundario small px-0">
+                                    La tutoría se marcará como rechazada o finalizada y el monto abonado se devolverá
+                                    automáticamente a tu cuenta de Mercado Pago.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-transparent mt-2">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed shadow-none px-0 bg-transparent texto-primario" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    ¿Puedo reprogramar la clase?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body texto-secundario small px-0">
+                                    ¡Sí! Si te surge un inconveniente, podés escribirle al profesor por la plataforma con al menos 12 horas de anticipación para acordar un nuevo horario usando el mismo pago.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    }
+        }
 
-    @if (rol === 'profesor') {
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="tarjeta-delicada p-4 shadow-sm bg-body-secondary rounded">
-                <h4 class="fw-normal mb-4 border-bottom pb-3 text-dark">Mi Disponibilidad Semanal</h4>
+        @if (rol === 'profesor') {
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
+                <div class="tarjeta-delicada p-4 p-md-5">
+                    <h3 class="fw-bold mb-2 texto-primario text-center">Mi Disponibilidad Semanal</h3>
+                    <p class="texto-mutado text-center mb-5">Configurá los bloques de días y horarios en los que estás
+                        disponible para recibir solicitudes de alumnos.</p>
 
-                <div class="mb-4">
-                    <h6 class="fw-semibold text-dark mb-3">Horarios Activos:</h6>
-                    @if (horariosProfesor.length === 0) {
-                    <div class="alert alert-light border small text-center text-muted">No tienes horarios configurados.</div>
-                    }
-                    <ul class="list-group list-group-flush border rounded bg-white">
-                        @for (horario of horariosProfesor; track horario.id) {
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            <span class="text-dark"><strong class="text-capitalize">{{ horario.diaSemana }}</strong>: de {{
-                                horario.horaInicio }} a {{ horario.horaFin }}</span>
-                            <button class="btn btn-sm btn-outline-danger shadow-none border-0"
-                                (click)="eliminarHorario(horario.id)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </li>
+                    <div class="mb-5">
+                        <h6 class="fw-semibold texto-secundario text-uppercase tracking-wide mb-3 espaciado-letras">
+                            Horarios Activos en la plataforma:</h6>
+                        @if (horariosProfesor.length === 0) {
+                        <div
+                            class="alert alert-light border border-dashed text-center texto-mutado p-4 rounded-4 bg-white shadow-sm">
+                            <i class="bi bi-calendar-plus fs-3 d-block mb-2 text-primary"></i>
+                            No tienes horarios configurados todavía. Comienza agregando uno abajo.
+                        </div>
+                        } @else {
+                        <ul class="list-group list-group-flush border rounded-4 bg-white overflow-hidden shadow-sm">
+                            @for (horario of horariosProfesor; track horario.id) {
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 px-4 border-bottom border-opacity-10">
+                                <span class="texto-secundario fs-6"><strong class="text-capitalize text-primary">{{
+                                        horario.diaSemana }}</strong>: de {{ horario.horaInicio }} a {{ horario.horaFin
+                                    }} hs</span>
+                                <button class="btn btn-outline-danger shadow-none"
+                                    (click)="eliminarHorario(horario.id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </li>
+                            }
+                        </ul>
                         }
-                    </ul>
-                </div>
+                    </div>
 
-                <div class="bg-light p-3 rounded border">
-                    <h6 class="fw-semibold text-muted small mb-3">Agregar nuevo bloque de horario</h6>
-                    <div class="row g-2 align-items-end">
-                        <div class="col-md-4">
-                            <label class="form-label small text-dark">Día</label>
-                            <select class="form-select shadow-none" [(ngModel)]="nuevoHorario.diaSemana">
-                                <option value="lunes">Lunes</option>
-                                <option value="martes">Martes</option>
-                                <option value="miercoles">Miércoles</option>
-                                <option value="jueves">Jueves</option>
-                                <option value="viernes">Viernes</option>
-                                <option value="sabado">Sábado</option>
-                                <option value="domingo">Domingo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-dark">Desde</label>
-                            <input type="time" class="form-control shadow-none" [(ngModel)]="nuevoHorario.horaInicio">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-dark">Hasta</label>
-                            <input type="time" class="form-control shadow-none" [(ngModel)]="nuevoHorario.horaFin">
-                        </div>
-                        <div class="col-md-2 d-grid">
-                            <button class="btn btn-primary fw-normal" (click)="agregarHorario()">Sumar</button>
+                    <div class="caja-agenda-desvinculada p-4 rounded-4 border">
+                        <h6 class="fw-bold texto-primario mb-3"><i
+                                class="bi bi-plus-circle-fill text-primary me-2"></i>Agregar nuevo bloque de horario
+                        </h6>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold texto-secundario">Día</label>
+                                <select class="form-select shadow-none" [(ngModel)]="nuevoHorario.diaSemana">
+                                    <option value="lunes">Lunes</option>
+                                    <option value="martes">Martes</option>
+                                    <option value="miercoles">Miércoles</option>
+                                    <option value="jueves">Jueves</option>
+                                    <option value="viernes">Viernes</option>
+                                    <option value="sabado">Sábado</option>
+                                    <option value="domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold texto-secundario">Desde</label>
+                                <input type="time" class="form-control shadow-none"
+                                    [(ngModel)]="nuevoHorario.horaInicio">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold texto-secundario">Hasta</label>
+                                <input type="time" class="form-control shadow-none" [(ngModel)]="nuevoHorario.horaFin">
+                            </div>
+                            <div class="col-12 mt-4 d-grid">
+                                <button class="btn btn-primary btn-lg fs-6 fw-semibold"
+                                    (click)="agregarHorario()">Guardar Bloque Disponible</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        }
     </div>
-    }
 </div>
