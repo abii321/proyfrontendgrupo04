@@ -1,19 +1,21 @@
-export class Respuesta {
+export class Respuesta{
 
-    id?: number;
+    id?:number;
 
-    id_solicitud!: number;
+    id_solicitud!:number;
 
-    id_usuario!: number;
+    id_usuario!:number;
 
-    respuesta!: string;
+    respuesta!:string;
 
-    archivoAdjunto!: string;
+    precio!:number;
 
-    fecha_creacion?: Date;
+    estado!:string;
 
-    fecha_actualizacion?: Date;
+    pagada!:boolean;
 
-    constructor(){}
+    payment_id?:string;
+
+    archivoAdjunto?:string;
 
 }

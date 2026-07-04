@@ -76,6 +76,12 @@ export class AutenticacionService {
     return this.http.post(this.urlBase + "loginGoogle", datosGoogle, httpOptions);
   }
 
+  getUserRole(): string {
+    const usuario = sessionStorage.getItem("usuario");
+    if (usuario) return JSON.parse(usuario).rol;
+    return '';
+  }
+
   updateUsuario(id: string | number, datos: any): Observable<any> {
     let httpOptions = {
       headers: new HttpHeaders({
@@ -83,6 +89,16 @@ export class AutenticacionService {
       })
     };
     return this.http.put(this.urlHost + 'api/usuario/' + id, datos, httpOptions);
+  }
+
+  postVincularGoogle(usuarioId: number, token: string): Observable<any> {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    const body = { usuarioId, token };
+    return this.http.post(this.urlBase + 'vincularGoogle', body, httpOptions);
   }
 
 }

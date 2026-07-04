@@ -10,6 +10,9 @@ export class Usuario {
     ubicacion!: string | null;
     universidad!: string;
     carrera!: string;
+    nivelAcademico!: string | null;
+    biografia!: string | null;
+    tarifaBase!: number | null;
     
     constructor(){
 

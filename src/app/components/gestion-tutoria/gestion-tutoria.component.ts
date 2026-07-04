@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TutoriaService } from '../../services/tutoria.service'; // Ajustá esta ruta si es necesario
+import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AutenticacionService } from '../../services/autenticacion.service';
+import { TutoriaService } from '../../services/tutoria.service';
+import { MercadoPagoService } from '../../services/mercadoPago.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-gestion-tutoria',
@@ -11,63 +16,122 @@ import { TutoriaService } from '../../services/tutoria.service'; // Ajustá esta
   styleUrls: ['./gestion-tutoria.component.css']
 })
 export class GestionTutoriaComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AutenticacionService);
+  private tutoriaService = inject(TutoriaService);
+  private mpService = inject(MercadoPagoService);
+  private cdr = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
 
   rol: string = '';
-  // Simulamos al profesor seleccionado 
-  profesorSeleccionado = {
-    id: 2, // ID importante para la base de datos
-    nombre: 'María Gómez',
+  usuarioId: number = 0;
+  alumnoProveedorAuth: string = '';
+  alumnoEmail: string = '';
+  calendarUrl: SafeResourceUrl | null = null;
+
+  profesorSeleccionado: any = { 
+    id: 0,
+    nombre: '', 
     tarifaBase: 2000,
-    categorias: ['Programación Web', 'Bases de Datos'],
-    categoriaId: 1 // ID de la categoría para guardar en BD
+    categoriasEnseniadas: []
   };
 
-  // Ahora arranca vacío, se llena con la base de datos
   horariosProfesor: any[] = [];
 
   solicitud = {
     modalidad: 'virtual',
     fechaHora: '',
-    mensaje: ''
+    mensaje: '',
+    categoriaId: ''
   };
 
   errorDisponibilidad: string = '';
   nuevoHorario = { diaSemana: 'lunes', horaInicio: '', horaFin: '' };
 
-  // INYECTAMOS EL SERVICIO 
-  constructor(private tutoriaService: TutoriaService) { }
-
   ngOnInit() {
-    //  Lee el rol del usuario que inició sesión
-    const usuarioString = localStorage.getItem('usuarioLogueado');
-console.log("1. Texto en localStorage:", usuarioString);
-    if (usuarioString) {
-      const usuario = JSON.parse(usuarioString);
-
-      console.log("2. Objeto usuario detectado:", usuario); 
-      console.log("3. El rol específico es:", usuario.rol);
-
-      this.rol = usuario.rol; // 'alumno' o 'profesor'
-    } else {
-      
-      console.log("No se encontró 'usuarioLogueado' en localStorage.");
-      
-      this.rol = 'alumno'; // Por defecto si no hay nadie logueado
+    if (!this.authService.userLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
     }
-    
-    console.log("4. ROL FINAL ASIGNADO A LA VISTA:", this.rol);
 
-    this.cargarHorariosReales();
+    this.rol = this.authService.getUserRole();
+    const userStr = sessionStorage.getItem('usuario');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      this.usuarioId = user.id;
+      this.alumnoProveedorAuth = user.proveedorAuth || 'local';
+      this.alumnoEmail = user.email || '';
+    }
+
+    if (this.rol === 'alumno') {
+      const profesorId = parseInt(this.route.snapshot.queryParams['profesorId'] || '0');
+      if (profesorId) {
+        this.cargarProfesor(profesorId);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se especificó un profesor válido.'
+        }).then(() => {
+          this.router.navigate(['/solicitar-tutoria']);
+        });
+      }
+
+      if (this.alumnoProveedorAuth === 'Google' && this.alumnoEmail) {
+        const rawUrl = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(this.alumnoEmail)}&ctz=America/Argentina/Buenos_Aires`;
+        this.calendarUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+      }
+    } else if (this.rol === 'profesor') {
+      this.cargarMisHorarios();
+    }
   }
 
-  cargarHorariosReales() {
-    this.tutoriaService.obtenerHorariosProfesor(this.profesorSeleccionado.id).subscribe({
-      next: (res) => {
-        if (res.status === 1) {
-          this.horariosProfesor = res.data;
+  cargarProfesor(id: number) {
+    this.tutoriaService.obtenerUsuarios().subscribe({
+      next: (users: any[]) => {
+        const userDetail = users.find((u: any) => u.id === id);
+        if (userDetail) {
+          this.profesorSeleccionado = {
+            id: userDetail.id,
+            nombre: `${userDetail.nombre} ${userDetail.apellido}`,
+            tarifaBase: userDetail.tarifaBase || 2000,
+            categoriasEnseniadas: userDetail.categoriasEnseniadas || []
+          };
+          this.horariosProfesor = (userDetail.horarios || []).map((h: any) => ({
+            id: h.id,
+            diaSemana: h.dia_semana || h.diaSemana,
+            horaInicio: (h.hora_inicio || h.horaInicio).slice(0, 5),
+            horaFin: (h.hora_fin || h.horaFin).slice(0, 5)
+          }));
         }
+        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error al cargar horarios', err)
+      error: (err) => {
+        console.error('Error al cargar datos del profesor:', err);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cargarMisHorarios() {
+    this.tutoriaService.obtenerUsuarios().subscribe({
+      next: (users: any[]) => {
+        const myDetail = users.find((u: any) => u.id === this.usuarioId);
+        if (myDetail && myDetail.horarios) {
+          this.horariosProfesor = myDetail.horarios.map((h: any) => ({
+            id: h.id,
+            diaSemana: h.dia_semana || h.diaSemana,
+            horaInicio: (h.hora_inicio || h.horaInicio).slice(0, 5),
+            horaFin: (h.hora_fin || h.horaFin).slice(0, 5)
+          }));
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar mis horarios:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -92,14 +156,14 @@ console.log("1. Texto en localStorage:", usuarioString);
     const minutos = fechaElegida.getMinutes().toString().padStart(2, '0');
     const horaElegidaStr = `${horas}:${minutos}`;
 
-    const horarioValido = this.horariosProfesor.find(h =>
-      h.dia_semana === diaElegido && // Ajustado para que coincida con la propiedad del backend
-      horaElegidaStr >= h.hora_inicio && // (hora_inicio)
-      horaElegidaStr <= h.hora_fin // (hora_fin)
+    const horarioValido = this.horariosProfesor.find(h => 
+      (h.diaSemana || '').toLowerCase() === diaElegido.toLowerCase() &&
+      horaElegidaStr >= h.horaInicio &&
+      horaElegidaStr <= h.horaFin
     );
 
     if (!horarioValido) {
-      this.errorDisponibilidad = `El profesor no está disponible el ${diaElegido} a las ${horaElegidaStr}. Revisá sus horarios.`;
+      this.errorDisponibilidad = `El profesor no está disponible el ${diaElegido} a las ${horaElegidaStr}. Revisa sus horarios.`;
     } else {
       this.errorDisponibilidad = '';
     }
@@ -109,66 +173,125 @@ console.log("1. Texto en localStorage:", usuarioString);
     this.validarHorario();
     if (this.errorDisponibilidad) return;
 
-    // Armamos el objeto exacto que espera el backend para guardar la tutoría
-    const datosParaBD = {
-      alumno_id: 1, // ID de quien está logueado
+    const data = {
+      alumno_id: this.usuarioId,
       profesor_id: this.profesorSeleccionado.id,
-      categoria_id: this.profesorSeleccionado.categoriaId,
+      categoria_id: parseInt(this.solicitud.categoriaId),
       modalidad: this.solicitud.modalidad,
       precio_acordado: this.precioFinal,
-      mensaje: this.solicitud.mensaje,
-      fecha_hora: this.solicitud.fechaHora
+      fecha_hora: new Date(this.solicitud.fechaHora).toISOString(),
+      estado: 'pendiente',
+      mensaje: this.solicitud.mensaje
     };
 
-    this.tutoriaService.solicitarTutoria(datosParaBD).subscribe({
-      next: (res) => {
-        alert(`¡Tutoría agendada en la base de datos! Total a abonar: $${this.precioFinal}`);
-        // REDIRECCIONAR a MercadoPago
+    this.tutoriaService.solicitarTutoria(data).subscribe({
+      next: (res: any) => {
+        const tutoriaId = res.data.id;
+        
+        this.mpService.crearPreferencia(tutoriaId).subscribe({
+          next: (mpRes: any) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Tutoría Solicitada',
+              text: 'Redirigiéndote a Mercado Pago para realizar el pago...',
+              timer: 3000,
+              showConfirmButton: false
+            }).then(() => {
+              if (mpRes.init_point) {
+                window.location.href = mpRes.init_point;
+              } else {
+                this.router.navigate(['/mis-solicitudes']);
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Error al crear preferencia de Mercado Pago:', err);
+            Swal.fire({
+              icon: 'warning',
+              title: 'Tutoría guardada, pago pendiente',
+              text: 'La tutoría se registró correctamente, pero no se pudo generar el enlace de pago.'
+            }).then(() => {
+              this.router.navigate(['/mis-solicitudes']);
+            });
+          }
+        });
       },
       error: (err) => {
-        console.error('Error al solicitar:', err);
-        alert('Hubo un error al guardar la tutoría.');
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo registrar la solicitud de tutoría.'
+        });
       }
     });
   }
 
-  // --- LÓGICA PROFESOR ---
-
   agregarHorario() {
-    if (this.nuevoHorario.diaSemana && this.nuevoHorario.horaInicio && this.nuevoHorario.horaFin) {
-
-      const datosParaBD = {
-        profesor_id: this.profesorSeleccionado.id,
-        dia_semana: this.nuevoHorario.diaSemana,
-        hora_inicio: this.nuevoHorario.horaInicio,
-        hora_fin: this.nuevoHorario.horaFin
-      };
-
-      this.tutoriaService.crearHorario(datosParaBD).subscribe({
-        next: (res) => {
-          if (res.status === 1) {
-            // Agregamos a la vista el horario real que devolvió la BD (con su ID)
-            this.horariosProfesor.push(res.data);
-            // Limpiamos los campitos
-            this.nuevoHorario = { diaSemana: 'lunes', horaInicio: '', horaFin: '' };
-          }
+    if (this.nuevoHorario.horaInicio && this.nuevoHorario.horaFin) {
+      this.tutoriaService.agregarHorario(
+        this.usuarioId, 
+        this.nuevoHorario.diaSemana, 
+        this.nuevoHorario.horaInicio, 
+        this.nuevoHorario.horaFin
+      ).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Horario Agregado',
+            text: 'Tu disponibilidad se guardó correctamente.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.cargarMisHorarios();
+          this.nuevoHorario.horaInicio = '';
+          this.nuevoHorario.horaFin = '';
         },
-        error: (err) => console.error('Error al guardar horario:', err)
+        error: (err) => {
+          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un problema al guardar el horario.'
+          });
+        }
       });
     }
   }
 
-  eliminarHorario(index: number, idHorario: number) {
-    if (!idHorario) return;
-
-    this.tutoriaService.eliminarHorario(idHorario).subscribe({
-      next: (res) => {
-        if (res.status === 1) {
-          // Lo sacamos de la pantalla SOLO si la base de datos confirmó que lo borró
-          this.horariosProfesor.splice(index, 1);
-        }
-      },
-      error: (err) => console.error('Error al eliminar horario:', err)
+  eliminarHorario(id: number) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este bloque de disponibilidad será eliminado.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.tutoriaService.eliminarHorario(id).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Eliminado',
+              text: 'El horario ha sido eliminado.',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            this.cargarMisHorarios();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar el horario.'
+            });
+          }
+        });
+      }
     });
   }
 }
