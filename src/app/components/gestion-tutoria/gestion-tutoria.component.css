@@ -132,3 +132,28 @@
     font-weight: 500;
     color: #5C6B73;
 }
+/* Botones de selección de turnos y duración */
+.btn-pill {
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-outline-secundario {
+    background-color: transparent;
+    border: 2px solid #DCE0D9;
+    color: #5C6B73;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-secundario:hover {
+    border-color: #A3B19B;
+    background-color: rgba(163, 177, 155, 0.1);
+}
+
+.btn-primario-activo {
+    background-color: #6C8484 !important;
+    border: 2px solid #6C8484 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(108, 132, 132, 0.3);
+}
