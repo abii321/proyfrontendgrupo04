@@ -55,7 +55,7 @@ export class GestionTutoriaComponent implements OnInit {
       return;
     }
 
-    this.rol = this.authService.getUserRole();
+    //this.rol = this.authService.getUserRole();
     const userStr = sessionStorage.getItem('usuario');
     if (userStr) {
       const user = JSON.parse(userStr);
