@@ -92,6 +92,31 @@ export class DashboardComponent implements OnInit {
   // TODO: cuando se instale angular-datatables, aplicar DataTableDirective a la tabla HTML
   // y configurar dtOptions / dtTrigger acá.
 
+  // --- FINANCIAL/OPERATIONAL KPIS ---
+  get totalRevenue(): number {
+    return this.tutorials
+      .filter(t => t.pagada)
+      .reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+  }
+
+  get pendingRevenue(): number {
+    return this.tutorials
+      .filter(t => !t.pagada && t.estado !== 'rechazada' && t.estado !== 'cancelada')
+      .reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+  }
+
+  get averagePrice(): number {
+    if (this.tutorials.length === 0) return 0;
+    const total = this.tutorials.reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+    return total / this.tutorials.length;
+  }
+
+  get paymentRate(): number {
+    if (this.tutorials.length === 0) return 0;
+    const paidCount = this.tutorials.filter(t => t.pagada).length;
+    return (paidCount / this.tutorials.length) * 100;
+  }
+
   constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -196,23 +221,28 @@ export class DashboardComponent implements OnInit {
 
   // Exporta el listado de tutorías a un archivo PDF
   exportToPDF(): void {
-    const doc = new jsPDF();
+    const doc = new jsPDF({ orientation: 'landscape' });
     doc.setFontSize(13);
     doc.text('Reporte de Tutorías', 14, 15);
 
     autoTable(doc, {
       startY: 22,
-      head: [['#', 'Alumno', 'Profesor', 'Categoría', 'Modalidad', 'Estado', 'Fecha']],
+      head: [['#', 'Alumno', 'Email Alumno', 'Profesor', 'Email Profesor', 'Categoría', 'Modalidad', 'Estado', 'Pagada', 'Precio', 'Fecha de Clase', 'Registro']],
       body: this.tutorials.map(t => [
         t.id,
         `${t.alumno?.nombre ?? ''} ${t.alumno?.apellido ?? ''}`,
+        t.alumno?.email ?? '',
         `${t.profesor?.nombre ?? ''} ${t.profesor?.apellido ?? ''}`,
+        t.profesor?.email ?? '',
         t.categoria?.nombre ?? '',
         t.modalidad,
         t.estado,
+        t.pagada ? 'Sí' : 'No',
+        `$${t.precio_acordado.toFixed(2)}`,
+        t.fecha_hora ? new Date(t.fecha_hora).toLocaleString() : '',
         new Date(t.createdAt).toLocaleDateString()
       ]),
-      styles: { fontSize: 9 },
+      styles: { fontSize: 8 },
       headStyles: { fillColor: [90, 107, 124] }
     });
 
@@ -224,11 +254,16 @@ export class DashboardComponent implements OnInit {
     const rows = this.tutorials.map(t => ({
       'ID': t.id,
       'Alumno': `${t.alumno?.nombre ?? ''} ${t.alumno?.apellido ?? ''}`,
+      'Email Alumno': t.alumno?.email ?? '',
       'Profesor': `${t.profesor?.nombre ?? ''} ${t.profesor?.apellido ?? ''}`,
+      'Email Profesor': t.profesor?.email ?? '',
       'Categoría': t.categoria?.nombre ?? '',
       'Modalidad': t.modalidad,
       'Estado': t.estado,
-      'Fecha': new Date(t.createdAt).toLocaleDateString()
+      'Pagada': t.pagada ? 'Sí' : 'No',
+      'Precio': t.precio_acordado,
+      'Fecha de Clase': t.fecha_hora ? new Date(t.fecha_hora).toLocaleString() : '',
+      'Fecha Registro': new Date(t.createdAt).toLocaleDateString()
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(rows);

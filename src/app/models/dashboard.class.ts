@@ -35,6 +35,7 @@ export interface FullTutorial {
     estado: string;
     modalidad: string;
     precio_acordado: number;
+    fecha_hora: string;
     preference_id?: string;
     payment_id?: string;
     pagada: boolean;
