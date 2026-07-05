@@ -6,6 +6,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { TutoriaService } from '../../services/tutoria.service';
 import { MercadoPagoService } from '../../services/mercadoPago.service';
+// 1. Importar el nuevo servicio de precios
+import { PrecioService } from '../../services/precio.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -31,6 +33,7 @@ export class GestionTutoriaComponent implements OnInit {
 
   horariosProfesor: any[] = [];
   turnosDisponibles: any[] = []; 
+  listaPreciosBD: any[] = []; // 2. Variable para guardar los precios
 
   solicitud = {
     modalidad: 'virtual',
@@ -50,13 +53,13 @@ export class GestionTutoriaComponent implements OnInit {
 
   errorDisponibilidad: string = '';
 
-  // --- CONSTRUCTOR CLÁSICO ---
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authService: AutenticacionService,
     private tutoriaService: TutoriaService,
     private mpService: MercadoPagoService,
+    private precioService: PrecioService, // 3. Inyectar el servicio en el constructor
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {}
@@ -75,6 +78,9 @@ export class GestionTutoriaComponent implements OnInit {
       this.alumnoEmail = user.email || '';
     }
 
+    // 4. Traer los precios apenas entra a la pantalla
+    this.cargarPrecios();
+
     const profesorId = parseInt(this.route.snapshot.queryParams['profesorId'] || '0');
     if (profesorId) {
       this.cargarProfesor(profesorId);
@@ -92,6 +98,16 @@ export class GestionTutoriaComponent implements OnInit {
       const rawUrl = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(this.alumnoEmail)}&ctz=America/Argentina/Buenos_Aires`;
       this.calendarUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
     }
+  }
+
+  cargarPrecios() {
+    // 5. Petición al backend usando el servicio nuevo
+    this.precioService.obtenerPrecios().subscribe({
+      next: (res: any) => {
+        this.listaPreciosBD = res.data || res;
+      },
+      error: (err: any) => console.error('Error al cargar precios:', err)
+    });
   }
 
   cargarProfesor(id: number) {
@@ -121,18 +137,19 @@ export class GestionTutoriaComponent implements OnInit {
   }
 
   get precioFinal(): number {
-    if (!this.solicitud.duracion) return 0;
+    // 6. Si aún no cargaron los precios, retorna 0
+    if (!this.solicitud.duracion || this.listaPreciosBD.length === 0) return 0;
     
     const nivel = (this.profesorSeleccionado.nivelAcademico || 'universitario').toLowerCase();
     const modalidad = this.solicitud.modalidad; 
 
-    let tarifaHora = 0;
-    if (nivel === 'primario') tarifaHora = modalidad === 'presencial' ? 5000 : 4000;
-    else if (nivel === 'secundario') tarifaHora = modalidad === 'presencial' ? 8000 : 7000;
-    else if (nivel === 'terciario') tarifaHora = modalidad === 'presencial' ? 10000 : 9000;
-    else if (nivel === 'universitario') tarifaHora = modalidad === 'presencial' ? 11900 : 10000;
-    else if (nivel === 'doctorado') tarifaHora = modalidad === 'presencial' ? 13000 : 12800;
-    else tarifaHora = modalidad === 'presencial' ? 11900 : 10000; 
+    // 7. Busca en la base de datos el precio que coincide con nivel y modalidad
+    const precioEncontrado = this.listaPreciosBD.find(
+      p => p.nivel === nivel && p.modalidad === modalidad
+    );
+
+    // Si no encuentra coincidencia, usa un precio base genérico
+    const tarifaHora = precioEncontrado ? precioEncontrado.precio : 10000;
 
     const costoCalculado = (tarifaHora / 60) * this.solicitud.duracion;
     return Math.round(costoCalculado);
@@ -228,7 +245,8 @@ export class GestionTutoriaComponent implements OnInit {
 
     this.tutoriaService.solicitarTutoria(data).subscribe({
       next: (res: any) => {
-        const tutoriaId = res.data.id;
+        // Adaptación por si el backend manda el id suelto o adentro de data
+        const tutoriaId = res.data?.id || res.id;
         
         this.mpService.crearPreferencia(tutoriaId).subscribe({
           next: (mpRes: any) => {
