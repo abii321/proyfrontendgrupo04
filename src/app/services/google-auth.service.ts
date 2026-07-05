@@ -7,12 +7,12 @@ declare const google: any;
 })
 export class GoogleAuthService {
 
-  private clientId = '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com';
+  private client_id = '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com';
 
   inicializar(callback: (response: any) => void) {
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
-        client_id: this.clientId,
+        client_id: this.client_id,
         callback: callback // Pasamos la función manejadora
       });
     }

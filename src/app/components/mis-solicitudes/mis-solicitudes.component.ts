@@ -124,10 +124,10 @@ export class MisSolicitudesComponent implements OnInit {
         if (res && res.data) {
           const allTutorias = res.data || [];
           if (this.rol === 'alumno') {
-            this.misTutorias = allTutorias.filter((t: any) => t.alumno_id === this.usuarioId);
+            this.misTutorias = allTutorias.filter((t: any) => t.alumnoId === this.usuarioId);
             this.actualizarMetricasAlumno();
           } else if (this.rol === 'profesor') {
-            this.misTutorias = allTutorias.filter((t: any) => t.profesor_id === this.usuarioId);
+            this.misTutorias = allTutorias.filter((t: any) => t.profesorId === this.usuarioId);
             this.actualizarMetricasProfesor();
           }
         }
@@ -146,7 +146,7 @@ export class MisSolicitudesComponent implements OnInit {
         if (res && res.data) {
           const allSolicitudes = res.data || [];
           if (this.rol === 'alumno') {
-            this.misTareas = allSolicitudes.filter((s: any) => s.id_usuario === this.usuarioId);
+            this.misTareas = allSolicitudes.filter((s: any) => s.usuarioId === this.usuarioId);
           }
         }
         this.cdr.detectChanges();
@@ -270,9 +270,9 @@ export class MisSolicitudesComponent implements OnInit {
     if (!this.tutoriaSeleccionada) return;
 
     const body = {
-      alumno_id: this.tutoriaSeleccionada.alumno_id,
-      profesor_id: this.tutoriaSeleccionada.profesor_id,
-      categoria_id: this.tutoriaSeleccionada.categoria_id,
+      alumnoId: this.tutoriaSeleccionada.alumnoId,
+      profesorId: this.tutoriaSeleccionada.profesorId,
+      categoriaId: this.tutoriaSeleccionada.categoriaId,
       fecha_hora: this.tutoriaSeleccionada.fecha_hora,
       estado: nuevoEstado,
       mensaje: this.tutoriaSeleccionada.mensaje,
@@ -345,7 +345,7 @@ export class MisSolicitudesComponent implements OnInit {
     if (!this.tutoriaSeleccionada || this.nuevaPuntuacion === 0) return;
 
     const body = {
-      tutoria_id: this.tutoriaSeleccionada.id,
+      tutoriaId: this.tutoriaSeleccionada.id,
       calificacion: this.nuevaPuntuacion,
       comentario: this.nuevoComentario
     };

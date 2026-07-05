@@ -38,7 +38,7 @@ export class SolicitudAyudaComponent implements OnInit {
   }
 
   esDueno(s: Solicitud): boolean {
-    return s.id_usuario === this.idUsuarioLogueado;
+    return s.usuarioId === this.idUsuarioLogueado;
   }
 
   cerrar(id: number) {

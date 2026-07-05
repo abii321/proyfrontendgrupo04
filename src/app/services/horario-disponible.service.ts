@@ -21,7 +21,7 @@ export class HorarioDisponibleService {
     let body = {
       'diaSemana' : horario.diaSemana,
       'horaInicio' : horario.horaInicio,
-      'horaFin' : horario.horaFin,  
+      'horaFin' : horario.horaFin,
       'modalidad' : horario.modalidad,
       'profesorId' : profesorId,
     }

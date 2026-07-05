@@ -45,7 +45,7 @@ export class RespuestaAyudaComponent implements OnInit {
   }
 
   getPublicadoPorTexto(): string {
-    if (!this.solicitud?.id_usuario) {
+    if (!this.solicitud?.usuarioId) {
       return 'No disponible';
     }
 
@@ -58,9 +58,9 @@ export class RespuestaAyudaComponent implements OnInit {
     if (usuarioClave) {
       try {
         const usuario = JSON.parse(usuarioClave);
-        const idUsuario = Number(usuario.id || usuario.id_usuario);
+        const idUsuario = Number(usuario.id || usuario.usuarioId);
 
-        if (idUsuario === Number(this.solicitud.id_usuario)) {
+        if (idUsuario === Number(this.solicitud.usuarioId)) {
           return usuario.nombre ? `Tú (${usuario.nombre})` : 'Tú';
         }
       } catch {
@@ -68,7 +68,7 @@ export class RespuestaAyudaComponent implements OnInit {
       }
     }
 
-    return `Usuario #${this.solicitud.id_usuario}`;
+    return `Usuario #${this.solicitud.usuarioId}`;
   }
 
  pagarRespuesta(respuesta: Respuesta) {
@@ -82,7 +82,7 @@ export class RespuestaAyudaComponent implements OnInit {
 
     next: (result: any) => {
 
-      if (result.status === 1) {
+      if (result.status === 1 && result.init_point) {
         window.location.href = result.init_point;
       } else {
         alert("No se pudo generar el pago.");
@@ -113,7 +113,7 @@ guardar() {
   }
 
   // ID de la solicitud
-  this.respuesta.id_solicitud = this.solicitud.id;
+  this.respuesta.idSolicitud = this.solicitud.id;
 
   // Obtener usuario logueado
   const usuarioClave =
@@ -128,18 +128,18 @@ guardar() {
 
       const usuarioLogueado = JSON.parse(usuarioClave);
 
-      this.respuesta.id_usuario =
-        usuarioLogueado.id || usuarioLogueado.id_usuario;
+      this.respuesta.idUsuario =
+        usuarioLogueado.id || usuarioLogueado.usuarioId;
 
     } catch {
 
-      this.respuesta.id_usuario = Number(usuarioClave);
+      this.respuesta.idUsuario = Number(usuarioClave);
 
     }
 
   }
 
-  if (!this.respuesta.id_usuario) {
+  if (!this.respuesta.idUsuario) {
 
     alert("No se pudo identificar el usuario.");
 

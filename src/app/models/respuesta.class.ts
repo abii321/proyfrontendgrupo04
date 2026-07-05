@@ -2,9 +2,9 @@ export class Respuesta{
 
     id?:number;
 
-    id_solicitud!:number;
+    idSolicitud!:number;
 
-    id_usuario!:number;
+    idUsuario!:number;
 
     respuesta!:string;
 
@@ -14,7 +14,7 @@ export class Respuesta{
 
     pagada!:boolean;
 
-    payment_id?:string;
+    paymentId?:string;
 
     archivoAdjunto?:string;
 

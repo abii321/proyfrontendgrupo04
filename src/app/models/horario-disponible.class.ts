@@ -1,9 +1,10 @@
 export class HorarioDisponible {
     id!: number;
     diaSemana!: string;
-    horaInicio!: number;
-    horaFin!: number;
+    horaInicio!: string;
+    horaFin!: string;
     modalidad!: string;
+    estado!: string;
 
     constructor(){
     }
