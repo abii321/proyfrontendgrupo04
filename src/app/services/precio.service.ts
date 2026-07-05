@@ -18,6 +18,6 @@ export class PrecioService {
       })
     };
       
-    return this.http.post(this.urlBase, httpOptions);
+    return this.http.get(this.urlBase, httpOptions);
   }
 }

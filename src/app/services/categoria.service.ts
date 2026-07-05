@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Categoria } from '../models/categoria.class';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +13,40 @@ export class CategoriaService {
 
   constructor(private http: HttpClient){ }
 
-  obtenerCategorias( ): Observable<any>{
+  asociarProfesor( categoriaId: number, profesorId: number){
     let httpOptions = {
       headers : new HttpHeaders({
         'Content-Type':'application/json'
       })
     };
-      
-    return this.http.post(this.urlBase, httpOptions);
+    let body = {
+      'categoriaId' : categoriaId,
+      'profesorId' : profesorId,
+    }
+    console.log(body);
+    return this.http.post(this.urlBase+"profesor", body, httpOptions);
+  }
+
+  desasociarProfesor( categoriaId: number, profesorId: number){
+    let body = {
+      'categoriaId' : categoriaId,
+      'profesorId' : profesorId,
+    }
+    console.log(body);
+    
+    return this.http.delete(this.urlBase + "profesor", {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+        body: body 
+    });
+  }
+
+  obtenerCategoriasdeProfesor( profesorId: number){
+    return this.http.get(this.urlBase + "profesor/" + profesorId);
+  }
+
+  obtenerCategorias( ): Observable<any>{
+    return this.http.get(this.urlBase);
   }
 }
