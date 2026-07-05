@@ -2,20 +2,24 @@
   <div class="container">
 
     <div class="row mb-5 align-items-end border-bottom pb-4 border-opacity-10">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <h2 class="fw-bold mb-2 texto-primario">Red de Tutores Académicos</h2>
-        <p class="texto-secundario mb-0 fs-6">Una comunidad de profesionales listos para ayudarte. Hacé clic en un
-          perfil para conocer su trayectoria.</p>
+        <p class="texto-secundario mb-0 fs-6">Una comunidad de profesionales listos para ayudarte. Hacé clic en un perfil para conocer su trayectoria.</p>
       </div>
-      <div class="col-md-4 mt-4 mt-md-0">
-        <label for="categoriaSelect"
-          class="form-label fw-semibold small texto-mutado mb-2 text-uppercase espaciado-letras">Filtrar por
-          especialidad</label>
+      <div class="col-md-3 mt-3 mt-md-0">
+        <label for="categoriaSelect" class="form-label fw-semibold small texto-mutado mb-2 text-uppercase espaciado-letras">Filtrar por especialidad</label>
         <select id="categoriaSelect" class="form-select select-sobrio shadow-none" [(ngModel)]="filtroCategoria">
           <option value="">Todas las especialidades</option>
           @for (cat of categorias; track cat.id) {
           <option [value]="cat.nombre">{{ cat.nombre }}</option>
           }
+        </select>
+      </div>
+      <div class="col-md-3 mt-3 mt-md-0">
+        <label for="ordenarSelect" class="form-label fw-semibold small texto-mutado mb-2 text-uppercase espaciado-letras">Ordenar por</label>
+        <select id="ordenarSelect" class="form-select select-sobrio shadow-none" [(ngModel)]="criterioOrden" (change)="ordenarCambio()">
+          <option value="predeterminado">Por defecto</option>
+          <option value="cercania">Más cercanos a mí</option>
         </select>
       </div>
     </div>
@@ -69,11 +73,17 @@
                   </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-2 mb-3 small">
-                  <span class="texto-destacado fw-semibold"><i class="bi bi-star-fill me-1"></i>{{ profesor.rating ||
-                    '5.0' }}</span>
+                <div class="d-flex align-items-center gap-2 mb-3 small flex-wrap">
+                  <span class="texto-destacado fw-semibold"><i class="bi bi-star-fill me-1"></i>{{ profesor.rating || '5.0' }}</span>
                   <span class="texto-mutado opacity-50">|</span>
                   <span class="texto-mutado">{{ profesor.tutoriasDictadas || '0' }} clases dictadas</span>
+                  @if (alumnoLat && alumnoLng && profesor.lat && profesor.lng) {
+                    <span class="texto-mutado opacity-50">|</span>
+                    <span class="text-success fw-medium">
+                      <i class="bi bi-geo-alt-fill me-1"></i>
+                      A {{ calcularDistancia(alumnoLat, alumnoLng, profesor.lat, profesor.lng) | number:'1.1-1' }} km
+                    </span>
+                  }
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">

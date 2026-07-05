@@ -93,7 +93,12 @@
 
                         <div class="mb-3">
                             <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
-                            <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" #ubicacion="ngModel" required minlength="4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" #ubicacion="ngModel" required minlength="4" placeholder="Ej. Yerba Buena, Tucumán">
+                                <button class="btn btn-outline-secondary" type="button" (click)="detectarUbicacionGPS()" title="Detectar ubicación actual usando GPS">
+                                    <i class="bi bi-geo-alt"></i> Usar GPS
+                                </button>
+                            </div>
                             <div *ngIf="ubicacion.invalid && (ubicacion.touched || ubicacion.dirty)" class="text-danger small mt-1">
                                 <div *ngIf="ubicacion.errors?.['required']">Campo obligatorio.</div>
                                 <div *ngIf="ubicacion.errors?.['minlength']">Debe contener al menos 4 caracteres.</div>

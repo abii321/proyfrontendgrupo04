@@ -26,6 +26,9 @@ export class GaleriaProfesoresComponent implements OnInit {
   profesorSeleccionado: any = null;
   alumnoNivelAcademico: string = 'universitario';
   perfilIncompleto: boolean = false;  
+  criterioOrden: string = 'predeterminado';
+  alumnoLat: number | null = null;
+  alumnoLng: number | null = null;
 
   ngOnInit() {
     const userStr = sessionStorage.getItem('usuario');
@@ -33,6 +36,8 @@ export class GaleriaProfesoresComponent implements OnInit {
       const user = JSON.parse(userStr);
       this.rol = user.rol || '';
       this.alumnoNivelAcademico = user.nivelAcademico || 'universitario';
+      this.alumnoLat = user.lat || null;
+      this.alumnoLng = user.lng || null;
       if ((this.rol || '').toLowerCase() === 'profesor') {
         if (!user.universidad || !user.carrera || !user.biografia) {
           this.perfilIncompleto = true;
@@ -76,11 +81,66 @@ cargarProfesores() {
     });
   }
 
+  calcularDistancia(lat1: number | null | undefined, lon1: number | null | undefined, lat2: number | null | undefined, lon2: number | null | undefined): number {
+    if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
+      return Infinity;
+    }
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  detectarUbicacionGPSAlumno() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.alumnoLat = position.coords.latitude;
+          this.alumnoLng = position.coords.longitude;
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error al obtener ubicación:', error);
+          alert('No se pudo obtener tu ubicación para calcular la distancia.');
+          this.criterioOrden = 'predeterminado';
+          this.cdr.detectChanges();
+        }
+      );
+    } else {
+      alert('Tu navegador no soporta geolocalización.');
+      this.criterioOrden = 'predeterminado';
+    }
+  }
+
+  ordenarCambio() {
+    if (this.criterioOrden === 'cercania' && (!this.alumnoLat || !this.alumnoLng)) {
+      this.detectarUbicacionGPSAlumno();
+    }
+  }
+
   get profesoresFiltrados() {
-    if (!this.filtroCategoria) return this.profesores;
-    return this.profesores.filter(p => 
-      (p.categoriasEnseniadas || []).some((c: any) => c.nombre === this.filtroCategoria)
-    );
+    let list = this.profesores;
+    
+    if (this.filtroCategoria) {
+      list = list.filter(p => 
+        (p.categoriasEnseniadas || []).some((c: any) => c.nombre === this.filtroCategoria)
+      );
+    }
+
+    if (this.criterioOrden === 'cercania' && this.alumnoLat != null && this.alumnoLng != null) {
+      list = [...list].sort((a, b) => {
+        const distA = this.calcularDistancia(this.alumnoLat, this.alumnoLng, a.lat, a.lng);
+        const distB = this.calcularDistancia(this.alumnoLat, this.alumnoLng, b.lat, b.lng);
+        return distA - distB;
+      });
+    }
+
+    return list;
   }
 
   toggleProfesor(profesor: any) {
