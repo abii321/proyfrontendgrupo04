@@ -1,14 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { URL_HOST } from './api.config';
+import { Categoria } from '../models/categoria.class';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriaService {
 
-  urlHost : string = URL_HOST;
+  urlHost : string = environment.urlHost;
   urlBase : string = this.urlHost + 'api/categoria/';
 
   constructor(private http: HttpClient){ }

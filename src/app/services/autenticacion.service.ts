@@ -2,13 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.class';
-import { URL_HOST } from './api.config';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AutenticacionService {
-  urlHost : string = URL_HOST;
+  urlHost : string = environment.urlHost;
   urlBase : string = this.urlHost + 'api/autenticacion/';
 
   constructor(private http: HttpClient){ }

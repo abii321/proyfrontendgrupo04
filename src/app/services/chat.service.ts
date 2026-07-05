@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { URL_HOST } from './api.config';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  urlHost: string = URL_HOST;
+  urlHost: string = environment.urlHost;
   private apiUrl = this.urlHost + 'api/chat';
 
   constructor(private http: HttpClient) { }

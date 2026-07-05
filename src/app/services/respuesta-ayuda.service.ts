@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Respuesta } from '../models/respuesta.class';
-import { URL_HOST } from './api.config';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RespuestaAyudaService {
 
-  urlHost: string = URL_HOST;
+  urlHost: string = environment.urlHost;
   urlBase: string = this.urlHost + "api/respuesta/";
 
   constructor(private http: HttpClient) { }
