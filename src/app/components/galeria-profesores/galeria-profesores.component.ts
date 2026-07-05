@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TutoriaService } from '../../services/tutoria.service';
 import { AutenticacionService } from '../../services/autenticacion.service';
-// 1. Importar el nuevo servicio
 import { CategoriaService } from '../../services/categoria.service'; 
 
 @Component({
@@ -17,8 +16,8 @@ import { CategoriaService } from '../../services/categoria.service';
 export class GaleriaProfesoresComponent implements OnInit {
   private tutoriaService = inject(TutoriaService);
   private autenticacionService = inject(AutenticacionService);
-  // 2. Inyectar el servicio de categorías
   private categoriaService = inject(CategoriaService); 
+  private cdr = inject(ChangeDetectorRef);
 
   rol: string = '';
   categorias: any[] = [];
@@ -26,6 +25,7 @@ export class GaleriaProfesoresComponent implements OnInit {
   filtroCategoria: string = '';
   profesorSeleccionado: any = null;
   alumnoNivelAcademico: string = 'universitario';
+  perfilIncompleto: boolean = false;  
 
   ngOnInit() {
     const userStr = sessionStorage.getItem('usuario');
@@ -33,6 +33,11 @@ export class GaleriaProfesoresComponent implements OnInit {
       const user = JSON.parse(userStr);
       this.rol = user.rol || '';
       this.alumnoNivelAcademico = user.nivelAcademico || 'universitario';
+      if ((this.rol || '').toLowerCase() === 'profesor') {
+        if (!user.universidad || !user.carrera || !user.biografia) {
+          this.perfilIncompleto = true;
+        }
+      }
     }
 
     this.cargarCategorias();
@@ -40,7 +45,7 @@ export class GaleriaProfesoresComponent implements OnInit {
   }
 
   cargarCategorias() {
-    // 3. Usar el nuevo servicio en vez del viejo tutoriaService
+    //  Usar el nuevo servicio en vez del viejo tutoriaService
     this.categoriaService.obtenerCategorias().subscribe({
       next: (res: any) => {
         // Depende de cómo envíe el backend (res o res.data)
@@ -50,19 +55,24 @@ export class GaleriaProfesoresComponent implements OnInit {
     });
   }
 
- cargarProfesores() {
+cargarProfesores() {
     this.tutoriaService.obtenerUsuarios().subscribe({
       next: (res: any) => {
-        // Leemos el formato nuevo (res.data) o el viejo (res)
-        const listado = res.data || res; 
+        const listado = res.data || res;
         
-        console.log("1. Todos los usuarios que llegaron:", listado);
-
-        this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
-        
-        console.log("2. Profesores filtrados que se van a mostrar:", this.profesores);
+        // Verificamos si realmente es una lista (array)
+        if (Array.isArray(listado)) {
+            // Filtramos a los profes y los guardamos
+            this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
+            console.log(" Profesores encontrados y listos para mostrar:", this.profesores);
+            this.cdr.detectChanges();
+        } else {
+            console.error(" El backend no mandó una lista válida:", listado);
+        }
       },
-      error: (err: any) => console.error('Error al cargar profesores:', err)
+      error: (err: any) => {
+        console.error(' Error gigante al cargar profesores desde el backend:', err);
+      }
     });
   }
 
