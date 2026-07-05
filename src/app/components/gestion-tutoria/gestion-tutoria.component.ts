@@ -6,8 +6,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { TutoriaService } from '../../services/tutoria.service';
 import { MercadoPagoService } from '../../services/mercadoPago.service';
-// 1. Importar el nuevo servicio de precios
 import { PrecioService } from '../../services/precio.service';
+import { CategoriaService } from '../../services/categoria.service';
+import { HorarioDisponibleService } from '../../services/horario-disponible.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -33,7 +34,7 @@ export class GestionTutoriaComponent implements OnInit {
 
   horariosProfesor: any[] = [];
   turnosDisponibles: any[] = []; 
-  listaPreciosBD: any[] = []; // 2. Variable para guardar los precios
+  listaPreciosBD: any[] = []; 
 
   solicitud = {
     modalidad: 'virtual',
@@ -59,7 +60,9 @@ export class GestionTutoriaComponent implements OnInit {
     private authService: AutenticacionService,
     private tutoriaService: TutoriaService,
     private mpService: MercadoPagoService,
-    private precioService: PrecioService, // 3. Inyectar el servicio en el constructor
+    private precioService: PrecioService,
+    private categoriaService: CategoriaService,
+    private horarioService: HorarioDisponibleService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {}
@@ -78,7 +81,6 @@ export class GestionTutoriaComponent implements OnInit {
       this.alumnoEmail = user.email || '';
     }
 
-    // 4. Traer los precios apenas entra a la pantalla
     this.cargarPrecios();
 
     const profesorId = parseInt(this.route.snapshot.queryParams['profesorId'] || '0');
@@ -101,7 +103,6 @@ export class GestionTutoriaComponent implements OnInit {
   }
 
   cargarPrecios() {
-    // 5. Petición al backend usando el servicio nuevo
     this.precioService.obtenerPrecios().subscribe({
       next: (res: any) => {
         this.listaPreciosBD = res.data || res;
@@ -111,46 +112,55 @@ export class GestionTutoriaComponent implements OnInit {
   }
 
   cargarProfesor(id: number) {
+    //  Traemos los datos básicos del usuario
     this.tutoriaService.obtenerUsuarios().subscribe({
-      next: (users: any[]) => {
-        const userDetail = users.find((u: any) => u.id === id);
+      next: (res: any) => {
+        const listado = res.data || res;
+        const userDetail = listado.find((u: any) => u.id === id);
         if (userDetail) {
-          this.profesorSeleccionado = {
-            id: userDetail.id,
-            nombre: `${userDetail.nombre} ${userDetail.apellido}`,
-            nivelAcademico: userDetail.nivelAcademico || 'universitario',
-            categoriasEnseniadas: userDetail.categoriasEnseniadas || []
-          };
-          this.horariosProfesor = (userDetail.horarios || []).map((h: any) => ({
-            id: h.id,
-            diaSemana: h.dia_semana || h.diaSemana,
-            horaInicio: (h.hora_inicio || h.horaInicio).slice(0, 5),
-            horaFin: (h.hora_fin || h.horaFin).slice(0, 5)
-          }));
+          this.profesorSeleccionado.id = userDetail.id;
+          this.profesorSeleccionado.nombre = `${userDetail.nombre} ${userDetail.apellido}`;
+          this.profesorSeleccionado.nivelAcademico = userDetail.nivelAcademico || 'universitario';
+          this.cdr.detectChanges();
         }
-        this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Error al cargar datos del profesor:', err);
+      error: (err: any) => console.error('Error al cargar nombre del profe:', err)
+    });
+
+    //  Traemos las materias
+    this.categoriaService.obtenerCategoriasdeProfesor(id).subscribe({
+      next: (res: any) => {
+        this.profesorSeleccionado.categoriasEnseniadas = res.data || res;
+        this.cdr.detectChanges();
+      }
+    });
+
+    //  Traemos los horarios
+    this.horarioService.obtenerHorarios(id).subscribe({
+      next: (res: any) => {
+        this.horariosProfesor = (res.data || res).map((h: any) => ({
+          id: h.id,
+          diaSemana: (h.dia_semana || h.diaSemana || '').toLowerCase(),
+          modalidad: (h.modalidad || '').toLowerCase(),
+          horaInicio: typeof h.horaInicio === 'string' ? h.horaInicio.slice(0, 5) : this.minutesToTime(h.horaInicio * 60 || 0),
+          horaFin: typeof h.horaFin === 'string' ? h.horaFin.slice(0, 5) : this.minutesToTime(h.horaFin * 60 || 0)
+        }));
+        this.cdr.detectChanges();
       }
     });
   }
 
   get precioFinal(): number {
-    // 6. Si aún no cargaron los precios, retorna 0
     if (!this.solicitud.duracion || this.listaPreciosBD.length === 0) return 0;
     
     const nivel = (this.profesorSeleccionado.nivelAcademico || 'universitario').toLowerCase();
     const modalidad = this.solicitud.modalidad; 
 
-    // 7. Busca en la base de datos el precio que coincide con nivel y modalidad
     const precioEncontrado = this.listaPreciosBD.find(
-      p => p.nivel === nivel && p.modalidad === modalidad
+      p => (p.nivel || '').toLowerCase() === nivel && (p.modalidad || '').toLowerCase() === modalidad
     );
 
-    // Si no encuentra coincidencia, usa un precio base genérico
     const tarifaHora = precioEncontrado ? precioEncontrado.precio : 10000;
-
     const costoCalculado = (tarifaHora / 60) * this.solicitud.duracion;
     return Math.round(costoCalculado);
   }
@@ -166,8 +176,7 @@ export class GestionTutoriaComponent implements OnInit {
     this.solicitud.fechaHora = ''; 
     this.generarTurnos(); 
   }
-
-  generarTurnos() {
+generarTurnos() {
     this.turnosDisponibles = [];
     this.solicitud.fechaHora = ''; 
     
@@ -177,18 +186,28 @@ export class GestionTutoriaComponent implements OnInit {
     const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
     const diaString = diasSemana[dateElegida.getDay()];
 
-    const horariosDelDia = this.horariosProfesor.filter(h => 
-      (h.diaSemana || '').toLowerCase() === diaString
-    );
+    //Pasamos a minúsculas lo que eligió el alumno para evitar errores de tipeo
+    const modalidadElegida = (this.solicitud.modalidad || '').toLowerCase();
+
+    //  FILTRO 
+    const horariosDelDia = this.horariosProfesor.filter(h => {
+      // Pasamos a minúsculas lo que guardó el profe
+      const modProfe = (h.modalidad || '').toLowerCase();
+      
+      // Chequeamos que coincida el día, Y que la modalidad sea la misma o 'ambas'
+      return h.diaSemana === diaString && 
+             (modProfe === modalidadElegida || modProfe === 'ambas');
+    });
 
     if (horariosDelDia.length === 0) {
-      this.errorDisponibilidad = 'El profesor no dicta clases en este día de la semana.';
+      this.errorDisponibilidad = `El profesor no atiende de forma ${this.solicitud.modalidad} en este día de la semana.`;
       return;
     } else {
       this.errorDisponibilidad = '';
     }
 
-    const tiempoBuffer = this.solicitud.modalidad === 'presencial' ? 20 : 10;
+    // Usamos modalidadElegida acá también para mantener consistencia
+    const tiempoBuffer = modalidadElegida === 'presencial' ? 20 : 10;
 
     horariosDelDia.forEach(bloque => {
       let minutosActual = this.timeToMinutes(bloque.horaInicio);
@@ -216,6 +235,7 @@ export class GestionTutoriaComponent implements OnInit {
   }
 
   timeToMinutes(time: string): number {
+    if (!time || !time.includes(':')) return 0;
     const [h, m] = time.split(':').map(Number);
     return h * 60 + m;
   }
@@ -245,7 +265,6 @@ export class GestionTutoriaComponent implements OnInit {
 
     this.tutoriaService.solicitarTutoria(data).subscribe({
       next: (res: any) => {
-        // Adaptación por si el backend manda el id suelto o adentro de data
         const tutoriaId = res.data?.id || res.id;
         
         this.mpService.crearPreferencia(tutoriaId).subscribe({

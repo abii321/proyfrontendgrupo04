@@ -41,6 +41,10 @@ export class PerfilComponent implements OnInit {
   }
 
   ngOnInit(){
+    const userStr = sessionStorage.getItem("usuario");
+    if (userStr) {
+      this.usuario = JSON.parse(userStr); 
+    }
     this.categoriaService.obtenerCategorias().subscribe({
         next: (res: any) => {
             this.categorias = res.data;
