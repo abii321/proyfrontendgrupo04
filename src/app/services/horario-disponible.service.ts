@@ -1,12 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HorarioDisponible } from './../models/horario-disponible.class';
+import { URL_HOST } from './api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HorarioDisponibleService {
-  urlHost : string = "http://localhost:3000/";
+  urlHost : string = URL_HOST;
   urlBase : string = this.urlHost + 'api/horarioDisponible/';
 
   constructor(private http: HttpClient){ }

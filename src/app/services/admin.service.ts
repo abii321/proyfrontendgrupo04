@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { URL_HOST } from './api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  private apiUrl = 'http://localhost:3000/api/admin';
+  urlHost: string = URL_HOST;
+  private apiUrl = this.urlHost + 'api/admin';
 
   constructor(private http: HttpClient) { }
 
