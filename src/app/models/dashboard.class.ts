@@ -34,10 +34,10 @@ export interface FullTutorial {
     id: number;
     estado: string;
     modalidad: string;
-    precio_acordado: number;
-    fecha_hora: string;
-    preference_id?: string;
-    payment_id?: string;
+    precioAcordado: number;
+    fechaHora: string;
+    preferenceId?: string;
+    paymentId?: string;
     pagada: boolean;
     createdAt: string;
     alumno?: TutorialUser;

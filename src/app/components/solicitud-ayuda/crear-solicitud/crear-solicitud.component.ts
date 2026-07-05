@@ -28,7 +28,7 @@ export class CrearSolicitudComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef, private domSanitizer: DomSanitizer) { }
   ngOnInit() {
-    this.solicitud.id_usuario = this.usuario.id || 0;
+    this.solicitud.usuarioId = this.usuario.id || 0;
     this.cargarCategorias();
   }
 
@@ -69,7 +69,7 @@ export class CrearSolicitudComponent implements OnInit {
   }
 
   guardar() {
-    //if (!this.solicitud.titulo || !this.solicitud.descripcion || !this.solicitud.id_categoria)
+    //if (!this.solicitud.titulo || !this.solicitud.descripcion || !this.solicitud.categoriaId)
     if (!this.solicitud.titulo || !this.solicitud.descripcion) {
       alert('Por favor completá los campos obligatorios');
       return;

@@ -19,7 +19,7 @@ export class PagoExitoso implements OnInit {
 
     this.route.queryParams.subscribe(params => {
 
-      this.paymentId = params['payment_id'];
+      this.paymentId = params['paymentId'];
       this.status = params['status'];
       this.externalReference = params['external_reference'];
 

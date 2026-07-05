@@ -96,18 +96,18 @@ export class DashboardComponent implements OnInit {
   get totalRevenue(): number {
     return this.tutorials
       .filter(t => t.pagada)
-      .reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+      .reduce((sum, t) => sum + (t.precioAcordado || 0), 0);
   }
 
   get pendingRevenue(): number {
     return this.tutorials
       .filter(t => !t.pagada && t.estado !== 'rechazada' && t.estado !== 'cancelada')
-      .reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+      .reduce((sum, t) => sum + (t.precioAcordado || 0), 0);
   }
 
   get averagePrice(): number {
     if (this.tutorials.length === 0) return 0;
-    const total = this.tutorials.reduce((sum, t) => sum + (t.precio_acordado || 0), 0);
+    const total = this.tutorials.reduce((sum, t) => sum + (t.precioAcordado || 0), 0);
     return total / this.tutorials.length;
   }
 
@@ -238,8 +238,8 @@ export class DashboardComponent implements OnInit {
         t.modalidad,
         t.estado,
         t.pagada ? 'Sí' : 'No',
-        `$${t.precio_acordado.toFixed(2)}`,
-        t.fecha_hora ? new Date(t.fecha_hora).toLocaleString() : '',
+        `$${t.precioAcordado.toFixed(2)}`,
+        t.fechaHora ? new Date(t.fechaHora).toLocaleString() : '',
         new Date(t.createdAt).toLocaleDateString()
       ]),
       styles: { fontSize: 8 },
@@ -261,8 +261,8 @@ export class DashboardComponent implements OnInit {
       'Modalidad': t.modalidad,
       'Estado': t.estado,
       'Pagada': t.pagada ? 'Sí' : 'No',
-      'Precio': t.precio_acordado,
-      'Fecha de Clase': t.fecha_hora ? new Date(t.fecha_hora).toLocaleString() : '',
+      'Precio': t.precioAcordado,
+      'Fecha de Clase': t.fechaHora ? new Date(t.fechaHora).toLocaleString() : '',
       'Fecha Registro': new Date(t.createdAt).toLocaleDateString()
     }));
 

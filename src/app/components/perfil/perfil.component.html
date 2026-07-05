@@ -50,6 +50,7 @@
         </div>
       </div>
 
+      <div *ngIf="errorCategoria" class="text-danger small mt-2"> {{ errorCategoria }} </div>
 
       <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel"
         aria-hidden="true">
@@ -69,6 +70,8 @@
         </div>
       </div>
     </div>
+
+
 
     <!--Horarios-->
     <div class="my-3">

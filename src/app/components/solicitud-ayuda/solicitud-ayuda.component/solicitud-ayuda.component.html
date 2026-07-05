@@ -31,8 +31,8 @@
           <p class="card-text texto-recortado">{{ s.descripcion }}</p>
 
           <div class="d-flex gap-3 text-muted small mb-3">
-            <span><i class="bi bi-tag"></i> {{ getNombreCategoria(s.id_categoria) }}</span>
-            <span><i class="bi bi-calendar"></i> {{ s.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span><i class="bi bi-tag"></i> {{ getNombreCategoria(s.categoriaId) }}</span>
+            <span><i class="bi bi-calendar"></i> {{ s.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
 
           @if (s.archivoAdjunto) {

@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Categoria } from '../models/categoria.class';
 import { URL_HOST } from './api.config';
 
 @Injectable({
@@ -23,6 +22,7 @@ export class CategoriaService {
     let body = {
       'categoriaId' : categoriaId,
       'profesorId' : profesorId,
+      'estado': true,
     }
     console.log(body);
     return this.http.post(this.urlBase+"profesor", body, httpOptions);

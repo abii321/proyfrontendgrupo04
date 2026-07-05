@@ -28,6 +28,7 @@ export class PerfilComponent implements OnInit {
   categoriasFiltradas: Array<Categoria> = [];
   categoriasSeleccionadas: Array<Categoria> = [];
   categoriaInfo: Categoria = new Categoria();
+  errorCategoria: string = '';
 
   nuevoHorario: HorarioDisponible;
   horarios: Array<HorarioDisponible> = [];
@@ -75,6 +76,7 @@ export class PerfilComponent implements OnInit {
           this.categoriasSeleccionadas = res.data; 
           this.filtrarCategorias();
           this.cdr.detectChanges();
+          console.log(res.data);
       }
     });
   }
@@ -106,11 +108,12 @@ export class PerfilComponent implements OnInit {
       ( result: any ) => {
         this.categoriasSeleccionadas = this.categoriasSeleccionadas.filter( x => x.id != cat.id );
         this.filtrarCategorias();
+        this.errorCategoria = '';
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
-      }
+        this.errorCategoria = error.error?.msg || 'Ocurrió un error inesperado.';
+      } 
     )
   }
   mostrarDescripcion(cat:Categoria){
@@ -157,7 +160,7 @@ export class PerfilComponent implements OnInit {
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
+        this.errorHorario = error.error?.msg || 'Ocurrió un error inesperado.';
       }
     )
   }

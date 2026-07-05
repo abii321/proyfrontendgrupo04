@@ -253,12 +253,12 @@ generarTurnos() {
     }
 
     const data = {
-      alumno_id: this.usuarioId,
-      profesor_id: this.profesorSeleccionado.id,
-      categoria_id: parseInt(this.solicitud.categoriaId),
+      alumnoId: this.usuarioId,
+      profesorId: this.profesorSeleccionado.id,
+      categoriaId: parseInt(this.solicitud.categoriaId),
       modalidad: this.solicitud.modalidad,
-      precio_acordado: this.precioFinal,
-      fecha_hora: this.solicitud.fechaHora,
+      precioAcordado: this.precioFinal,
+      fechaHora: this.solicitud.fechaHora,
       estado: 'pendiente',
       mensaje: this.solicitud.mensaje
     };

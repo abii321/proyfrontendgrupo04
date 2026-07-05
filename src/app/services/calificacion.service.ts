@@ -12,7 +12,7 @@ export class CalificacionService {
 
   constructor(private http: HttpClient) { }
 
-  crearCalificacion(data: { tutoria_id: number, calificacion: number, comentario?: string }): Observable<any> {
+  crearCalificacion(data: { tutoriaId: number, calificacion: number, comentario?: string }): Observable<any> {
     return this.http.post(this.apiUrl, data);
   }
 
