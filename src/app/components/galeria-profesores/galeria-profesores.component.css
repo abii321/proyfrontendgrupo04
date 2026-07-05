@@ -1,14 +1,13 @@
-/* Estilos de la galería delegados completamente a Bootstrap */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 .estilo-profesional {
-    /* La fuente Outfit es redondita, súper amigable y moderna */
+    /* Fuente Outfit: moderna, amable y muy zarpada */
     font-family: 'Outfit', sans-serif;
-    background-color: #EFEFE9; /* Un color hueso/arena muy suave de fondo */
+    background-color: #EFEFE9; /* Fondo hueso/arena suave */
     min-height: 100vh;
 }
 
-/* --- PALETA DE COLORES OPACOS/AESTHETIC --- */
+/* --- COLORES MATE OPACOS (Palette) --- */
 .texto-primario {
     color: #2D4243 !important; /* Verde oscuro grisáceo */
 }
@@ -22,7 +21,7 @@
 }
 
 .texto-destacado {
-    color: #DDA77B !important; /* Ocre/Naranja pastel apagado */
+    color: #DDA77B !important; /* Ocre mate */
 }
 
 .espaciado-letras {
@@ -61,7 +60,7 @@
 
 /* Borde cuando se expande */
 .tarjeta-acordeon.expandida {
-    border-color: #A3B19B !important; /* Borde verde salvia */
+    border-color: #A3B19B !important; /* Verde salvia */
     box-shadow: 0 10px 40px rgba(163, 177, 155, 0.15) !important;
 }
 
@@ -105,7 +104,7 @@
 
 /* Cajas de información interna */
 .caja-info {
-    background-color: #F4F5F0; /* Gris súper clarito con toque cálido */
+    background-color: #F4F5F0; /* Gris clarito cálido */
     border: 1px solid #EBECE8;
 }
 
@@ -119,7 +118,7 @@
     border: 1px solid #EBECE8;
 }
 
-/* --- LA ANIMACIÓN MAGICA FLUIDA --- */
+/* --- LA ANIMACIÓN MAGICA FLUIDA (Acordeón) --- */
 .wrapper-colapsable {
     max-height: 0;
     overflow: hidden;
@@ -128,7 +127,7 @@
 }
 
 .tarjeta-acordeon.expandida .wrapper-colapsable {
-    max-height: 1200px; /* Le damos margen suficiente para que entre todo el contenido */
+    max-height: 1200px; /* Margen para todo el contenido */
     opacity: 1;
 }
 
@@ -148,12 +147,4 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(108, 132, 132, 0.3);
     color: #ffffff;
-}
-
-.btn-desactivado {
-    background-color: #E2E8E8;
-    color: #A1B0B0;
-    border-radius: 12px;
-    font-weight: 600;
-    border: none;
 }

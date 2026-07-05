@@ -2,6 +2,7 @@ export class PerfilProfesor {
     idPerfilProfesor!: number;
     primario!: boolean;
     secundario!: boolean;
+    terciario!: boolean;
     universitario!: boolean;
     doctorado!: boolean;
     

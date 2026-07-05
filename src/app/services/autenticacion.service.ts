@@ -11,22 +11,16 @@ export class AutenticacionService {
   urlHost : string = "http://localhost:3000/";
   urlBase : string = this.urlHost + 'api/autenticacion/';
 
-  private http = inject(HttpClient);
+  constructor(private http: HttpClient){ }
 
-  postRegistroLocal( usuario: Usuario, perfilProfesor: PerfilProfesor ): Observable<any>{
+  postRegistroLocal( usuario: Usuario ): Observable<any>{
     let httpOptions = {
       headers : new HttpHeaders({
         'Content-Type':'application/json'
       })
     };
-    
-    let body = {
-      'usuario': usuario, 
-      'perfilProfesor': perfilProfesor
-    }
-
-    console.log(body);
-    return this.http.post(this.urlBase+"signUp", body, httpOptions);
+      
+    return this.http.post(this.urlBase+"signUp", usuario, httpOptions);
   }
 
   postLoginLocal( email:string, password:string ): Observable<any>{
@@ -76,12 +70,6 @@ export class AutenticacionService {
     return this.http.post(this.urlBase + "loginGoogle", datosGoogle, httpOptions);
   }
 
-  getUserRole(): string {
-    const usuario = sessionStorage.getItem("usuario");
-    if (usuario) return JSON.parse(usuario).rol;
-    return '';
-  }
-
   updateUsuario(id: string | number, datos: any): Observable<any> {
     let httpOptions = {
       headers: new HttpHeaders({
@@ -91,15 +79,5 @@ export class AutenticacionService {
     return this.http.put(this.urlHost + 'api/usuario/' + id, datos, httpOptions);
   }
 
-  postVincularGoogle(usuarioId: number, token: string): Observable<any> {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    };
-    const body = { usuarioId, token };
-    return this.http.post(this.urlBase + 'vincularGoogle', body, httpOptions);
-  }
-
 }
-
+//89

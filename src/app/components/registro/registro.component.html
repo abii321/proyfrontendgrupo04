@@ -27,60 +27,6 @@
                 </div>
             </div>
 
-            <!--Nivel Académico (solo Alumno)-->
-            <div class="mb-3 row align-items-center" *ngIf="usuario.rol=='alumno'">
-                <div class="col-3 col-md-2"><label for="nivelAcademico" class="form-label fw-semibold">Nivel Académico</label></div>
-                <div class="col-9 col-md-10">
-                    <select class="form-select" name="nivelAcademico" [(ngModel)]="usuario.nivelAcademico" #nivelAcademico="ngModel" required>
-                        <option [value]="null" disabled selected>Selecciona tu nivel</option>
-                        <option value="primario">Primario</option>
-                        <option value="secundario">Secundario</option>
-                        <option value="universitario">Universitario</option>
-                        <option value="doctorado">Doctorado</option>
-                    </select>
-                    <div *ngIf="nivelAcademico.invalid && (nivelAcademico.touched || nivelAcademico.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="nivelAcademico.errors?.['required']">Campo obligatorio</div>
-                    </div>
-                </div>
-            </div>
-
-            <!--Nivel de enseñanza-->
-            <div class="mb-3 row align-items-center" *ngIf="usuario.rol=='profesor'">
-                <div class="col-3 col-md-2"><label for="rol" class="form-label fw-semibold">Nivel de Enseñanza</label>
-                </div>
-                <div class="col-9 col-md-10">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="primario" name="primario" [(ngModel)]="perfilProfesor.primario">
-                        <label class="form-check-label" for="primario">Primario</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="secundario" name="secundario" [(ngModel)]="perfilProfesor.secundario">
-                        <label class="form-check-label" for="secundario">Secundario</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="universitario" name="universitario" [(ngModel)]="perfilProfesor.universitario">
-                        <label class="form-check-label" for="universitario">Universitario</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="doctorado" name="doctorado" [(ngModel)]="perfilProfesor.doctorado">
-                        <label class="form-check-label" for="doctorado">Doctorado</label>
-                    </div>
-                    
-                    <div *ngIf="usuario.rol=='profesor' && !algunNivelSeleccionado()" class="text-danger small mt-1">
-                        Debe seleccionar al menos un nivel
-                    </div>
-
-                </div>
-            </div>
-
-            <!--Tarifa Base-->
-            <div class="mb-3 row align-items-center" *ngIf="usuario.rol=='profesor'">
-                <div class="col-3 col-md-2"><label for="tarifaBase" class="form-label fw-semibold">Tarifa por Hora ($)</label></div>
-                <div class="col-9 col-md-10">
-                    <input type="number" class="form-control" id="tarifaBase" name="tarifaBase" [(ngModel)]="usuario.tarifaBase" required min="0" placeholder="Ej: 2000">
-                </div>
-            </div>
-
             <!--Genero-->
             <div class="mb-3 row align-items-center">
                 <div class="col-3 col-md-2"><label for="genero" class="form-label fw-semibold">Genero</label></div>
@@ -211,5 +157,8 @@
         <span>¿Ya tienes una cuenta?
             <a [routerLink]="['/login']">Login</a>
         </span>
+
+
+
     </div>
 </div>
