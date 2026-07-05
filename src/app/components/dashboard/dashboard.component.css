@@ -221,3 +221,62 @@ h6.fw-semibold {
 canvas {
     max-height: 260px;
 }
+
+/* --- CELDA DE CALIFICACIÓN (estrellas) --- */
+.rating-cell {
+    font-size: 1rem;
+    color: #DDA77B;
+    letter-spacing: 1px;
+    cursor: help;
+}
+
+/* --- DATATABLES OVERRIDES --- */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 10px;
+    border: 1px solid #D9DBD3;
+    padding: 4px 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    color: #2D4243;
+    background-color: #FDFDFD;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: #A3B19B;
+    box-shadow: 0 0 0 3px rgba(163, 177, 155, 0.25);
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    color: #8C999A;
+}
+
+/* Paginación */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 8px !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    color: #5C6B73 !important;
+    border: none !important;
+    padding: 4px 10px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #6C8484 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #EBECE8 !important;
+    color: #2D4243 !important;
+    border: none !important;
+}
