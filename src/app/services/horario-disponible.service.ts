@@ -24,6 +24,7 @@ export class HorarioDisponibleService {
       'horaFin' : horario.horaFin,
       'modalidad' : horario.modalidad,
       'profesorId' : profesorId,
+      'estado': 'activo'
     }
     //console.log(body);
     return this.http.post(this.urlBase, body, httpOptions);
