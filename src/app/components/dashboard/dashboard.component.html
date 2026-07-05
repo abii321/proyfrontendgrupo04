@@ -7,7 +7,7 @@
             <p class="text-muted">Resumen de las métricas clave y datos de la plataforma.</p>
         </div>
 
-        <!-- KPI Cards -->
+        <!-- KPI Cards — contadores generales -->
         <div class="row g-4 mb-5">
             <div class="col-sm-6 col-xl-3">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
@@ -51,34 +51,53 @@
             <div class="col-sm-6 col-xl-3">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon">
-                            <i class="bi bi-tags fs-3"></i>
+                        <div class="kpi-icon kpi-icon--warning">
+                            <i class="bi bi-star-half fs-3"></i>
                         </div>
                         <div>
-                            <p class="text-muted small mb-0">Categorías</p>
-                            <h3 class="fw-light mb-0">{{ summary.totalCategories }}</h3>
+                            <p class="text-muted small mb-0">Calificación Promedio</p>
+                            <h3 class="fw-light mb-0">
+                                {{ summary.avgRating }}
+                                <small class="text-muted fs-6">/ 5</small>
+                            </h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Row -->
-        <div class="row g-4 mb-5">
+        <!-- Charts — fila 1 -->
+        <div class="row g-4 mb-4">
 
-            <!-- Bar Chart: usuarios por rol -->
-            <div class="col-lg-4">
+            <!-- Stacked Bar Chart: usuarios por rol (activos/inactivos) -->
+            <div class="col-lg-6">
                 <div class="tarjeta-delicada p-4 shadow-sm h-100">
                     <h6 class="fw-semibold text-muted mb-3">
-                        <i class="bi bi-bar-chart me-2"></i>Usuarios por Rol
+                        <i class="bi bi-bar-chart-steps me-2"></i>Usuarios por Rol (Activos / Inactivos)
                     </h6>
                     <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar">
                     </canvas>
                 </div>
             </div>
 
-            <!-- Pie Chart: solicitudes por estado -->
-            <div class="col-lg-4">
+            <!-- Line Chart: tutorias por mes -->
+            <div class="col-lg-6">
+                <div class="tarjeta-delicada p-4 shadow-sm h-100">
+                    <h6 class="fw-semibold text-muted mb-3">
+                        <i class="bi bi-graph-up me-2"></i>Tutorías por Mes (año actual)
+                    </h6>
+                    <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line">
+                    </canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Charts — fila 2 -->
+        <div class="row g-4 mb-5">
+
+            <!-- Pie Chart 1: solicitudes de ayuda por estado -->
+            <div class="col-lg-6">
                 <div class="tarjeta-delicada p-4 shadow-sm h-100">
                     <h6 class="fw-semibold text-muted mb-3">
                         <i class="bi bi-pie-chart me-2"></i>Solicitudes de Ayuda por Estado
@@ -88,20 +107,20 @@
                 </div>
             </div>
 
-            <!-- Line Chart: tutorias por mes -->
-            <div class="col-lg-4">
+            <!-- Pie Chart 2: tutorías por estado -->
+            <div class="col-lg-6">
                 <div class="tarjeta-delicada p-4 shadow-sm h-100">
                     <h6 class="fw-semibold text-muted mb-3">
-                        <i class="bi bi-graph-up me-2"></i>Tutorías por Mes
+                        <i class="bi bi-pie-chart-fill me-2"></i>Tutorías por Estado
                     </h6>
-                    <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line">
+                    <canvas baseChart [data]="tutorialStatePieData" [options]="tutorialStatePieOptions" type="pie">
                     </canvas>
                 </div>
             </div>
 
         </div>
 
-        <!-- Financial/Operational KPIs Row -->
+        <!-- Financial/Operational KPIs -->
         <div class="row g-4 mb-5">
             <div class="col-sm-6 col-xl-3">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
@@ -157,11 +176,11 @@
             </div>
         </div>
 
-        <!-- Data Table Section -->
+        <!-- Data Table Section — ngx-datatables-net -->
         <div class="tarjeta-delicada p-4 shadow-sm">
 
             <!-- Table header -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3 mb-3">
                 <h6 class="fw-semibold text-muted mb-0">
                     <i class="bi bi-table me-2"></i>Listado de Tutorías
                 </h6>
@@ -175,13 +194,18 @@
                 </div>
             </div>
 
-            <!--
-            TODO: instalar angular-datatables para activar filtros, búsqueda y paginación:
-            Luego importar DataTablesModule, agregar [datatable] y [dtOptions]="dtOptions" en la tabla,
-            y usar Subject<void>() como dtTrigger en el componente.
-        -->
+            <!-- Skeleton loader mientras llegan los datos del backend -->
+            @if (!tableReady) {
+            <div class="py-5 text-center text-muted">
+                <div class="spinner-border spinner-border-sm mb-3" role="status" aria-hidden="true"></div>
+                <p class="small mb-0">Cargando tutorías…</p>
+            </div>
+            }
+
+            @if (tableReady) {
             <div class="table-responsive">
-                <table class="table table-hover table-borderless align-middle" id="tutorials-table">
+                <table #tutorialsTable
+                    class="table table-hover table-borderless align-middle w-100" id="tutorials-table">
                     <thead class="table-header">
                         <tr>
                             <th scope="col">#</th>
@@ -191,49 +215,16 @@
                             <th scope="col">Modalidad</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Pagada</th>
+                            <th scope="col">Calific.</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Fecha de Clase</th>
                             <th scope="col">Registro</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @if (tutorials.length === 0) {
-                        <tr>
-                            <td colspan="10" class="text-center text-muted py-5">
-                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                No se encontraron tutorías.
-                            </td>
-                        </tr>
-                        }
-                        @for (tutorial of tutorials; track tutorial.id) {
-                        <tr>
-                            <td class="text-muted small">{{ tutorial.id }}</td>
-                            <td>{{ tutorial.alumno?.nombre }} {{ tutorial.alumno?.apellido }}</td>
-                            <td>{{ tutorial.profesor?.nombre }} {{ tutorial.profesor?.apellido }}</td>
-                            <td>{{ tutorial.categoria?.nombre }}</td>
-                            <td>
-                                <span class="badge-modalidad badge-modalidad--{{ tutorial.modalidad | lowercase }}">
-                                    {{ tutorial.modalidad }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge-estado badge-estado--{{ tutorial.estado | lowercase }}">
-                                    {{ tutorial.estado }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge-pagada--{{ tutorial.pagada ? 'si' : 'no' }}">
-                                    {{ tutorial.pagada ? 'Sí' : 'No' }}
-                                </span>
-                            </td>
-                            <td class="fw-semibold">${{ tutorial.precioAcordado | number:'1.2-2' }}</td>
-                            <td class="text-muted small">{{ tutorial.fechaHora | date:'medium' }}</td>
-                            <td class="text-muted small">{{ tutorial.createdAt | date:'mediumDate' }}</td>
-                        </tr>
-                        }
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
+            }
 
         </div>
 
