@@ -22,7 +22,7 @@ export class CategoriaService {
     let body = {
       'categoriaId' : categoriaId,
       'profesorId' : profesorId,
-      'estado': true,
+      'estado': 'activo',
     }
     console.log(body);
     return this.http.post(this.urlBase+"profesor", body, httpOptions);
