@@ -8,6 +8,8 @@ export class Usuario {
     genero!: string;
     foto!: string;
     ubicacion!: string | null;
+    lat?: number | null;
+    lng?: number | null;
     universidad!: string;
     carrera!: string;
     
