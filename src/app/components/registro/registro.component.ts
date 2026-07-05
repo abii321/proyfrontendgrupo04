@@ -5,7 +5,6 @@ import { AutenticacionService } from '../../services/autenticacion.service';
 import { Usuario } from '../../models/usuario.class';
 import { GoogleAuthService } from '../../services/google-auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { PerfilProfesor } from '../../models/perfil-profesor.class';
 
 @Component({
   selector: 'app-registro',
@@ -16,7 +15,6 @@ import { PerfilProfesor } from '../../models/perfil-profesor.class';
 
 export class RegistroComponent implements AfterViewInit {
   usuario: Usuario;
-  perfilProfesor: PerfilProfesor;
   banGoogle: boolean = false;
   googleToken: string = '';
   msg: string = "";
@@ -24,7 +22,6 @@ export class RegistroComponent implements AfterViewInit {
   constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
     this.usuario = new Usuario();
     this.usuario.rol = ''; 
-    this.perfilProfesor = new PerfilProfesor();
   }
 
   ngAfterViewInit(): void {
