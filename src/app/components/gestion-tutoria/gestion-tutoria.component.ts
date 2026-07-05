@@ -19,28 +19,28 @@ import Swal from 'sweetalert2';
   styleUrls: ['./gestion-tutoria.component.css']
 })
 export class GestionTutoriaComponent implements OnInit {
-  
+
   usuarioId: number = 0;
   alumnoProveedorAuth: string = '';
   alumnoEmail: string = '';
   calendarUrl: SafeResourceUrl | null = null;
 
-  profesorSeleccionado: any = { 
+  profesorSeleccionado: any = {
     id: 0,
-    nombre: '', 
-    nivelAcademico: 'universitario', 
+    nombre: '',
+    nivelAcademico: 'universitario',
     categoriasEnseniadas: []
   };
 
   horariosProfesor: any[] = [];
-  turnosDisponibles: any[] = []; 
-  listaPreciosBD: any[] = []; 
+  turnosDisponibles: any[] = [];
+  listaPreciosBD: any[] = [];
 
   solicitud = {
     modalidad: 'virtual',
-    fechaSeleccionada: '', 
-    fechaHora: '', 
-    duracion: 60, 
+    fechaSeleccionada: '',
+    fechaHora: '',
+    duracion: 60,
     mensaje: '',
     categoriaId: ''
   };
@@ -65,7 +65,7 @@ export class GestionTutoriaComponent implements OnInit {
     private horarioService: HorarioDisponibleService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (!this.authService.userLoggedIn()) {
@@ -152,9 +152,9 @@ export class GestionTutoriaComponent implements OnInit {
 
   get precioFinal(): number {
     if (!this.solicitud.duracion || this.listaPreciosBD.length === 0) return 0;
-    
+
     const nivel = (this.profesorSeleccionado.nivelAcademico || 'universitario').toLowerCase();
-    const modalidad = this.solicitud.modalidad; 
+    const modalidad = this.solicitud.modalidad;
 
     const precioEncontrado = this.listaPreciosBD.find(
       p => (p.nivel || '').toLowerCase() === nivel && (p.modalidad || '').toLowerCase() === modalidad
@@ -167,19 +167,19 @@ export class GestionTutoriaComponent implements OnInit {
 
   setDuracion(minutos: number) {
     this.solicitud.duracion = minutos;
-    this.solicitud.fechaHora = ''; 
+    this.solicitud.fechaHora = '';
     this.generarTurnos();
   }
 
   setModalidad(tipo: string) {
     this.solicitud.modalidad = tipo;
-    this.solicitud.fechaHora = ''; 
-    this.generarTurnos(); 
+    this.solicitud.fechaHora = '';
+    this.generarTurnos();
   }
-generarTurnos() {
+  generarTurnos() {
     this.turnosDisponibles = [];
-    this.solicitud.fechaHora = ''; 
-    
+    this.solicitud.fechaHora = '';
+
     if (!this.solicitud.fechaSeleccionada || !this.solicitud.duracion) return;
 
     const dateElegida = new Date(this.solicitud.fechaSeleccionada + 'T00:00:00');
@@ -193,10 +193,10 @@ generarTurnos() {
     const horariosDelDia = this.horariosProfesor.filter(h => {
       // Pasamos a minúsculas lo que guardó el profe
       const modProfe = (h.modalidad || '').toLowerCase();
-      
+
       // Chequeamos que coincida el día, Y que la modalidad sea la misma o 'ambas'
-      return h.diaSemana === diaString && 
-             (modProfe === modalidadElegida || modProfe === 'ambas');
+      return h.diaSemana === diaString &&
+        (modProfe === modalidadElegida || modProfe === 'ambas');
     });
 
     if (horariosDelDia.length === 0) {
@@ -214,7 +214,7 @@ generarTurnos() {
       const minutosFin = this.timeToMinutes(bloque.horaFin);
 
       while (minutosActual + this.solicitud.duracion <= minutosFin) {
-        
+
         const horaInicioStr = this.minutesToTime(minutosActual);
         const horaFinStr = this.minutesToTime(minutosActual + this.solicitud.duracion);
         const fechaHoraISO = new Date(`${this.solicitud.fechaSeleccionada}T${horaInicioStr}:00`).toISOString();
@@ -253,12 +253,12 @@ generarTurnos() {
     }
 
     const data = {
-      alumno_id: this.usuarioId,
-      profesor_id: this.profesorSeleccionado.id,
-      categoria_id: parseInt(this.solicitud.categoriaId),
+      alumnoId: this.usuarioId,
+      profesorId: this.profesorSeleccionado.id,
+      categoriaId: parseInt(this.solicitud.categoriaId),
       modalidad: this.solicitud.modalidad,
-      precio_acordado: this.precioFinal,
-      fecha_hora: this.solicitud.fechaHora,
+      precioAcordado: this.precioFinal,
+      fechaHora: this.solicitud.fechaHora,
       estado: 'pendiente',
       mensaje: this.solicitud.mensaje
     };
@@ -266,7 +266,7 @@ generarTurnos() {
     this.tutoriaService.solicitarTutoria(data).subscribe({
       next: (res: any) => {
         const tutoriaId = res.data?.id || res.id;
-        
+
         this.mpService.crearPreferencia(tutoriaId).subscribe({
           next: (mpRes: any) => {
             Swal.fire({
