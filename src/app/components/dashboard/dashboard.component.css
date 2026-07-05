@@ -149,22 +149,31 @@ h6.fw-semibold {
     letter-spacing: 0.2px;
 }
 
+/* Tutoría: pendiente */
 .badge-estado--pendiente {
     background-color: rgba(221, 167, 123, 0.2);
     color: #9B6A3A;
 }
 
+/* Tutoría: aceptada | finalizada — SolicitudAyuda: resuelta */
 .badge-estado--aceptada,
-.badge-estado--finalizada {
+.badge-estado--finalizada,
+.badge-estado--resuelta {
     background-color: rgba(163, 177, 155, 0.25);
     color: #4A6040;
 }
 
+/* Tutoría: rechazada — SolicitudAyuda: cerrada */
 .badge-estado--rechazada,
-.badge-estado--cancelada {
+.badge-estado--cerrada {
     background-color: rgba(221, 167, 165, 0.25);
-    /* dusty rose con opacidad */
     color: #8B3F3D;
+}
+
+/* SolicitudAyuda: abierta */
+.badge-estado--abierta {
+    background-color: rgba(158, 173, 200, 0.2);
+    color: #4A5F7A;
 }
 
 /* --- BADGE DE MODALIDAD --- */
