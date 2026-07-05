@@ -1,62 +1,55 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-body-secondary border-bottom py-3 px-4">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-dark" style="letter-spacing: -0.5px;"
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-5"
       [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">App</a>
 
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
       @if (autenticacionService.userLoggedIn()) {
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 small">
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['home']"
-            routerLinkActive="active text-dark">Inicio</a>
-        </li>
-        <!--<li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" 
-             [routerLink]="autenticacionService.getUserRole() === 'profesor' ? ['gestion-tutoria'] : ['solicitar-tutoria']"*/
-             routerLinkActive="active text-dark">App</a>
-        </li>
-        @if (autenticacionService.getUserRole() !== 'profesor') {-->
-        <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitar-tutoria']"
-            routerLinkActive="active text-dark">Tutorias</a>
+          <a class="nav-link px-3" [routerLink]="['home']" routerLinkActive="active rounded-pill bg-light"
+            [routerLinkActiveOptions]="{exact: true}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" [routerLink]="['solicitud-ayuda']"
-            routerLinkActive="active text-dark">Tareas</a>
-        </li>
-
-
-        <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"
-            [routerLink]="['mis-solicitudes']">Mis solicitudes</a>
+          <a class="nav-link px-3" [routerLink]="['solicitar-tutoria']"
+            routerLinkActive="active rounded-pill bg-light">Tutorías</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 fw-medium text-secondary" routerLinkActive="active text-dark"
-            [routerLink]="['dashboard']">Dashboard</a>
+          <a class="nav-link px-3" [routerLink]="['solicitud-ayuda']"
+            routerLinkActive="active rounded-pill bg-light">Tareas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" [routerLink]="['mis-solicitudes']"
+            routerLinkActive="active rounded-pill bg-light">Mis Solicitudes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" [routerLink]="['dashboard']"
+            routerLinkActive="active rounded-pill bg-light">Dashboard</a>
         </li>
       </ul>
       }
 
-      <div class="d-flex ms-auto gap-2">
+      <div class="d-flex align-items-center ms-auto gap-2">
         @if (!autenticacionService.userLoggedIn()){
-        <a class="btn btn-sm text-secondary text-decoration-none fw-semibold" [routerLink]="['login']">Iniciar
-          Sesión</a>
-        <a class="btn btn-sm btn-primary py-2 px-3 fw-semibold text-white rounded-2" [routerLink]="['registro']"
-          style="font-size: 13px;">Registrarse</a>
+        <a class="btn btn-sm btn-link text-decoration-none text-dark fw-semibold" [routerLink]="['login']">
+          Iniciar Sesión
+        </a>
+        <a class="btn btn-sm btn-dark py-2 px-3 fw-semibold" [routerLink]="['registro']">
+          Registrarse
+        </a>
         } @else {
         <li class="nav-item dropdown list-unstyled">
-          <a class="nav-link dropdown-toggle fw-semibold text-dark" href="#" role="button" data-bs-toggle="dropdown"
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown"
             aria-expanded="false">
-            <i class="bi bi-person-circle me-1"></i> {{ autenticacionService.userLogged() || 'Mi Cuenta' }}
+            <i class="bi bi-person-circle fs-5"></i>
+            <span class="fw-semibold small">{{ autenticacionService.userLogged() || 'Mi Cuenta' }}</span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
             <li>
               <button class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/perfil']"> <span>Editar
                   perfil</span> </button>
@@ -69,17 +62,14 @@
             </li>
             <li>
               <button class="dropdown-item text-danger d-flex align-items-center gap-2" [routerLink]="['/home']"
-                (click)="autenticacionService.logout()">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Cerrar Sesión</span>
+                (click)="autenticacionService.logout()">                
+                Cerrar Sesión
               </button>
             </li>
           </ul>
         </li>
         }
       </div>
-
     </div>
-
   </div>
 </nav>
