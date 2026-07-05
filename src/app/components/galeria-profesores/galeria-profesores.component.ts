@@ -50,10 +50,17 @@ export class GaleriaProfesoresComponent implements OnInit {
     });
   }
 
-  cargarProfesores() {
+ cargarProfesores() {
     this.tutoriaService.obtenerUsuarios().subscribe({
-      next: (res: any[]) => {
-        this.profesores = res.filter(u => (u.rol || '').toLowerCase() === 'profesor');
+      next: (res: any) => {
+        // Leemos el formato nuevo (res.data) o el viejo (res)
+        const listado = res.data || res; 
+        
+        console.log("1. Todos los usuarios que llegaron:", listado);
+
+        this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
+        
+        console.log("2. Profesores filtrados que se van a mostrar:", this.profesores);
       },
       error: (err: any) => console.error('Error al cargar profesores:', err)
     });
@@ -74,7 +81,7 @@ export class GaleriaProfesoresComponent implements OnInit {
     }
   }
 
-  getOpiniones(profesor: any): any[] {
+  getOpiniones(profesor: any): { id: number, alumno: string, calificacion: number, comentario: string }[] {
     if (!profesor.opiniones) return [];
     return profesor.opiniones.slice(0, 2);
   }

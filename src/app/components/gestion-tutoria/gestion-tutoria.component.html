@@ -1,6 +1,6 @@
 <div class="container-fluid py-5 estilo-profesional">
     <div class="container">
-        
+
         <div class="mb-5 text-center">
             <h2 class="fw-bold mb-2 texto-primario">Personalizá tu próxima tutoría</h2>
             <p class="texto-secundario fs-5">Elegí la duración ideal y nosotros calculamos los horarios disponibles.</p>
@@ -15,7 +15,7 @@
                         <h4 class="fw-bold mb-3 texto-primario">Clase con {{ profesorSeleccionado.nombre }}</h4>
                         <div class="d-flex flex-wrap gap-2">
                             @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
-                                <span class="badge badge-materia">{{ cat.nombre }}</span>
+                            <span class="badge badge-materia">{{ cat.nombre }}</span>
                             }
                         </div>
                     </div>
@@ -25,17 +25,23 @@
                         <!-- SELECCIÓN 1: MATERIA Y MODALIDAD -->
                         <div class="row mb-4 g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">1. Materia</label>
-                                <select class="form-select shadow-none" name="categoriaId" [(ngModel)]="solicitud.categoriaId" required>
+                                <label
+                                    class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">1.
+                                    Materia</label>
+                                <select class="form-select shadow-none" name="categoriaId"
+                                    [(ngModel)]="solicitud.categoriaId" required>
                                     <option value="" disabled selected>Seleccioná una</option>
                                     @for (cat of profesorSeleccionado.categoriasEnseniadas; track cat.id) {
-                                      <option [value]="cat.id">{{ cat.nombre }}</option>
+                                    <option [value]="cat.id">{{ cat.nombre }}</option>
                                     }
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">2. Modalidad</label>
-                                <select class="form-select shadow-none" name="modalidad" [ngModel]="solicitud.modalidad" (ngModelChange)="setModalidad($event)" required>
+                                <label
+                                    class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">2.
+                                    Modalidad</label>
+                                <select class="form-select shadow-none" name="modalidad" [ngModel]="solicitud.modalidad"
+                                    (ngModelChange)="setModalidad($event)" required>
                                     <option value="virtual">💻 Virtual</option>
                                     <option value="presencial">☕ Presencial</option>
                                 </select>
@@ -44,58 +50,68 @@
 
                         <!-- SELECCIÓN 2: DURACIÓN -->
                         <div class="mb-4">
-                            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">3. Duración de la clase</label>
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">3.
+                                Duración de la clase</label>
                             <div class="d-flex gap-2 flex-wrap">
                                 @for (dur of duracionesOpciones; track dur.value) {
-                                    <button type="button" class="btn btn-pill flex-grow-1"
-                                            [ngClass]="solicitud.duracion === dur.value ? 'btn-primario-activo' : 'btn-outline-secundario'"
-                                            (click)="setDuracion(dur.value)">
-                                        {{ dur.label }}
-                                    </button>
+                                <button type="button" class="btn btn-pill flex-grow-1"
+                                    [ngClass]="solicitud.duracion === dur.value ? 'btn-primario-activo' : 'btn-outline-secundario'"
+                                    (click)="setDuracion(dur.value)">
+                                    {{ dur.label }}
+                                </button>
                                 }
                             </div>
                         </div>
 
                         <!-- SELECCIÓN 3: FECHA Y TURNOS -->
                         <div class="mb-4">
-                            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">4. Elige una fecha</label>
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">4.
+                                Elige una fecha</label>
                             <input type="date" class="form-control shadow-none w-50" name="fechaSeleccionada"
                                 [(ngModel)]="solicitud.fechaSeleccionada" (change)="generarTurnos()" required>
 
                             <!-- Generador de Botones de Horario -->
                             @if (solicitud.fechaSeleccionada && turnosDisponibles.length > 0) {
-                                <div class="mt-4 p-4 caja-agenda-desvinculada rounded-4 border">
-                                    <h6 class="fw-bold texto-primario mb-3">Horarios disponibles encontrados:</h6>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        @for (turno of turnosDisponibles; track turno.fechaHora) {
-                                            <button type="button" class="btn btn-sm"
-                                                    [ngClass]="solicitud.fechaHora === turno.fechaHora ? 'btn-primario-activo' : 'btn-outline-secundario'"
-                                                    (click)="solicitud.fechaHora = turno.fechaHora">
-                                                <i class="bi bi-clock me-1"></i> {{ turno.inicio }} a {{ turno.fin }}
-                                            </button>
-                                        }
-                                    </div>
-                                    <div class="text-muted small mt-3">
-                                        *Incluye el tiempo de descanso{{ solicitud.modalidad === 'presencial' ? ' y traslado' : '' }} asegurado para el profesor.
-                                    </div>
+                            <div class="mt-4 p-4 caja-agenda-desvinculada rounded-4 border">
+                                <h6 class="fw-bold texto-primario mb-3">Horarios disponibles encontrados:</h6>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    @for (turno of turnosDisponibles; track turno.fechaHora) {
+                                    <button type="button" class="btn btn-sm"
+                                        [ngClass]="solicitud.fechaHora === turno.fechaHora ? 'btn-primario-activo' : 'btn-outline-secundario'"
+                                        (click)="solicitud.fechaHora = turno.fechaHora">
+                                        <i class="bi bi-clock me-1"></i> {{ turno.inicio }} a {{ turno.fin }}
+                                    </button>
+                                    }
                                 </div>
-                            } 
-                            
+                                <div class="text-muted small mt-3">
+                                    *Incluye el tiempo de descanso{{ solicitud.modalidad === 'presencial' ? ' y
+                                    traslado' : '' }} asegurado para el profesor.
+                                </div>
+                            </div>
+                            }
+
                             @if (errorDisponibilidad) {
-                                <div class="text-danger small mt-3 fw-medium p-3 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25">
-                                    <i class="bi bi-calendar-x me-2"></i>{{ errorDisponibilidad }}
-                                </div>
+                            <div
+                                class="text-danger small mt-3 fw-medium p-3 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25">
+                                <i class="bi bi-calendar-x me-2"></i>{{ errorDisponibilidad }}
+                            </div>
                             }
                         </div>
 
                         <div class="mb-5 border-top pt-4">
-                            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Temas a tratar (Opcional)</label>
+                            <label
+                                class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Temas
+                                a tratar (Opcional)</label>
                             <textarea class="form-control shadow-none" rows="2" name="mensaje"
-                                [(ngModel)]="solicitud.mensaje" placeholder="Ej: Necesito repasar derivadas..."></textarea>
+                                [(ngModel)]="solicitud.mensaje"
+                                placeholder="Ej: Necesito repasar derivadas..."></textarea>
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg py-3 d-flex justify-content-center align-items-center gap-2"
+                            <button type="submit"
+                                class="btn btn-primary btn-lg py-3 d-flex justify-content-center align-items-center gap-2"
                                 [disabled]="formSolicitud.invalid || !solicitud.fechaHora">
                                 <span>Solicitar tutoría</span>
                                 <span class="badge-precio ms-2">${{ precioFinal }}</span>
@@ -107,40 +123,116 @@
 
             <!-- Columna Información Lateral -->
             <div class="col-lg-5">
-                
+
                 <!-- Disponibilidad del Profesor (Referencia visual) -->
                 <div class="tarjeta-delicada p-4 mb-4">
-                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i class="bi bi-journal-bookmark-fill text-primary me-2"></i>Agenda Base del Tutor</h5>
+                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i
+                            class="bi bi-journal-bookmark-fill text-primary me-2"></i>Agenda Base del Tutor</h5>
                     <p class="small texto-mutado mb-3">Estos son los bloques de horas en los que trabaja.</p>
 
                     <ul class="list-group list-group-flush border rounded-4 bg-white overflow-hidden">
                         @for (horario of horariosProfesor; track horario.id) {
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom border-opacity-10">
-                            <span class="texto-secundario"><strong class="text-capitalize text-primary">{{ horario.diaSemana }}</strong>: de {{ horario.horaInicio }} a {{ horario.horaFin }} hs</span>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom border-opacity-10">
+                            <span class="texto-secundario"><strong class="text-capitalize text-primary">{{
+                                    horario.diaSemana }}</strong>: de {{ horario.horaInicio }} a {{ horario.horaFin }}
+                                hs</span>
                         </li>
                         } @empty {
-                        <li class="list-group-item texto-mutado text-center py-4 bg-light">El profesor no ha definido horarios base todavía.</li>
+                        <li class="list-group-item texto-mutado text-center py-4 bg-light">El profesor no ha definido
+                            horarios base todavía.</li>
                         }
                     </ul>
                 </div>
 
                 <!-- Mi Agenda Personal -->
                 <div class="tarjeta-delicada p-4 mb-4">
-                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i class="bi bi-calendar3 text-primary me-2"></i>Mi Sincronización</h5>
-                    
+                    <h5 class="fw-bold mb-1 texto-primario d-flex align-items-center"><i
+                            class="bi bi-calendar3 text-primary me-2"></i>Mi Sincronización</h5>
+
                     @if (alumnoProveedorAuth === 'Google' && alumnoEmail) {
-                      <div class="caja-agenda-activa p-3 text-center mt-3">
-                          <i class="bi bi-google text-success fs-3 mb-2 d-block"></i>
-                          <p class="texto-secundario small mb-3">Vinculada a <strong>{{ alumnoEmail }}</strong>.</p>
-                          <a href="https://calendar.google.com/" target="_blank" class="btn btn-primary btn-sm w-100 rounded-pill">Abrir Google Calendar</a>
-                      </div>
+                    <div class="caja-agenda-activa p-3 text-center mt-3">
+                        <i class="bi bi-google text-success fs-3 mb-2 d-block"></i>
+                        <p class="texto-secundario small mb-3">Vinculada a <strong>{{ alumnoEmail }}</strong>.</p>
+                        <a href="https://calendar.google.com/" target="_blank"
+                            class="btn btn-primary btn-sm w-100 rounded-pill">Abrir Google Calendar</a>
+                    </div>
                     } @else {
-                      <div class="caja-agenda-desvinculada p-3 text-center mt-3">
-                          <i class="bi bi-calendar-x text-muted fs-3 mb-2 d-block"></i>
-                          <p class="texto-mutado small mb-0">Vincula tu cuenta de Google en tu panel principal.</p>
-                      </div>
+                    <div class="caja-agenda-desvinculada p-3 text-center mt-3">
+                        <i class="bi bi-calendar-x text-muted fs-3 mb-2 d-block"></i>
+                        <p class="texto-mutado small mb-0">Vincula tu cuenta de Google en tu panel principal.</p>
+                    </div>
                     }
+
                 </div>
+                <div class="tarjeta-delicada p-4 mb-4 border-top border-opacity-10">
+                    <div class="col-12 text-center mb-4">
+                        <h3 class="fw-bold texto-primario">Preguntas Frecuentes</h3>
+                        <p class="texto-secundario">Resolvé tus dudas antes de agendar tu próxima clase.</p>
+                    </div>
+                    <div class="col-md-8 mx-auto">
+                        <div class="accordion accordion-flush" id="accordionFAQ">
+
+                            <div class="accordion-item bg-transparent border-bottom border-opacity-10">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed bg-transparent texto-primario fw-semibold shadow-none"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        ¿Cómo funciona el pago de las tutorías?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                                    <div class="accordion-body texto-secundario small">
+                                        Una vez que selecciones al profesor, la modalidad y el horario, el sistema te
+                                        redirigirá a
+                                        Mercado Pago de forma segura. Tu reserva quedará confirmada automáticamente al
+                                        realizar el pago.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item bg-transparent border-bottom border-opacity-10">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed bg-transparent texto-primario fw-semibold shadow-none"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        ¿Dónde veo el link para la clase virtual?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                                    <div class="accordion-body texto-secundario small">
+                                        Si elegiste modalidad virtual, una vez que el profesor acepte tu solicitud vas a
+                                        poder acceder
+                                        al enlace de la videollamada directamente desde tu panel en la sección "Mis
+                                        Solicitudes".
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item bg-transparent border-bottom border-opacity-10">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed bg-transparent texto-primario fw-semibold shadow-none"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        ¿Qué pasa si el nivel académico del profesor es distinto al mío?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                                    <div class="accordion-body texto-secundario small">
+                                        El sistema filtra automáticamente y solo te permite agendar con profesores que
+                                        estén capacitados
+                                        para enseñar en tu nivel académico actual (primario, secundario, universitario,
+                                        etc.) o
+                                        superior.
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
