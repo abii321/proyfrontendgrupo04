@@ -43,6 +43,34 @@ export class RespuestaAyudaComponent implements OnInit {
       }
     });
   }
+
+  getPublicadoPorTexto(): string {
+    if (!this.solicitud?.id_usuario) {
+      return 'No disponible';
+    }
+
+    const usuarioClave =
+      localStorage.getItem('usuario') ||
+      sessionStorage.getItem('usuario') ||
+      localStorage.getItem('user') ||
+      sessionStorage.getItem('user');
+
+    if (usuarioClave) {
+      try {
+        const usuario = JSON.parse(usuarioClave);
+        const idUsuario = Number(usuario.id || usuario.id_usuario);
+
+        if (idUsuario === Number(this.solicitud.id_usuario)) {
+          return usuario.nombre ? `Tú (${usuario.nombre})` : 'Tú';
+        }
+      } catch {
+        // Ignorar y usar el fallback
+      }
+    }
+
+    return `Usuario #${this.solicitud.id_usuario}`;
+  }
+
  pagarRespuesta(respuesta: Respuesta) {
 
   if (!respuesta.id || !respuesta.precio || respuesta.precio <= 0) {

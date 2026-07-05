@@ -16,7 +16,6 @@ export class MercadoPagoService {
     return this.http.post<any>(
       `${this.apiUrl}/crear-preferencia`,
       {
-        tutoria_id: respuestaId,
         respuesta_id: respuestaId,
         precio: precio ?? 0
       }

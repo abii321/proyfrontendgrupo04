@@ -78,4 +78,5 @@ export class SolicitudAyudaComponent implements OnInit {
     const cat = this.categorias.find(c => c.id === id);
     return cat ? cat.nombre : 'Sin categoría';
   }
+  
 }

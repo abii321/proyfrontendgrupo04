@@ -1,0 +1,27 @@
+<div class="container mt-5 text-center">
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <h2 class="text-success">
+                ✅ Pago realizado correctamente
+            </h2>
+
+            <hr>
+
+            <p><strong>ID del pago:</strong> {{ paymentId }}</p>
+
+            <p><strong>Estado:</strong> {{ status }}</p>
+
+            <p><strong>Respuesta:</strong> {{ externalReference }}</p>
+
+            <a routerLink="/home" class="btn btn-primary">
+                Volver al inicio
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
