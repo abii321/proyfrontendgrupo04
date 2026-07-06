@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
   <div class="container">
     <a class="navbar-brand fw-bold fs-5"
-      [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">App</a>
+      [routerLink]="autenticacionService.userLoggedIn() ? ['home'] : ['login']">Tutorias<span
+        style="color: blue;">.</span>com</a>
 
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,15 +45,14 @@
         </a>
         } @else {
         <li class="nav-item dropdown list-unstyled">
-          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-5"></i>
             <span class="fw-semibold small">{{ autenticacionService.userLogged() || 'Mi Cuenta' }}</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
             <li>
-              <button class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/perfil']"> <span>Editar
-                  perfil</span> </button>
+              <button class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/perfil']"> <span>Ver perfil</span> </button>
             </li>
 
             <li> <span class="dropdown-header text-muted pb-2">Sesión activa</span> </li>
@@ -62,7 +62,7 @@
             </li>
             <li>
               <button class="dropdown-item text-danger d-flex align-items-center gap-2" [routerLink]="['/home']"
-                (click)="autenticacionService.logout()">                
+                (click)="autenticacionService.logout()">
                 Cerrar Sesión
               </button>
             </li>

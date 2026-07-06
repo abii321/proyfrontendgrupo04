@@ -12,6 +12,10 @@ export class Usuario {
     lng?: number | null;
     universidad!: string;
     carrera!: string;
+    biografia?: string;
+    nivelAcademico?: string;
+    tarifaBase?: number;
+    id?: number;
     
     constructor(){
     }
