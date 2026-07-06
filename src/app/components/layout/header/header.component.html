@@ -28,10 +28,12 @@
           <a class="nav-link px-3" [routerLink]="['mis-solicitudes']"
             routerLinkActive="active rounded-pill bg-light">Mis Solicitudes</a>
         </li>
+        @if (autenticacionService.isAdmin()) {
         <li class="nav-item">
           <a class="nav-link px-3" [routerLink]="['dashboard']"
             routerLinkActive="active rounded-pill bg-light">Dashboard</a>
         </li>
+        }
       </ul>
       }
 
