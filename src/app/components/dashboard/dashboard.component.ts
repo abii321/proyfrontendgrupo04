@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, signal, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
@@ -9,8 +9,11 @@ import {
   FullTutorial,
   MonthCount,
   RoleStateCount,
-  StateCount
+  StateCount,
+  FullUsuarioDashboard,
+  FullCategoryDashboard
 } from '../../models/dashboard.class';
+import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -26,7 +29,26 @@ import DataTable from 'datatables.net-bs5';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   @ViewChild('tutorialsTable') tutorialsTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('usersTable') usersTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('categoriesTable') categoriesTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLDivElement>;
 
+  currentTableView: 'tutorias' | 'usuarios' | 'categorias' = 'tutorias';
+  
+  users = signal<FullUsuarioDashboard[]>([]);
+  categories = signal<FullCategoryDashboard[]>([]);
+  
+  editingUser: FullUsuarioDashboard | null = null;
+  showUserModal = false;
+
+  editingTutorial: FullTutorial | null = null;
+  showTutorialModal = false;
+
+  editingCategory: FullCategoryDashboard | null = null;
+  showCategoryModal = false;
+
+  itemToDelete: { type: string, id: number } | null = null;
+  showDeleteModal = false;
   // --- KPI CARDS ---
   summary: DashboardSummary = {
     totalUsers: 0,
@@ -211,9 +233,100 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (type !== 'display') return d;
           return new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
         }
+      },
+      {
+        data: null,
+        title: 'Acciones',
+        orderable: false,
+        render: (d: any, type: string, row: FullTutorial) => {
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-tutorial me-1" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm btn-outline-danger btn-delete-tutorial" data-id="${row.id}"><i class="bi bi-trash pe-none"></i></button>
+          `;
+        }
       }
     ],
     order: [[10, 'desc'] as [number, 'asc' | 'desc']]   // ordenar por "Registro" DESC
+  };
+
+  private readonly dtOptionsUsers = {
+    language: {
+      url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-AR.json'
+    },
+    pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
+    columns: [
+      { data: 'id', title: '#', className: 'text-muted small' },
+      {
+        data: null,
+        title: 'Usuario',
+        render: (d: any, type: string, row: FullUsuarioDashboard) => {
+          const nombre = `${row.nombre ?? ''} ${row.apellido ?? ''}`.trim();
+          const email = row.email ?? '';
+          if (type !== 'display') return nombre;
+          return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
+        }
+      },
+      {
+        data: 'rol', title: 'Rol', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const bg = d === 'admin' ? 'bg-danger' : (d === 'profesor' ? 'bg-primary' : 'bg-secondary');
+          return `<span class="badge ${bg}">${d}</span>`;
+        }
+      },
+      {
+        data: 'estado', title: 'Estado', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const bg = d === 'activo' ? 'bg-success' : 'bg-warning text-dark';
+          return `<span class="badge ${bg}">${d}</span>`;
+        }
+      },
+      { data: 'universidad', title: 'Universidad', defaultContent: '—' },
+      { data: 'carrera', title: 'Carrera', defaultContent: '—' },
+      {
+        data: 'createdAt',
+        title: 'Registro',
+        className: 'text-muted small',
+        render: (d: string, type: string) => {
+          if (!d) return '';
+          if (type !== 'display') return d;
+          return new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+        }
+      },
+      {
+        data: null,
+        title: 'Acciones',
+        orderable: false,
+        render: (d: any, type: string, row: FullUsuarioDashboard) => {
+          return `<button class="btn btn-sm btn-outline-secondary btn-edit-user" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i> Editar</button>`;
+        }
+      }
+    ],
+    order: [[6, 'desc'] as [number, 'asc' | 'desc']]
+  };
+
+  private readonly dtOptionsCategories = {
+    language: { url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-AR.json' },
+    pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
+    columns: [
+      { data: 'id', title: '#', className: 'text-muted small' },
+      { data: 'nombre', title: 'Nombre', className: 'fw-semibold' },
+      { data: 'nivel', title: 'Nivel' },
+      { data: 'descripcion', title: 'Descripción', render: (d: string, type: string) => {
+          if (type !== 'display') return d;
+          return d && d.length > 50 ? d.substring(0, 50) + '...' : d;
+      }},
+      {
+        data: null, title: 'Acciones', orderable: false, render: (d: any, type: string, row: FullCategoryDashboard) => {
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-category me-1" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm btn-outline-danger btn-delete-category" data-id="${row.id}"><i class="bi bi-trash pe-none"></i></button>
+          `;
+        }
+      }
+    ],
+    order: [[1, 'asc'] as [number, 'asc' | 'desc']]
   };
 
   // --- KPIs FINANCIEROS ---
@@ -243,7 +356,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return (paidCount / list.length) * 100;
   }
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef, private router: Router) { }
 
   ngOnInit(): void {
     this.loadSummary();
@@ -252,6 +365,61 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadTutorialsByState();
     this.loadTutorialsByMonth();
     this.loadFullTutorials();
+  }
+
+  @HostListener('click', ['$event'])
+  onTableClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const actionBtn = target.closest('button');
+    if (!actionBtn) return;
+
+    const id = Number(actionBtn.getAttribute('data-id'));
+    if (!id) return;
+
+    if (actionBtn.classList.contains('btn-edit-user')) {
+      const user = this.users().find(u => u.id === id);
+      if (user) this.openEditUserModal(user);
+    } else if (actionBtn.classList.contains('btn-edit-tutorial')) {
+      const tutoria = this.tutorials().find(t => t.id === id);
+      if (tutoria) this.openEditTutorialModal(tutoria);
+    } else if (actionBtn.classList.contains('btn-delete-tutorial')) {
+      this.openDeleteModal('tutorial', id);
+    } else if (actionBtn.classList.contains('btn-edit-category')) {
+      const cat = this.categories().find(c => c.id === id);
+      if (cat) this.openEditCategoryModal(cat);
+    } else if (actionBtn.classList.contains('btn-delete-category')) {
+      this.openDeleteModal('category', id);
+    }
+  }
+
+  goToSolicitudes(): void {
+    this.router.navigate(['/solicitud-ayuda']);
+  }
+
+  switchView(view: 'tutorias' | 'usuarios' | 'categorias'): void {
+    if (this.currentTableView !== view) {
+      this.currentTableView = view;
+      this.tableReady = false;
+      
+      if (this.dtInstance) {
+        this.dtInstance.destroy();
+        this.dtInstance = null;
+      }
+
+      if (view === 'tutorias') {
+        this.loadFullTutorials();
+      } else if (view === 'usuarios') {
+        this.loadUsers();
+      } else if (view === 'categorias') {
+        this.loadCategories();
+      }
+    }
+    
+    setTimeout(() => {
+      if (this.tableContainer && this.tableContainer.nativeElement) {
+        this.tableContainer.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   ngOnDestroy(): void {
@@ -454,5 +622,189 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Tutorías');
     XLSX.writeFile(workbook, 'reporte-tutorias.xlsx');
+  }
+
+  // Carga usuarios para la vista de usuarios
+  loadUsers(): void {
+    this.adminService.getUsers().subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.users.set(res.data);
+          this.tableReady = true;
+          this.cdr.detectChanges();
+
+          setTimeout(() => {
+            if (this.usersTable && this.usersTable.nativeElement) {
+              if (this.dtInstance) {
+                this.dtInstance.destroy();
+              }
+              this.dtInstance = new DataTable(this.usersTable.nativeElement, {
+                ...this.dtOptionsUsers,
+                data: res.data
+              });
+            }
+          }, 0);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+        this.tableReady = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openEditUserModal(user: FullUsuarioDashboard): void {
+    this.editingUser = { ...user };
+    this.showUserModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeUserModal(): void {
+    this.showUserModal = false;
+    this.editingUser = null;
+  }
+
+  saveUserChanges(): void {
+    if (!this.editingUser) return;
+    
+    this.adminService.updateUser(this.editingUser.id, this.editingUser).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeUserModal();
+          this.loadUsers(); // Recargar la tabla
+        } else {
+          alert('Error al actualizar usuario: ' + res.msg);
+        }
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        alert('Ocurrió un error al actualizar el usuario.');
+      }
+    });
+  }
+
+  // --- TUTORIALS EDIT ---
+  openEditTutorialModal(tutoria: FullTutorial): void {
+    this.editingTutorial = { ...tutoria };
+    this.showTutorialModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeTutorialModal(): void {
+    this.showTutorialModal = false;
+    this.editingTutorial = null;
+  }
+
+  saveTutorialChanges(): void {
+    if (!this.editingTutorial) return;
+    this.adminService.updateTutorial(this.editingTutorial.id, this.editingTutorial).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeTutorialModal();
+          this.loadFullTutorials();
+        } else alert('Error: ' + res.msg);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al actualizar tutoría.');
+      }
+    });
+  }
+
+  // --- CATEGORIES (CATEGORÍAS) ---
+  loadCategories(): void {
+    this.adminService.getCategoriesList().subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.categories.set(res.data);
+          this.tableReady = true;
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            if (this.categoriesTable && this.categoriesTable.nativeElement) {
+              if (this.dtInstance) this.dtInstance.destroy();
+              this.dtInstance = new DataTable(this.categoriesTable.nativeElement, {
+                ...this.dtOptionsCategories, data: res.data
+              });
+            }
+          }, 0);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.tableReady = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openEditCategoryModal(cat: FullCategoryDashboard): void {
+    this.editingCategory = { ...cat };
+    this.showCategoryModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeCategoryModal(): void {
+    this.showCategoryModal = false;
+    this.editingCategory = null;
+  }
+
+  saveCategoryChanges(): void {
+    if (!this.editingCategory) return;
+    this.adminService.updateCategory(this.editingCategory.id, this.editingCategory).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeCategoryModal();
+          this.loadCategories();
+        } else alert('Error: ' + res.msg);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al actualizar categoría.');
+      }
+    });
+  }
+
+  // --- DELETE MODAL ---
+  openDeleteModal(type: string, id: number): void {
+    this.itemToDelete = { type, id };
+    this.showDeleteModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.itemToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.itemToDelete) return;
+    const { type, id } = this.itemToDelete;
+
+    let deleteObs;
+    if (type === 'tutorial') deleteObs = this.adminService.deleteTutorial(id);
+    else if (type === 'category') deleteObs = this.adminService.deleteCategory(id);
+    else return;
+
+    deleteObs.subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeDeleteModal();
+          if (type === 'tutorial') this.loadFullTutorials();
+          else if (type === 'category') this.loadCategories();
+        } else {
+          alert('Error: ' + res.msg);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        if (err.error && err.error.msg) {
+          alert(err.error.msg);
+        } else {
+          alert('Error al eliminar el registro.');
+        }
+        this.closeDeleteModal();
+      }
+    });
   }
 }
