@@ -53,6 +53,10 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/users/${id}`, data);
   }
 
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}`);
+  }
+
   // --- Tutorías ---
   updateTutorial(id: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/tutorials/${id}`, data);

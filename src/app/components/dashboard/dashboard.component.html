@@ -355,9 +355,14 @@
                     </form>
                 }
             </div>
-            <div class="modal-footer border-0 pt-0 px-4 pb-4">
-                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" (click)="closeUserModal()">Cancelar</button>
-                <button type="button" class="btn btn-elegante px-4 rounded-pill" (click)="saveUserChanges()">Guardar Cambios</button>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-danger px-3 rounded-pill" (click)="deleteEditingUser()" title="Eliminar definitivamente">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill me-2" (click)="closeUserModal()">Cancelar</button>
+                    <button type="button" class="btn btn-elegante px-4 rounded-pill" (click)="saveUserChanges()">Guardar</button>
+                </div>
             </div>
         </div>
     </div>
