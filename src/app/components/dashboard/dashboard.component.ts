@@ -20,6 +20,9 @@ import * as XLSX from 'xlsx';
 import DataTable from 'datatables.net-bs5';
 
 /**
+  ==========================================================
+  FUNCIÓN AUXILIAR: escapeHtml
+  ==========================================================
   Escapa caracteres especiales HTML para prevenir XSS
   en celdas de DataTables que usan render() con HTML manual.
  */
@@ -42,6 +45,10 @@ function escapeHtml(value: string | null | undefined): string {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  // ==========================================================
+  // 1. PROPIEDADES DE ESTADO Y REFERENCIAS AL DOM
+  // ==========================================================
+
   @ViewChild('tutorialsTable') tutorialsTable!: ElementRef<HTMLTableElement>;
   @ViewChild('usersTable') usersTable!: ElementRef<HTMLTableElement>;
   @ViewChild('categoriesTable') categoriesTable!: ElementRef<HTMLTableElement>;
@@ -63,6 +70,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   itemToDelete: { type: string, id: number } | null = null;
   showDeleteModal = false;
+
+  // ==========================================================
+  // 2. CONFIGURACIONES DE GRÁFICOS (CHART.JS)
+  // ==========================================================
+
   // --- KPI CARDS ---
   summary: DashboardSummary = {
     totalUsers: 0,
@@ -144,7 +156,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  // --- DATA TABLE (DataTable.net nativo) ---
+  // ==========================================================
+  // 3. CONFIGURACIONES DE TABLAS (DATATABLES)
+  // ==========================================================
+
   tableReady = false;
   tutorials = signal<FullTutorial[]>([]);
   private dtInstance: any;
@@ -314,7 +329,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Acciones',
         orderable: false,
         render: (d: any, type: string, row: FullUsuarioDashboard) => {
-          return `<button class="btn btn-sm btn-outline-secondary btn-edit-user" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i> Editar</button>`;
+          const isActivo = row.estado === 'activo';
+          const toggleClass = isActivo ? 'btn-outline-warning' : 'btn-outline-success';
+          const toggleIcon = isActivo ? 'bi-person-fill-slash' : 'bi-person-fill-check';
+          const toggleTitle = isActivo ? 'Inactivar Usuario' : 'Activar Usuario';
+
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-user me-1" data-id="${row.id}" title="Editar"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm ${toggleClass} btn-toggle-user" data-id="${row.id}" title="${toggleTitle}"><i class="bi ${toggleIcon} pe-none"></i></button>
+          `;
         }
       }
     ],
@@ -348,7 +371,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     order: [[1, 'asc'] as [number, 'asc' | 'desc']]
   };
 
-  // --- KPIs FINANCIEROS ---
+  // ==========================================================
+  // 4. GETTERS PARA KPIs FINANCIEROS (calculados en el frontend)
+  // ==========================================================
+
   get totalRevenue(): number {
     return this.tutorials()
       .filter(t => t.pagada)
@@ -377,6 +403,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(private adminService: AdminService, private cdr: ChangeDetectorRef, private router: Router) { }
 
+  // ==========================================================
+  // 5. CICLO DE VIDA
+  // ==========================================================
+
   ngOnInit(): void {
     this.loadSummary();
     this.loadUsersByRole();
@@ -386,6 +416,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadFullTutorials();
   }
 
+  // ==========================================================
+  // 6. GESTIÓN DE EVENTOS DE INTERFAZ (CLICKS EN TABLAS Y NAVEGACIÓN)
+  // ==========================================================
+
+  // Escucha los clics globales en la tabla para delegar los eventos a los botones
   @HostListener('click', ['$event'])
   onTableClick(event: Event) {
     const target = event.target as HTMLElement;
@@ -398,6 +433,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (actionBtn.classList.contains('btn-edit-user')) {
       const user = this.users().find(u => u.id === id);
       if (user) this.openEditUserModal(user);
+    } else if (actionBtn.classList.contains('btn-toggle-user')) {
+      const user = this.users().find(u => u.id === id);
+      if (user) {
+        const newStatus = user.estado === 'activo' ? 'inactivo' : 'activo';
+        this.adminService.updateUser(user.id, { ...user, estado: newStatus }).subscribe({
+          next: (res) => {
+            if (res.status === 1) {
+              this.loadUsers();
+              this.loadSummary();
+              this.loadUsersByRole();
+            }
+          },
+          error: (err) => { console.error(err); alert('Error al cambiar estado.'); }
+        });
+      }
     } else if (actionBtn.classList.contains('btn-edit-tutorial')) {
       const tutoria = this.tutorials().find(t => t.id === id);
       if (tutoria) this.openEditTutorialModal(tutoria);
@@ -446,6 +496,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.dtInstance.destroy();
     }
   }
+
+  // ==========================================================
+  // 7. CARGA DE DATOS PARA KPIs Y GRÁFICOS
+  // ==========================================================
 
   // Carga los contadores generales para las KPI cards
   loadSummary(): void {
@@ -556,6 +610,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ==========================================================
+  // 8. GESTIÓN DE TUTORÍAS (CARGA Y EXPORTACIONES)
+  // ==========================================================
+
   // Carga el listado completo de tutorías; inicializa la tabla una vez cargada en el DOM
   loadFullTutorials(): void {
     this.adminService.getFullTutorials().subscribe({
@@ -643,6 +701,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     XLSX.writeFile(workbook, 'reporte-tutorias.xlsx');
   }
 
+  // ==========================================================
+  // 9. GESTIÓN Y EDICIÓN DE USUARIOS
+  // ==========================================================
+
   // Carga usuarios para la vista de usuarios
   loadUsers(): void {
     this.adminService.getUsers().subscribe({
@@ -691,7 +753,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (res) => {
         if (res.status === 1) {
           this.closeUserModal();
-          this.loadUsers(); // Recargar la tabla
+          this.loadUsers();
+          this.loadSummary();
+          this.loadUsersByRole();
         } else {
           alert('Error al actualizar usuario: ' + res.msg);
         }
@@ -703,7 +767,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- TUTORIALS EDIT ---
+  deleteEditingUser(): void {
+    if (this.editingUser) {
+      this.openDeleteModal('user', this.editingUser.id);
+      this.closeUserModal();
+    }
+  }
+
+  // ==========================================================
+  // 10. EDICIÓN DE TUTORÍAS (MODAL)
+  // ==========================================================
+
   openEditTutorialModal(tutoria: FullTutorial): void {
     this.editingTutorial = { ...tutoria };
     this.showTutorialModal = true;
@@ -722,6 +796,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (res.status === 1) {
           this.closeTutorialModal();
           this.loadFullTutorials();
+          this.loadSummary();
+          this.loadTutorialsByState();
+          this.loadTutorialsByMonth();
         } else alert('Error: ' + res.msg);
       },
       error: (err) => {
@@ -731,7 +808,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- CATEGORIES (CATEGORÍAS) ---
+  // ==========================================================
+  // 11. GESTIÓN Y EDICIÓN DE CATEGORÍAS
+  // ==========================================================
+
   loadCategories(): void {
     this.adminService.getCategoriesList().subscribe({
       next: (res) => {
@@ -775,6 +855,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (res.status === 1) {
           this.closeCategoryModal();
           this.loadCategories();
+          this.loadSummary();
         } else alert('Error: ' + res.msg);
       },
       error: (err) => {
@@ -784,7 +865,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // --- DELETE MODAL ---
+  // ==========================================================
+  // 12. SISTEMA DE BORRADO UNIFICADO (MODAL DE CONFIRMACIÓN)
+  // ==========================================================
+
   openDeleteModal(type: string, id: number): void {
     this.itemToDelete = { type, id };
     this.showDeleteModal = true;
@@ -803,14 +887,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let deleteObs;
     if (type === 'tutorial') deleteObs = this.adminService.deleteTutorial(id);
     else if (type === 'category') deleteObs = this.adminService.deleteCategory(id);
+    else if (type === 'user') deleteObs = this.adminService.deleteUser(id);
     else return;
 
     deleteObs.subscribe({
       next: (res) => {
         if (res.status === 1) {
           this.closeDeleteModal();
-          if (type === 'tutorial') this.loadFullTutorials();
-          else if (type === 'category') this.loadCategories();
+          this.loadSummary();
+          if (type === 'tutorial') {
+            this.loadFullTutorials();
+            this.loadTutorialsByState();
+            this.loadTutorialsByMonth();
+          }
+          else if (type === 'category') {
+            this.loadCategories();
+          }
+          else if (type === 'user') {
+            this.loadUsers();
+            this.loadUsersByRole();
+          }
         } else {
           alert('Error: ' + res.msg);
         }
