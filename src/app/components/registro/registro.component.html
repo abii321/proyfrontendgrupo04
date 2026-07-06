@@ -4,7 +4,7 @@
             <div class="row g-0">
                 
                 <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-2">
-                    <img src="registro.jpg" alt="Ilustración de registro" class="img-fluid mb-4 border rounded-4" style="max-width: 350px;">
+                    <img src="registro.jpg" alt="Ilustración de registro" class="img-fluid mb-4 border rounded-4" style="max-width: 350px;" ngNoOptimize>
                     <div class="text-center">
                         <h4 class="fw-bold">¡Únete a nuestra comunidad!</h4>
                         <p class="text-muted small">Regístrate para acceder a tutorías y conectar con otros estudiantes y profesores.</p>
@@ -91,14 +91,23 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label for="ubicacion" class="form-label fw-semibold">Ubicación</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" #ubicacion="ngModel" required minlength="4" placeholder="Ej. Yerba Buena, Tucumán">
-                                <button class="btn btn-outline-secondary" type="button" (click)="detectarUbicacionGPS()" title="Detectar ubicación actual usando GPS">
-                                    <i class="bi bi-geo-alt"></i> Usar GPS
+                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" [(ngModel)]="usuario.ubicacion" (input)="onUbicacionInput()" (blur)="onBlurUbicacion()" #ubicacion="ngModel" required minlength="4" placeholder="Ej. Yerba Buena, Tucumán" [disabled]="cargandoUbicacion" autocomplete="off">
+                                <button class="btn btn-outline-secondary" type="button" (click)="detectarUbicacionGPS()" title="Detectar ubicación actual usando GPS" [disabled]="cargandoUbicacion">
+                                    <span *ngIf="cargandoUbicacion" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                    <i *ngIf="!cargandoUbicacion" class="bi bi-geo-alt"></i> 
+                                    {{ cargandoUbicacion ? 'Detectando...' : 'Usar GPS' }}
                                 </button>
                             </div>
+                            <ul class="dropdown-menu show w-100 position-absolute start-0" *ngIf="mostrarSugerencias && sugerencias.length > 0" style="max-height: 200px; overflow-y: auto; z-index: 1050; top: 100%;">
+                                <li *ngFor="let sug of sugerencias">
+                                    <button type="button" class="dropdown-item small text-wrap text-start py-2" (click)="seleccionarSugerencia(sug)">
+                                        <i class="bi bi-geo-alt-fill text-muted me-2"></i>{{ sug.display_name }}
+                                    </button>
+                                </li>
+                            </ul>
                             <div *ngIf="ubicacion.invalid && (ubicacion.touched || ubicacion.dirty)" class="text-danger small mt-1">
                                 <div *ngIf="ubicacion.errors?.['required']">Campo obligatorio.</div>
                                 <div *ngIf="ubicacion.errors?.['minlength']">Debe contener al menos 4 caracteres.</div>

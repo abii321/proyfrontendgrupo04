@@ -8,14 +8,25 @@ declare var process: any;
 })
 export class GoogleAuthService {
 
-  private clientId = process.env.NG_APP_GOOGLE_CLIENT_ID || '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com';
+  private clientId = (process.env.NG_APP_GOOGLE_CLIENT_ID || '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com').replace(/['"]/g, '');
+
+  private inicializado = false;
+  private currentCallback?: (response: any) => void;
 
   inicializar(callback: (response: any) => void) {
+    this.currentCallback = callback;
     if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: this.clientId,
-        callback: callback
-      });
+      if (!this.inicializado) {
+        google.accounts.id.initialize({
+          client_id: this.clientId,
+          callback: (res: any) => {
+            if (this.currentCallback) {
+              this.currentCallback(res);
+            }
+          }
+        });
+        this.inicializado = true;
+      }
     }
   }
 
