@@ -10,6 +10,7 @@ import { MisSolicitudesComponent } from './components/mis-solicitudes/mis-solici
 import { CrearSolicitudComponent } from './components/solicitud-ayuda/crear-solicitud/crear-solicitud.component';
 import { GaleriaProfesoresComponent } from './components/galeria-profesores/galeria-profesores.component';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 import { PagoExitoso } from './components/pago-exitoso/pago-exitoso';
 import { PagoPendiente} from './components/pago-pendiente/pago-pendiente';
 import { PagoError} from './components/pago-error/pago-error';
@@ -29,7 +30,7 @@ export const routes: Routes = [
     { path: 'mis-solicitudes', component: MisSolicitudesComponent, canActivate: [authGuard] },
     { path: 'gestion-tutoria', component: GestionTutoriaComponent, canActivate: [authGuard] },
     { path: 'solicitar-tutoria', component: GaleriaProfesoresComponent, canActivate: [authGuard] },
-    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, adminGuard] },
     { path: 'pago-exitoso', component: PagoExitoso, canActivate: [authGuard] },
     { path: 'pago-pendiente', component: PagoPendiente, canActivate: [authGuard] },
     { path: 'pago-error', component: PagoError, canActivate: [authGuard] },

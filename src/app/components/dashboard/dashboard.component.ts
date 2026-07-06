@@ -19,6 +19,20 @@ import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import DataTable from 'datatables.net-bs5';
 
+/**
+  Escapa caracteres especiales HTML para prevenir XSS
+  en celdas de DataTables que usan render() con HTML manual.
+ */
+function escapeHtml(value: string | null | undefined): string {
+  if (!value) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -34,10 +48,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLDivElement>;
 
   currentTableView: 'tutorias' | 'usuarios' | 'categorias' = 'tutorias';
-  
+
   users = signal<FullUsuarioDashboard[]>([]);
   categories = signal<FullCategoryDashboard[]>([]);
-  
+
   editingUser: FullUsuarioDashboard | null = null;
   showUserModal = false;
 
@@ -148,8 +162,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Alumno',
         defaultContent: '',
         render: (d: any, type: string, row: FullTutorial) => {
-          const nombre = `${row.alumno?.nombre ?? ''} ${row.alumno?.apellido ?? ''}`.trim();
-          const email = row.alumno?.email ?? '';
+          const nombre = escapeHtml(`${row.alumno?.nombre ?? ''} ${row.alumno?.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.alumno?.email);
           if (type !== 'display') return nombre;
           return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
         }
@@ -159,8 +173,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Profesor',
         defaultContent: '',
         render: (d: any, type: string, row: FullTutorial) => {
-          const nombre = `${row.profesor?.nombre ?? ''} ${row.profesor?.apellido ?? ''}`.trim();
-          const email = row.profesor?.email ?? '';
+          const nombre = escapeHtml(`${row.profesor?.nombre ?? ''} ${row.profesor?.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.profesor?.email);
           if (type !== 'display') return nombre;
           return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
         }
@@ -175,7 +189,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Modalidad',
         render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
-          return `<span class="badge-modalidad badge-modalidad--${(d ?? '').toLowerCase()}">${d}</span>`;
+          const safe = escapeHtml(d);
+          return `<span class="badge-modalidad badge-modalidad--${(d ?? '').toLowerCase()}">${safe}</span>`;
         }
       },
       {
@@ -183,7 +198,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Estado',
         render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
-          return `<span class="badge-estado badge-estado--${(d ?? '').toLowerCase()}">${d}</span>`;
+          const safe = escapeHtml(d);
+          return `<span class="badge-estado badge-estado--${(d ?? '').toLowerCase()}">${safe}</span>`;
         }
       },
       {
@@ -261,8 +277,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         data: null,
         title: 'Usuario',
         render: (d: any, type: string, row: FullUsuarioDashboard) => {
-          const nombre = `${row.nombre ?? ''} ${row.apellido ?? ''}`.trim();
-          const email = row.email ?? '';
+          const nombre = escapeHtml(`${row.nombre ?? ''} ${row.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.email);
           if (type !== 'display') return nombre;
           return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
         }
@@ -271,14 +287,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         data: 'rol', title: 'Rol', render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
           const bg = d === 'admin' ? 'bg-danger' : (d === 'profesor' ? 'bg-primary' : 'bg-secondary');
-          return `<span class="badge ${bg}">${d}</span>`;
+          return `<span class="badge ${bg}">${escapeHtml(d)}</span>`;
         }
       },
       {
         data: 'estado', title: 'Estado', render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
           const bg = d === 'activo' ? 'bg-success' : 'bg-warning text-dark';
-          return `<span class="badge ${bg}">${d}</span>`;
+          return `<span class="badge ${bg}">${escapeHtml(d)}</span>`;
         }
       },
       { data: 'universidad', title: 'Universidad', defaultContent: '—' },
@@ -313,10 +329,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       { data: 'id', title: '#', className: 'text-muted small' },
       { data: 'nombre', title: 'Nombre', className: 'fw-semibold' },
       { data: 'nivel', title: 'Nivel' },
-      { data: 'descripcion', title: 'Descripción', render: (d: string, type: string) => {
-          if (type !== 'display') return d;
-          return d && d.length > 50 ? d.substring(0, 50) + '...' : d;
-      }},
+      {
+        data: 'descripcion', title: 'Descripción', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const safe = escapeHtml(d);
+          return safe.length > 50 ? safe.substring(0, 50) + '...' : safe;
+        }
+      },
       {
         data: null, title: 'Acciones', orderable: false, render: (d: any, type: string, row: FullCategoryDashboard) => {
           return `
@@ -400,7 +419,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.currentTableView !== view) {
       this.currentTableView = view;
       this.tableReady = false;
-      
+
       if (this.dtInstance) {
         this.dtInstance.destroy();
         this.dtInstance = null;
@@ -414,7 +433,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loadCategories();
       }
     }
-    
+
     setTimeout(() => {
       if (this.tableContainer && this.tableContainer.nativeElement) {
         this.tableContainer.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -667,7 +686,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   saveUserChanges(): void {
     if (!this.editingUser) return;
-    
+
     this.adminService.updateUser(this.editingUser.id, this.editingUser).subscribe({
       next: (res) => {
         if (res.status === 1) {

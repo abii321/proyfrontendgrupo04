@@ -43,6 +43,26 @@ export class AutenticacionService {
     return true;
   }
 
+  public getToken(): string | null {
+    const usuario = sessionStorage.getItem("usuario");
+    if (!usuario) return null;
+    try {
+      return JSON.parse(usuario).token || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  public isAdmin(): boolean {
+    const usuario = sessionStorage.getItem("usuario");
+    if (!usuario) return false;
+    try {
+      return JSON.parse(usuario).rol === 'admin';
+    } catch (e) {
+      return false;
+    }
+  }
+
   public logout(){
     sessionStorage.clear();
   }
