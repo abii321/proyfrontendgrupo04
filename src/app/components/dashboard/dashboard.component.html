@@ -9,7 +9,7 @@
 
         <!-- KPI Cards — contadores generales -->
         <div class="row g-4 mb-5">
-            <div class="col-sm-6 col-xl-3">
+            <div class="col-sm-6 col-md-4 col-xl">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
@@ -22,7 +22,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
+            <div class="col-sm-6 col-md-4 col-xl">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
@@ -35,27 +35,40 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
+            <div class="col-sm-6 col-md-4 col-xl">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
                             <i class="bi bi-question-circle fs-3"></i>
                         </div>
                         <div>
-                            <p class="text-muted small mb-0">Solicitudes de Ayuda</p>
+                            <p class="text-muted small mb-0">Solicitudes</p>
                             <h3 class="fw-light mb-0">{{ summary.totalHelpRequests }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
+            <div class="col-sm-6 col-md-6 col-xl">
+                <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="kpi-icon kpi-icon--info">
+                            <i class="bi bi-tags fs-3"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted small mb-0">Categorías</p>
+                            <h3 class="fw-light mb-0">{{ summary.totalCategories }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-xl">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon kpi-icon--warning">
                             <i class="bi bi-star-half fs-3"></i>
                         </div>
                         <div>
-                            <p class="text-muted small mb-0">Calificación Promedio</p>
+                            <p class="text-muted small mb-0">Calif. Promedio</p>
                             <h3 class="fw-light mb-0">
                                 {{ summary.avgRating }}
                                 <small class="text-muted fs-6">/ 5</small>
@@ -204,8 +217,8 @@
 
             @if (tableReady) {
             <div class="table-responsive">
-                <table #tutorialsTable
-                    class="table table-hover table-borderless align-middle w-100" id="tutorials-table">
+                <table #tutorialsTable class="table table-hover table-borderless align-middle w-100"
+                    id="tutorials-table">
                     <thead class="table-header">
                         <tr>
                             <th scope="col">#</th>
