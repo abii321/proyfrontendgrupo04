@@ -1,252 +1,168 @@
-<div class="container py-5">
-  <div class="row">
-    <!-- Card principal del perfil -->
-    <div class="col-lg-4 mb-4">
-      <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
-        <div class="position-relative d-inline-block mx-auto mb-3">
-          <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm" style="width: 120px; height: 120px; border: 3px solid #6c757d;">
-            <i class="bi bi-person fs-1 text-secondary"></i>
-          </div>
-          <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-primary px-3 py-2 text-capitalize shadow-sm">
-            {{ rolUsuario }}
+<div class="container">
+
+  <div class="bg-light pt-4 rounded shadow-sm" *ngIf="rolUsuario=='profesor'">
+    <h3 class="mb-0">Configura tu Perfil de Profesor</h3>
+
+    <!--Categorias-->
+    <div class="my-3">
+      <div class="col-md-6">
+        <h5 for="rol" class="form-label fw-semibold">Categorias</h5>
+
+        <div class="input-group mb-2">
+          <select class="form-select" style="max-width: 150px;" name="filtroNivel" [(ngModel)]="filtroNivel"
+            (change)="filtrarCategorias()">
+            <option value="">Todos</option>
+            <option value="primario">Primario</option>
+            <option value="secundario">Secundario</option>
+            <option value="terciario">Terciario</option>
+            <option value="universitario">Universitario</option>
+            <option value="doctorado">Doctorado</option>
+          </select>
+          <input class="form-control" type="text" placeholder="Buscar categoría..." [(ngModel)]="textoBusqueda"
+            name="textoBusqueda" (input)="filtrarCategorias()">
+        </div>
+
+        <div class="list-group mb-3" style="max-height:250px; overflow:auto;">
+          <button type="button"
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+            *ngFor="let categoria of categoriasFiltradas" (click)="agregarCategoria(categoria)">
+            <div>
+              <span>{{categoria.nombre}} </span>
+              <span class="badge bg-secondary ms-2">{{categoria.nivel}}</span>
+            </div>
+            <div>
+              <button class="btn btn-outline-info btn-sm me-2" type="button" data-bs-toggle="modal"
+                data-bs-target="#modalCategoria" (click)="mostrarDescripcion(categoria); $event.stopPropagation()"> <i
+                  class="bi bi-info-circle"></i> </button>
+              <i class="bi bi-plus-circle"></i>
+            </div>
+          </button>
+        </div>
+
+        <label class="fw-semibold"> Categorías seleccionadas</label>
+        <div class="mt-2">
+          <span *ngIf="categoriasSeleccionadas.length==0">No has seleccionado ninguna aun</span>
+          <span *ngFor="let categoria of categoriasSeleccionadas" class="badge bg-primary me-2 mb-2 fs-6">
+            {{categoria.nombre}}
+            <button type="button" class="btn-close btn-close-white ms-2" style="font-size:10px"
+              (click)="quitarCategoria(categoria)"> </button>
           </span>
         </div>
-        <h4 class="fw-bold mb-1">{{ usuario.nombre }} {{ usuario.apellido }}</h4>
-        <p class="text-muted small mb-3"><i class="bi bi-envelope me-1"></i>{{ usuario.email }}</p>
-        
-        <!-- Ubicación -->
-        <div class="d-flex align-items-center justify-content-center text-secondary small mb-4">
-          <i class="bi bi-geo-alt-fill text-danger me-1"></i>
-          <span>{{ usuario.ubicacion || 'Sin ubicación especificada' }}</span>
-        </div>
+      </div>
 
-        <hr class="opacity-10 my-3">
+      <div *ngIf="errorCategoria" class="text-danger small mt-2"> {{ errorCategoria }} </div>
 
-        <!-- Botones de Acción -->
-        <button *ngIf="!modoEdicion" class="btn btn-primary w-100 py-2 rounded-3 fw-semibold" (click)="activarEdicion()">
-          <i class="bi bi-pencil-square me-2"></i>Editar Perfil
-        </button>
-        <div *ngIf="modoEdicion" class="d-flex gap-2 w-100">
-          <button class="btn btn-success flex-grow-1 py-2 rounded-3 fw-semibold" (click)="guardarEdicion()">
-            <i class="bi bi-check-lg me-1"></i>Guardar
-          </button>
-          <button class="btn btn-outline-secondary flex-grow-1 py-2 rounded-3 fw-semibold" (click)="cancelarEdicion()">
-            Cancelar
-          </button>
+      <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"> <!-- Centrado vertical opcional -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold" id="modalCategoriaLabel"> {{categoriaInfo.nombre}} </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-content p-3 border-0">
+              <p class="text-secondary mb-0">{{categoriaInfo.descripcion}}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Panel de Detalles y Configuración -->
-    <div class="col-lg-8">
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-        <h5 class="fw-bold border-bottom pb-3 mb-4 text-primary">Información General</h5>
-        
-        <div class="row g-3">
-          <!-- Modo Lectura -->
-          <ng-container *ngIf="!modoEdicion">
-            <div class="col-md-6">
-              <span class="text-muted small text-uppercase fw-semibold">Nombre</span>
-              <p class="fw-medium text-dark fs-5 mt-1">{{ usuario.nombre || '-' }}</p>
-            </div>
-            <div class="col-md-6">
-              <span class="text-muted small text-uppercase fw-semibold">Apellido</span>
-              <p class="fw-medium text-dark fs-5 mt-1">{{ usuario.apellido || '-' }}</p>
-            </div>
-            <div class="col-md-6">
-              <span class="text-muted small text-uppercase fw-semibold">Universidad</span>
-              <p class="fw-medium text-dark fs-5 mt-1">{{ usuario.universidad || '-' }}</p>
-            </div>
-            <div class="col-md-6">
-              <span class="text-muted small text-uppercase fw-semibold">Carrera</span>
-              <p class="fw-medium text-dark fs-5 mt-1">{{ usuario.carrera || '-' }}</p>
-            </div>
-            <div class="col-12" *ngIf="rolUsuario === 'profesor'">
-              <span class="text-muted small text-uppercase fw-semibold">Biografía / Presentación</span>
-              <p class="text-secondary mt-1" style="white-space: pre-line; line-height: 1.6;">
-                {{ usuario.biografia || 'Sin biografía escrita todavía.' }}
-              </p>
-            </div>
-          </ng-container>
 
-          <!-- Modo Edición -->
-          <ng-container *ngIf="modoEdicion">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Nombre</label>
-              <input type="text" class="form-control" [(ngModel)]="usuario.nombre" name="nombre">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Apellido</label>
-              <input type="text" class="form-control" [(ngModel)]="usuario.apellido" name="apellido">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Universidad</label>
-              <input type="text" class="form-control" [(ngModel)]="usuario.universidad" name="universidad">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Carrera</label>
-              <input type="text" class="form-control" [(ngModel)]="usuario.carrera" name="carrera">
-            </div>
-            <div class="col-md-12">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Ubicación</label>
-              <input type="text" class="form-control" [(ngModel)]="usuario.ubicacion" name="ubicacion" placeholder="Ej. San Salvador de Jujuy, Jujuy">
-            </div>
-            <div class="col-12" *ngIf="rolUsuario === 'profesor'">
-              <label class="form-label small fw-semibold text-muted text-uppercase">Biografía / Presentación</label>
-              <textarea class="form-control" rows="4" [(ngModel)]="usuario.biografia" name="biografia" placeholder="Cuéntale a tus alumnos sobre ti, tu trayectoria académica y metodologías de enseñanza..."></textarea>
-            </div>
-          </ng-container>
-        </div>
-      </div>
 
-      <!-- Configuración Académica de Profesor (Categorías y Horarios) -->
-      <ng-container *ngIf="rolUsuario === 'profesor'">
-        <!-- Categorías -->
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-          <h5 class="fw-bold border-bottom pb-3 mb-3 text-primary">Materias / Categorías de Enseñanza</h5>
-          
-          <!-- Si estamos en Modo Edición, mostrar selector de categorías -->
-          <div *ngIf="modoEdicion" class="mb-4">
-            <div class="row g-2 align-items-center mb-3">
-              <div class="col-md-4">
-                <select class="form-select" name="filtroNivel" [(ngModel)]="filtroNivel" (change)="filtrarCategorias()">
-                  <option value="">Todos los niveles</option>
-                  <option value="primario">Primario</option>
-                  <option value="secundario">Secundario</option>
-                  <option value="terciario">Terciario</option>
-                  <option value="universitario">Universitario</option>
-                  <option value="doctorado">Doctorado</option>
-                </select>
-              </div>
-              <div class="col-md-8">
-                <input class="form-control" type="text" placeholder="Buscar y agregar categorías..." [(ngModel)]="textoBusqueda" name="textoBusqueda" (input)="filtrarCategorias()">
-              </div>
-            </div>
+    <!--Horarios-->
+    <div class="my-3">
+      <h5 class="mb-0"> Horarios Disponibles </h5>
 
-            <div class="list-group mb-3" style="max-height: 180px; overflow-y: auto;">
-              <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2" *ngFor="let categoria of categoriasFiltradas" (click)="agregarCategoria(categoria)">
-                <div>
-                  <span class="fw-medium">{{ categoria.nombre }}</span>
-                  <span class="badge bg-secondary ms-2 small">{{ categoria.nivel }}</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <button class="btn btn-link text-info p-0 me-2" type="button" data-bs-toggle="modal" data-bs-target="#modalCategoria" (click)="mostrarDescripcion(categoria); $event.stopPropagation()">
-                    <i class="bi bi-info-circle"></i>
-                  </button>
-                  <i class="bi bi-plus-circle-fill text-success fs-5"></i>
-                </div>
-              </button>
-            </div>
-            <div *ngIf="errorCategoria" class="text-danger small mb-3">{{ errorCategoria }}</div>
-          </div>
-
-          <!-- Listado de categorías actuales -->
-          <div class="d-flex flex-wrap gap-2">
-            <span *ngIf="categoriasSeleccionadas.length === 0" class="text-muted small">No has agregado ninguna categoría.</span>
-            <span *ngFor="let categoria of categoriasSeleccionadas" class="badge bg-primary px-3 py-2 fs-6 rounded-pill d-inline-flex align-items-center">
-              {{ categoria.nombre }} ({{ categoria.nivel }})
-              <button *ngIf="modoEdicion" type="button" class="btn-close btn-close-white ms-2" style="font-size: 8px;" (click)="quitarCategoria(categoria)"></button>
-            </span>
+      <form class="row g-2 align-items-end" #perfilForm="ngForm">
+        <div class="col-md-3">
+          <label>Día</label>
+          <select class="form-select" [(ngModel)]="nuevoHorario.diaSemana" name="diaSemana" #diaSemana="ngModel" required>
+            <option value="">Seleccionar</option>
+            <option value="lunes">Lunes</option>
+            <option value="martes">Martes</option>
+            <option value="miercoles">Miércoles</option>
+            <option value="jueves">Jueves</option>
+            <option value="viernes">Viernes</option>
+            <option value="sabado">Sábado</option>
+          </select>
+          <div *ngIf="diaSemana.invalid && (diaSemana.touched || diaSemana.dirty)" class="text-danger small mt-1">
+            <div *ngIf="diaSemana.errors?.['required']">El dia de la semana es obligatorio.</div>
           </div>
         </div>
 
-        <!-- Horarios Disponibles -->
-        <div class="card border-0 shadow-sm rounded-4 p-4">
-          <h5 class="fw-bold border-bottom pb-3 mb-3 text-primary">Horarios de Tutoría</h5>
-          
-          <!-- Si estamos en Modo Edición, mostrar formulario para agregar horarios -->
-          <div *ngIf="modoEdicion" class="mb-4 bg-light p-3 rounded-4">
-            <form class="row g-2 align-items-end" #perfilForm="ngForm">
-              <div class="col-md-3">
-                <label class="form-label small fw-semibold text-muted">Día</label>
-                <select class="form-select" [(ngModel)]="nuevoHorario.diaSemana" name="diaSemana" #diaSemana="ngModel" required>
-                  <option value="">Seleccionar</option>
-                  <option value="lunes">Lunes</option>
-                  <option value="martes">Martes</option>
-                  <option value="miercoles">Miércoles</option>
-                  <option value="jueves">Jueves</option>
-                  <option value="viernes">Viernes</option>
-                  <option value="sabado">Sábado</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <label class="form-label small fw-semibold text-muted">Inicio</label>
-                <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaInicio" name="horaInicio" #horaInicio="ngModel" required>
-              </div>
-              <div class="col-md-2">
-                <label class="form-label small fw-semibold text-muted">Fin</label>
-                <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaFin" name="horaFin" #horaFin="ngModel" required>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label small fw-semibold text-muted">Modalidad</label>
-                <select class="form-select" [(ngModel)]="nuevoHorario.modalidad" name="modalidad" #modalidad="ngModel" required>
-                  <option value="">Seleccionar</option>
-                  <option value="presencial">Presencial</option>
-                  <option value="virtual">Virtual</option>
-                  <option value="ambas">Ambas</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-success w-100" type="button" [disabled]="perfilForm.form.invalid" (click)="agregarHorario(perfilForm)">
-                  Agregar
-                </button>
-              </div>
-              <div *ngIf="errorHorario" class="text-danger small mt-2 col-12">{{ errorHorario }}</div>
-            </form>
-          </div>
-
-          <!-- Listado de horarios -->
-          <div class="table-responsive">
-            <table class="table align-middle mb-0">
-              <thead>
-                <tr class="table-light">
-                  <th>Día</th>
-                  <th>Hora Inicio</th>
-                  <th>Hora Fin</th>
-                  <th>Modalidad</th>
-                  <th *ngIf="modoEdicion">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let h of horarios">
-                  <td class="text-capitalize fw-semibold">{{ h.diaSemana }}</td>
-                  <td>{{ h.horaInicio }}</td>
-                  <td>{{ h.horaFin }}</td>
-                  <td>
-                    <span class="badge bg-secondary text-capitalize px-2 py-1">{{ h.modalidad }}</span>
-                  </td>
-                  <td *ngIf="modoEdicion">
-                    <button class="btn btn-outline-danger btn-sm rounded-pill px-3" type="button" (click)="eliminarHorario(h.id)">
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="horarios.length === 0">
-                  <td colspan="5" class="text-center text-muted py-3">No hay horarios de disponibilidad agregados.</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="col-md-2">
+          <label>Inicio</label>
+          <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaInicio" name="horaInicio" #horaInicio="ngModel" required>
+          <div *ngIf="horaInicio.invalid && (horaInicio.touched || horaInicio.dirty)" class="text-danger small mt-1">
+            <div *ngIf="horaInicio.errors?.['required']">La hora de inicio es obligatoria.</div>
           </div>
         </div>
-      </ng-container>
+
+        <div class="col-md-2">
+          <label>Fin</label>
+          <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaFin" name="horaFin" #horaFin="ngModel" required>
+          <div *ngIf="horaFin.invalid && (horaFin.touched || horaFin.dirty)" class="text-danger small mt-1">
+            <div *ngIf="horaFin.errors?.['required']">La hora de fin es obligatoria.</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label>Modalidad</label>
+          <select class="form-select" [(ngModel)]="nuevoHorario.modalidad" name="modalidad" #modalidad="ngModel" required>
+            <option value="">Seleccionar</option>
+            <option value="presencial">Presencial</option>
+            <option value="virtual">Virtual</option>
+            <option value="ambas">Ambas</option>
+          </select>
+          <div *ngIf="modalidad.invalid && (modalidad.touched || modalidad.dirty)" class="text-danger small mt-1">
+            <div *ngIf="modalidad.errors?.['required']">La modalidad es obligatoria.</div>
+          </div>
+        </div>
+
+        <div *ngIf="errorHorario" class="text-danger small mt-2">
+          {{ errorHorario }}
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn btn-success w-100" type="button" [disabled]="perfilForm.form.invalid" (click)="agregarHorario(perfilForm)"> Agregar </button>
+        </div>
+      </form>
+
+      <table class="table table-striped mt-4">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Modalidad</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of horarios">
+            <td>{{h.diaSemana}}</td>
+            <td>{{h.horaInicio}}</td>
+            <td>{{h.horaFin}}</td>
+            <td>{{h.modalidad}}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" type="button" (click)="eliminarHorario(h.id)"> Eliminar </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
   </div>
-</div>
 
-<!-- Modal para información detallada de categorías -->
-<div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <div class="modal-header border-bottom border-opacity-10 bg-light rounded-top-4">
-        <h5 class="modal-title fw-bold text-primary" id="modalCategoriaLabel">{{ categoriaInfo.nombre }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4">
-        <p class="text-secondary mb-0">{{ categoriaInfo.descripcion || 'Sin descripción detallada disponible.' }}</p>
-      </div>
-      <div class="modal-footer border-top border-opacity-10">
-        <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
+  <div class="bg-light p-4 rounded shadow-sm" *ngIf="rolUsuario=='alumno'">
+    <p>Tu perfil ya se encuentra completo.</p>
+    <p>Volver a
+      <a [routerLink]="['home']">inicio</a>
+    </p>
   </div>
+
 </div>

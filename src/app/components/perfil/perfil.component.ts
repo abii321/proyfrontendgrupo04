@@ -10,7 +10,6 @@ import { HorarioDisponible } from '../../models/horario-disponible.class';
 import { ProfesorService } from '../../services/profesor.service';
 import { HorarioDisponibleService } from '../../services/horario-disponible.service';
 import { RouterLink } from "@angular/router";
-import { AutenticacionService } from '../../services/autenticacion.service';
 
 @Component({
   selector: 'app-perfil',
@@ -35,15 +34,11 @@ export class PerfilComponent implements OnInit {
   horarios: Array<HorarioDisponible> = [];
   errorHorario: string = '';
 
-  modoEdicion: boolean = false;
-  backupUsuario: any = null;
-
   rolUsuario = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).rol : 'null';
   profesorId = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).id : 0; 
 
   constructor( private categoriaService: CategoriaService, private precioService: PrecioService, private cdr: ChangeDetectorRef,
-    private profesorService: ProfesorService, private horarioService : HorarioDisponibleService,
-    private autenticacionService: AutenticacionService
+    private profesorService: ProfesorService, private horarioService : HorarioDisponibleService
    ){ 
     this.usuario = new Usuario();
     this.nuevoHorario = new HorarioDisponible();
@@ -150,13 +145,12 @@ export class PerfilComponent implements OnInit {
   }
 
   haySuperposicion(): boolean {
-    return this.horarios .some(h =>
-      this.nuevoHorario.diaSemana === this.nuevoHorario.diaSemana &&
+    return this.horarios.some(h =>
+      h.diaSemana === this.nuevoHorario.diaSemana &&
       this.nuevoHorario.horaInicio < h.horaFin &&
       this.nuevoHorario.horaFin > h.horaInicio
-  );
-
-}
+    );
+  }
 
   eliminarHorario( horarioId: number ){
     this.horarioService.eliminarHorario( horarioId ).subscribe(
@@ -168,47 +162,6 @@ export class PerfilComponent implements OnInit {
         this.errorHorario = error.error?.msg || 'Ocurrió un error inesperado.';
       }
     )
-  }
-
-  activarEdicion() {
-    this.backupUsuario = JSON.parse(JSON.stringify(this.usuario));
-    this.modoEdicion = true;
-  }
-
-  cancelarEdicion() {
-    if (this.backupUsuario) {
-      this.usuario = JSON.parse(JSON.stringify(this.backupUsuario));
-    }
-    this.modoEdicion = false;
-  }
-
-  guardarEdicion() {
-    if (!this.usuario.nombre || !this.usuario.apellido) {
-      alert('Nombre y apellido son campos requeridos.');
-      return;
-    }
-
-    this.autenticacionService.updateUsuario(this.profesorId, this.usuario).subscribe({
-      next: (res: any) => {
-        if (res.status === '1') {
-          const userStr = sessionStorage.getItem("usuario");
-          if (userStr) {
-            const currentUser = JSON.parse(userStr);
-            const updatedUser = { ...currentUser, ...this.usuario };
-            sessionStorage.setItem("usuario", JSON.stringify(updatedUser));
-          }
-          this.modoEdicion = false;
-          alert('Perfil actualizado con éxito.');
-          this.cdr.detectChanges();
-        } else {
-          alert('Error al actualizar el perfil: ' + res.msg);
-        }
-      },
-      error: (err: any) => {
-        console.error('Error actualizando perfil:', err);
-        alert('Ocurrió un error al intentar actualizar el perfil.');
-      }
-    });
   }
 
 }
