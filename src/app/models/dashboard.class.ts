@@ -27,6 +27,28 @@ export interface MonthCount {
     count: string;
 }
 
+export interface FullUsuarioDashboard {
+    id: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+    rol: 'alumno' | 'profesor' | 'admin';
+    estado: 'activo' | 'inactivo';
+    universidad: string;
+    carrera: string;
+    genero: string;
+    ubicacion: string;
+    createdAt: string;
+}
+
+export interface FullCategoryDashboard {
+    id: number;
+    nombre: string;
+    nivel: string;
+    descripcion: string;
+    createdAt: string;
+}
+
 export interface TutorialUser {
     id: number;
     nombre: string;

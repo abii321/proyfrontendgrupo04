@@ -42,4 +42,36 @@ export class AdminService {
   getFullTutorials(): Observable<any> {
     return this.http.get(`${this.apiUrl}/full-tutorials`);
   }
+
+  // Obtiene el listado completo de usuarios para la tabla
+  getUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users`);
+  }
+
+  // Actualiza los datos principales de un usuario (admin)
+  updateUser(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${id}`, data);
+  }
+
+  // --- Tutorías ---
+  updateTutorial(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/tutorials/${id}`, data);
+  }
+
+  deleteTutorial(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/tutorials/${id}`);
+  }
+
+  // --- Categorías ---
+  getCategoriesList(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categories-list`);
+  }
+
+  updateCategory(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/categories/${id}`, data);
+  }
+
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/categories/${id}`);
+  }
 }
