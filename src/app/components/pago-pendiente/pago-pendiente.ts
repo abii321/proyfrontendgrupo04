@@ -13,12 +13,6 @@ export class PagoPendiente implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const extRef = params['external_reference'];
-      if (extRef && extRef.endsWith(':dev')) {
-        const cleanRef = extRef.replace(':dev', '');
-        const localUrl = `http://localhost:4200/pago-pendiente?external_reference=${cleanRef}`;
-        window.location.href = localUrl;
-        return;
-      }
       if (extRef || params['payment_id']) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
