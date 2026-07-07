@@ -19,6 +19,8 @@ export class RespuestaAyudaComponent implements OnInit {
 
   solicitud!: Solicitud;
   respuesta = new Respuesta();
+  mensajeFormulario: { tipo: 'success' | 'error' | 'info'; texto: string } | null = null;
+  respuestasExpandidas: { [key: number]: boolean } = {};
 
   private route = inject(ActivatedRoute);
   private solicitudService = inject(SolicitudService);
@@ -71,10 +73,52 @@ export class RespuestaAyudaComponent implements OnInit {
     return `Usuario #${this.solicitud.usuarioId}`;
   }
 
+  mostrarMensaje(tipo: 'success' | 'error' | 'info', texto: string) {
+    this.mensajeFormulario = { tipo, texto };
+  }
+
+  limpiarMensaje() {
+    this.mensajeFormulario = null;
+  }
+
+  alternarRespuesta(idRespuesta?: number) {
+    if (!idRespuesta) return;
+    this.respuestasExpandidas[idRespuesta] = !this.respuestasExpandidas[idRespuesta];
+  }
+
+  esRespuestaExpandida(idRespuesta?: number): boolean {
+    return !!(idRespuesta && this.respuestasExpandidas[idRespuesta]);
+  }
+
+  esCreadorSolicitud(): boolean {
+    const usuarioClave =
+      localStorage.getItem('usuario') ||
+      sessionStorage.getItem('usuario') ||
+      localStorage.getItem('user') ||
+      sessionStorage.getItem('user');
+
+    if (!usuarioClave || !this.solicitud?.usuarioId) {
+      return false;
+    }
+
+    try {
+      const usuario = JSON.parse(usuarioClave);
+      const idUsuario = Number(usuario.id || usuario.usuarioId);
+      return idUsuario === Number(this.solicitud.usuarioId);
+    } catch {
+      return false;
+    }
+  }
+
  pagarRespuesta(respuesta: Respuesta) {
 
-  if (!respuesta.id || !respuesta.precio || respuesta.precio <= 0) {
-    alert("La respuesta no tiene un ID o precio válido para pagar.");
+  if (!this.esCreadorSolicitud()) {
+    this.mostrarMensaje('error', 'Solo el usuario que creó la solicitud puede comprar una respuesta.');
+    return;
+  }
+
+  if (!respuesta.id || respuesta.precio === undefined || respuesta.precio === null || respuesta.precio < 0) {
+    this.mostrarMensaje('error', 'La respuesta no tiene un ID o precio válido para pagar.');
     return;
   }
 
@@ -85,14 +129,14 @@ export class RespuestaAyudaComponent implements OnInit {
       if (result.status === 1 && result.init_point) {
         window.location.href = result.init_point;
       } else {
-        alert("No se pudo generar el pago.");
+        this.mostrarMensaje('error', 'No se pudo generar el pago.');
       }
 
     },
 
     error: (err) => {
       console.error("Error al crear la preferencia de pago:", err);
-      alert("Ocurrió un error al conectar con Mercado Pago.");
+      this.mostrarMensaje('error', 'Ocurrió un error al conectar con Mercado Pago.');
     }
 
   });
@@ -101,14 +145,17 @@ export class RespuestaAyudaComponent implements OnInit {
 
 guardar() {
 
+  this.limpiarMensaje();
+
   // Validaciones
   if (
     !this.respuesta.respuesta ||
     this.solicitud.id === undefined ||
-    !this.respuesta.precio ||
-    this.respuesta.precio <= 0
+    this.respuesta.precio === undefined ||
+    this.respuesta.precio === null ||
+    this.respuesta.precio < 0
   ) {
-    alert("Completá la respuesta y un precio válido.");
+    this.mostrarMensaje('error', 'Completá la respuesta y un precio válido.');
     return;
   }
 
@@ -141,7 +188,7 @@ guardar() {
 
   if (!this.respuesta.idUsuario) {
 
-    alert("No se pudo identificar el usuario.");
+    this.mostrarMensaje('error', 'No se pudo identificar el usuario.');
 
     return;
 
@@ -151,17 +198,11 @@ guardar() {
 
     next: (result) => {
 
-      alert(result.msg);
-
-      const respuestaCreada = result.data || this.respuesta;
+      this.mostrarMensaje('success', result.msg || 'Respuesta publicada correctamente. Ahora podrá comprarse desde el botón correspondiente.');
 
       this.respuesta = new Respuesta();
 
       this.cargarSolicitud(this.solicitud.id);
-
-      if (respuestaCreada?.id) {
-        this.pagarRespuesta(respuestaCreada);
-      }
 
     },
 
@@ -169,7 +210,7 @@ guardar() {
 
       console.error(err);
 
-      alert("Error al guardar la respuesta.");
+      this.mostrarMensaje('error', 'Error al guardar la respuesta.');
 
     }
 

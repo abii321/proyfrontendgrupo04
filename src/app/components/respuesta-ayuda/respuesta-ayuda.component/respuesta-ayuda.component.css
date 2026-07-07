@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+.estilo-profesional {
+  font-family: 'Outfit', sans-serif;
+  background-color: #EFEFE9;
+  min-height: 100vh;
+  color: #2D4243;
+}
+
+.texto-primario {
+  color: #2D4243 !important;
+}
+
+.texto-secundario {
+  color: #5C6B73 !important;
+}
+
+.espaciado-letras {
+  letter-spacing: 0.6px;
+}
+
+.tarjeta-delicada {
+  background: #FDFDFD;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  box-shadow: 0 10px 30px rgba(45, 66, 67, 0.04) !important;
+  transition: transform 0.3s ease;
+}
+
+.form-control, .form-select {
+  border: 2px solid #DCE0D9;
+  border-radius: 12px;
+  padding: 0.75rem 1.2rem;
+  color: #2D4243;
+  background-color: #FAFAFA;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #A3B19B;
+  box-shadow: 0 0 0 4px rgba(163, 177, 155, 0.2);
+  background-color: #ffffff;
+}
+
+.badge-materia {
+  background-color: #DDA7A5;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 0.5em 1.2em;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.badge-precio {
+  background-color: #ffffff;
+  color: #2D4243;
+  padding: 0.4rem 1rem;
+  border-radius: 30px;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.caja-agenda-desvinculada {
+  background-color: #F4F5F0;
+  border: 1px solid #EBECE8;
+  border-radius: 16px;
+}
+
+.btn-primary {
+  background-color: #6C8484;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover:not([disabled]) {
+  background-color: #556B6B;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108, 132, 132, 0.25);
+}
+
+.alert {
+  margin-bottom: 0;
+  border-radius: 12px;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.alert-info {
+  background-color: #cff4fc;
+  color: #055160;
+  border: 1px solid #b6effb;
+}

@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+.estilo-profesional {
+  font-family: 'Outfit', sans-serif;
+  background-color: #EFEFE9;
+  min-height: 100vh;
+  color: #2D4243;
+}
+
+.texto-primario {
+  color: #2D4243 !important;
+}
+
+.texto-secundario {
+  color: #5C6B73 !important;
+}
+
+.espaciado-letras {
+  letter-spacing: 0.6px;
+}
+
+.tarjeta-delicada {
+  background: #FDFDFD;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  box-shadow: 0 10px 30px rgba(45, 66, 67, 0.04) !important;
+  transition: transform 0.3s ease;
+}
+
+.form-control, .form-select {
+  border: 2px solid #DCE0D9;
+  border-radius: 12px;
+  padding: 0.75rem 1.2rem;
+  color: #2D4243;
+  background-color: #FAFAFA;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #A3B19B;
+  box-shadow: 0 0 0 4px rgba(163, 177, 155, 0.2);
+  background-color: #ffffff;
+}
+
+.btn-primary {
+  background-color: #6C8484;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover:not([disabled]) {
+  background-color: #556B6B;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108, 132, 132, 0.25);
+}
+
+.btn-outline-secondary {
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+}

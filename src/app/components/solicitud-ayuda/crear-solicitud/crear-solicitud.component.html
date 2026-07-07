@@ -1,70 +1,65 @@
-<div class="container mt-4">
+<div class="container-fluid py-5 estilo-profesional">
+  <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+      <div class="col-lg-8">
+        <div class="tarjeta-delicada p-4 p-md-5">
+          <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2 texto-primario"><i class="bi bi-plus-circle me-2"></i>Nueva solicitud de ayuda</h2>
+            <p class="texto-secundario fs-5 mb-0">Describí tu duda y publicá una solicitud para recibir respuestas.</p>
+          </div>
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Nueva Solicitud de Ayuda</h4>
-                </div>
-                <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Título <span class="text-danger">*</span></label>
+            <input type="text" class="form-control shadow-none" [(ngModel)]="solicitud.titulo" name="titulo"
+              placeholder="Ej: Necesito ayuda con integrales">
+          </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Título <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" [(ngModel)]="solicitud.titulo" name="titulo"
-                            placeholder="Ej: Necesito ayuda con integrales">
-                    </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Descripción <span class="text-danger">*</span></label>
+            <textarea class="form-control shadow-none" rows="5" [(ngModel)]="solicitud.descripcion" name="descripcion"
+              placeholder="Describí tu consulta en detalle..."></textarea>
+          </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Descripción <span class="text-danger">*</span></label>
-                        <textarea class="form-control" rows="4" [(ngModel)]="solicitud.descripcion" name="descripcion"
-                            placeholder="Describí tu consulta en detalle..."></textarea>
-                    </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Categoría</label>
+            <select class="form-select shadow-none" [(ngModel)]="solicitud.categoriaId" name="categoriaId">
+              <option value="0" disabled>Seleccioná una categoría</option>
+              @for (cat of categorias; track cat.id) {
+              <option [value]="cat.id">{{ cat.nombre }}</option>
+              }
+            </select>
+          </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Categoría </label>
-                        <select class="form-select" [(ngModel)]="solicitud.categoriaId" name="categoriaId">
-                            <option value="0" disabled>Seleccioná una categoría</option>
-                            @for (cat of categorias; track cat.id) {
-                            <option [value]="cat.id">{{ cat.nombre }}</option>
-                            }
-                        </select>
-                    </div>
-
-             
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Archivo adjunto</label>
-                        <input type="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.txt"
-                            name="archivoAdjunto"
-                            (change)="onArchivoSeleccionado($event)">
-                        <small class="text-muted">PDF, PNG o JPG — opcional</small>
-                        @if (archivoSafeUrl) {
-                        <div class="mt-2">
-                            <!-- si es imagen la previsualiza -->
-                            @if (solicitud.archivoAdjunto.startsWith('data:image')) {
-                            <img [src]="archivoSafeUrl" class="img-thumbnail mt-1" style="max-height: 200px;">
-                            }
-                            <!-- si es pdf muestra el nombre -->
-                            @if (solicitud.archivoAdjunto.startsWith('data:application/pdf')) {
-                            <div class="alert alert-success py-1 mt-1">
-                                <i class="bi bi-file-pdf text-danger"></i> {{ archivoNombre }}
-                            </div>
-                            }
-                        </div>
-                        }
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-success" (click)="guardar()">
-                            <i class="bi bi-send"></i> Publicar solicitud
-                        </button>
-                        <button class="btn btn-secondary" (click)="cancelar()">
-                            Cancelar
-                        </button>
-                    </div>
-
-                </div>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold texto-secundario text-uppercase tracking-wide espaciado-letras">Archivo adjunto</label>
+            <input type="file" class="form-control shadow-none" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.txt"
+              name="archivoAdjunto"
+              (change)="onArchivoSeleccionado($event)">
+            <small class="text-muted">PDF, PNG o JPG — opcional</small>
+            @if (archivoSafeUrl) {
+            <div class="mt-3">
+              @if (solicitud.archivoAdjunto.startsWith('data:image')) {
+              <img [src]="archivoSafeUrl" class="img-thumbnail mt-1" style="max-height: 200px;">
+              }
+              @if (solicitud.archivoAdjunto.startsWith('data:application/pdf')) {
+              <div class="alert alert-success py-2 mt-2 mb-0 rounded-4">
+                <i class="bi bi-file-pdf text-danger"></i> {{ archivoNombre }}
+              </div>
+              }
             </div>
+            }
+          </div>
 
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-primary" (click)="guardar()">
+              <i class="bi bi-send"></i> Publicar solicitud
+            </button>
+            <button class="btn btn-outline-secondary" (click)="cancelar()">
+              Cancelar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
