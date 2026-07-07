@@ -15,6 +15,7 @@ import { PagoExitoso } from './components/pago-exitoso/pago-exitoso';
 import { PagoPendiente} from './components/pago-pendiente/pago-pendiente';
 import { PagoError} from './components/pago-error/pago-error';
 import { PagoBridgeComponent } from './components/pago-bridge/pago-bridge.component';
+import { AuditoriaComponent} from './components/auditoria/auditoria';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
@@ -36,5 +37,6 @@ export const routes: Routes = [
     { path: 'pago-pendiente', component: PagoPendiente, canActivate: [authGuard] },
     { path: 'pago-error', component: PagoError, canActivate: [authGuard] },
     { path: 'pago-bridge', component: PagoBridgeComponent },
+    { path: 'auditoria', component: AuditoriaComponent, canActivate: [authGuard] },
     { path: '**', pathMatch: 'full', redirectTo: 'home' },
 ];

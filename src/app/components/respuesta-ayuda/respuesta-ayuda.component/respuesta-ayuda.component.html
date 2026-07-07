@@ -67,8 +67,8 @@
               <p class="text-muted mb-2">
 
                 {{
-                  r.respuesta.length > 120
-                  ? (r.respuesta | slice:0:120) + '...'
+                  r.respuesta.length > 20
+                  ? (r.respuesta | slice:0:20) + '...'
                   : r.respuesta
                 }}
 

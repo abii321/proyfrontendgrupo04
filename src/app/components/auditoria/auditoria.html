@@ -1,0 +1,69 @@
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        Historial de Auditoría
+    </h2>
+
+    <table class="table table-striped table-hover">
+
+        <thead class="table-dark">
+            <tr>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Entidad</th>
+                <th>Descripción</th>
+                <th>IP</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @for (a of auditorias; track a.id) {
+
+                <tr>
+
+                    <td>
+                        {{ a.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+                    </td>
+
+                    <td>
+                        {{ a.usuario?.nombre }}
+                        {{ a.usuario?.apellido }}
+                    </td>
+
+                    <td>
+                        <span class="badge bg-primary">
+                            {{ a.accion }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {{ a.entidad }}
+                    </td>
+
+                    <td>
+                        {{ a.descripcion }}
+                    </td>
+
+                    <td>
+                        {{ a.ip }}
+                    </td>
+
+                </tr>
+
+            } @empty {
+
+                <tr>
+                    <td colspan="6" class="text-center text-muted">
+                        No hay registros de auditoría.
+                    </td>
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
