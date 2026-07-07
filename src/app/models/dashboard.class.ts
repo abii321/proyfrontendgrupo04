@@ -3,10 +3,17 @@ export interface DashboardSummary {
     totalTutorials: number;
     totalHelpRequests: number;
     totalCategories: number;
+    avgRating: string;
 }
 
 export interface RoleCount {
     rol: string;
+    count: string;
+}
+
+export interface RoleStateCount {
+    rol: string;
+    estado: string;
     count: string;
 }
 
@@ -21,26 +28,35 @@ export interface MonthCount {
 }
 
 export interface TutorialUser {
+    id: number;
     nombre: string;
     apellido: string;
     email: string;
 }
 
 export interface TutorialCategory {
+    id: number;
     nombre: string;
+}
+
+export interface CalificacionData {
+    calificacion: number;
+    comentario: string | null;
 }
 
 export interface FullTutorial {
     id: number;
     estado: string;
     modalidad: string;
-    precio_acordado: number;
-    fecha_hora: string;
-    preference_id?: string;
-    payment_id?: string;
+    precioAcordado: number;
+    fechaHora: string;
+    enlaceMeet?: string;
+    preferenceId?: string;
+    paymentId?: string;
     pagada: boolean;
     createdAt: string;
     alumno?: TutorialUser;
     profesor?: TutorialUser;
     categoria?: TutorialCategory;
+    calificacion?: CalificacionData;
 }

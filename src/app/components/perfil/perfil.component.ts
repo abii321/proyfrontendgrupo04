@@ -9,11 +9,12 @@ import { PrecioService } from '../../services/precio.service';
 import { HorarioDisponible } from '../../models/horario-disponible.class';
 import { ProfesorService } from '../../services/profesor.service';
 import { HorarioDisponibleService } from '../../services/horario-disponible.service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule ],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']
 })
@@ -27,10 +28,13 @@ export class PerfilComponent implements OnInit {
   categoriasFiltradas: Array<Categoria> = [];
   categoriasSeleccionadas: Array<Categoria> = [];
   categoriaInfo: Categoria = new Categoria();
+  errorCategoria: string = '';
 
   nuevoHorario: HorarioDisponible;
   horarios: Array<HorarioDisponible> = [];
+  errorHorario: string = '';
 
+  rolUsuario = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).rol : 'null';
   profesorId = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).id : 0; 
 
   constructor( private categoriaService: CategoriaService, private precioService: PrecioService, private cdr: ChangeDetectorRef,
@@ -72,6 +76,7 @@ export class PerfilComponent implements OnInit {
           this.categoriasSeleccionadas = res.data; 
           this.filtrarCategorias();
           this.cdr.detectChanges();
+          console.log(res.data);
       }
     });
   }
@@ -103,22 +108,34 @@ export class PerfilComponent implements OnInit {
       ( result: any ) => {
         this.categoriasSeleccionadas = this.categoriasSeleccionadas.filter( x => x.id != cat.id );
         this.filtrarCategorias();
+        this.errorCategoria = '';
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
-      }
+        this.errorCategoria = error.error?.msg || 'Ocurrió un error inesperado.';
+      } 
     )
   }
   mostrarDescripcion(cat:Categoria){
     this.categoriaInfo = cat;
   }
 
-  agregarHorario(){
+  agregarHorario( form:NgForm){
+    this.errorHorario = '';
+    if (this.nuevoHorario.horaInicio >= this.nuevoHorario.horaFin) {
+      this.errorHorario = 'La hora de inicio debe ser anterior a la hora de fin.';
+      return;
+    }
+    if (this.haySuperposicion()) {
+      this.errorHorario = 'Ya existe un horario que se superpone ese día.';
+      return;
+    }
+    
     this.horarioService.agregarHorario( this.nuevoHorario, this.profesorId ).subscribe(
       ( result: any ) => {
         this.horarios.push(result.data);
         this.nuevoHorario = new HorarioDisponible();
+        form.reset();
         this.cdr.detectChanges();
       },
       ( error: any ) => {
@@ -126,6 +143,15 @@ export class PerfilComponent implements OnInit {
       }
     )
   }
+
+  haySuperposicion(): boolean {
+    return this.horarios .some(h =>
+      this.nuevoHorario.diaSemana === this.nuevoHorario.diaSemana &&
+      this.nuevoHorario.horaInicio < h.horaFin &&
+      this.nuevoHorario.horaFin > h.horaInicio
+  );
+
+}
 
   eliminarHorario( horarioId: number ){
     this.horarioService.eliminarHorario( horarioId ).subscribe(
@@ -134,7 +160,7 @@ export class PerfilComponent implements OnInit {
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
+        this.errorHorario = error.error?.msg || 'Ocurrió un error inesperado.';
       }
     )
   }

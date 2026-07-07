@@ -1,140 +1,168 @@
 <div class="container">
 
-  <form class="form bg-light p-4 rounded shadow-sm" #perfilForm="ngForm">
-    <h3 class="mb-4">Configurar Perfil de Profesor</h3>
+  <div class="bg-light pt-4 rounded shadow-sm" *ngIf="rolUsuario=='profesor'">
+    <h3 class="mb-0">Configura tu Perfil de Profesor</h3>
 
     <!--Categorias-->
-    <div class="col-md-6"><label for="rol" class="form-label fw-semibold">Categorias</label>
+    <div class="my-3">
+      <div class="col-md-6">
+        <h5 for="rol" class="form-label fw-semibold">Categorias</h5>
 
-      <div class="input-group mb-2">
-        <select class="form-select" style="max-width: 150px;" name="filtroNivel" [(ngModel)]="filtroNivel" (change)="filtrarCategorias()">
+        <div class="input-group mb-2">
+          <select class="form-select" style="max-width: 150px;" name="filtroNivel" [(ngModel)]="filtroNivel"
+            (change)="filtrarCategorias()">
             <option value="">Todos</option>
             <option value="primario">Primario</option>
             <option value="secundario">Secundario</option>
             <option value="terciario">Terciario</option>
             <option value="universitario">Universitario</option>
             <option value="doctorado">Doctorado</option>
-        </select>
-        <input class="form-control" type="text" placeholder="Buscar categoría..." [(ngModel)]="textoBusqueda"
-          name="textoBusqueda" (input)="filtrarCategorias()">
+          </select>
+          <input class="form-control" type="text" placeholder="Buscar categoría..." [(ngModel)]="textoBusqueda"
+            name="textoBusqueda" (input)="filtrarCategorias()">
+        </div>
+
+        <div class="list-group mb-3" style="max-height:250px; overflow:auto;">
+          <button type="button"
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+            *ngFor="let categoria of categoriasFiltradas" (click)="agregarCategoria(categoria)">
+            <div>
+              <span>{{categoria.nombre}} </span>
+              <span class="badge bg-secondary ms-2">{{categoria.nivel}}</span>
+            </div>
+            <div>
+              <button class="btn btn-outline-info btn-sm me-2" type="button" data-bs-toggle="modal"
+                data-bs-target="#modalCategoria" (click)="mostrarDescripcion(categoria); $event.stopPropagation()"> <i
+                  class="bi bi-info-circle"></i> </button>
+              <i class="bi bi-plus-circle"></i>
+            </div>
+          </button>
+        </div>
+
+        <label class="fw-semibold"> Categorías seleccionadas</label>
+        <div class="mt-2">
+          <span *ngIf="categoriasSeleccionadas.length==0">No has seleccionado ninguna aun</span>
+          <span *ngFor="let categoria of categoriasSeleccionadas" class="badge bg-primary me-2 mb-2 fs-6">
+            {{categoria.nombre}}
+            <button type="button" class="btn-close btn-close-white ms-2" style="font-size:10px"
+              (click)="quitarCategoria(categoria)"> </button>
+          </span>
+        </div>
       </div>
 
-      <div class="list-group mb-3" style="max-height:250px; overflow:auto;">
-        <button type="button"
-          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-          *ngFor="let categoria of categoriasFiltradas" (click)="agregarCategoria(categoria)">
-          <div>
-            <span>{{categoria.nombre}} </span>
-            <span class="badge bg-secondary ms-2">{{categoria.nivel}}</span>
-          </div>
-          <div>
-            <button class="btn btn-outline-info btn-sm me-2" type="button" data-bs-toggle="modal"
-              data-bs-target="#modalCategoria" (click)="mostrarDescripcion(categoria); $event.stopPropagation()"> <i
-                class="bi bi-info-circle"></i> </button>
-            <i class="bi bi-plus-circle"></i>
-          </div>
-        </button>
-      </div>
+      <div *ngIf="errorCategoria" class="text-danger small mt-2"> {{ errorCategoria }} </div>
 
-      <label class="fw-semibold"> Categorías seleccionadas</label>
-      <div class="mt-2">
-        <span *ngFor="let categoria of categoriasSeleccionadas" class="badge bg-primary me-2 mb-2 fs-6">
-          {{categoria.nombre}}
-          <button type="button" class="btn-close btn-close-white ms-2" style="font-size:10px"
-            (click)="quitarCategoria(categoria)"> </button>
-        </span>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered"> <!-- Centrado vertical opcional -->
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold" id="modalCategoriaLabel"> {{categoriaInfo.nombre}} </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-content p-3 border-0">
-            <p class="text-secondary mb-0">{{categoriaInfo.descripcion}}</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"> <!-- Centrado vertical opcional -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold" id="modalCategoriaLabel"> {{categoriaInfo.nombre}} </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-content p-3 border-0">
+              <p class="text-secondary mb-0">{{categoriaInfo.descripcion}}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
 
 
     <!--Horarios-->
-    <div class="card shadow-sm mb-4">
+    <div class="my-3">
       <h5 class="mb-0"> Horarios Disponibles </h5>
-        <div class="row g-2 align-items-end">
-          <div class="col-md-3">
-            <label>Día</label>
-            <select class="form-select" [(ngModel)]="nuevoHorario.diaSemana" name="diaSemana">
-              <option value="">Seleccionar</option>
-              <option value="lunes">Lunes</option>
-              <option value="martes">Martes</option>
-              <option value="miercoles">Miércoles</option>
-              <option value="jueves">Jueves</option>
-              <option value="viernes">Viernes</option>
-              <option value="sabado">Sábado</option>
-            </select>
-          </div>
 
-          <div class="col-md-2">
-            <label>Inicio</label>
-            <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaInicio" name="horaInicio">
-          </div>
-
-          <div class="col-md-2">
-            <label>Fin</label>
-            <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaFin" name="horaFin">
-          </div>
-
-          <div class="col-md-3">
-            <label>Modalidad</label>
-            <select class="form-select" [(ngModel)]="nuevoHorario.modalidad" name="modalidad">
-              <option value="">Seleccionar</option>
-              <option value="presencial">Presencial</option>
-              <option value="virtual">Virtual</option>
-              <option value="ambas">Ambas</option>
-            </select>
-          </div>
-
-          <div class="col-md-2">
-            <button class="btn btn-success w-100" type="button" (click)="agregarHorario()"> Agregar </button>
+      <form class="row g-2 align-items-end" #perfilForm="ngForm">
+        <div class="col-md-3">
+          <label>Día</label>
+          <select class="form-select" [(ngModel)]="nuevoHorario.diaSemana" name="diaSemana" #diaSemana="ngModel" required>
+            <option value="">Seleccionar</option>
+            <option value="lunes">Lunes</option>
+            <option value="martes">Martes</option>
+            <option value="miercoles">Miércoles</option>
+            <option value="jueves">Jueves</option>
+            <option value="viernes">Viernes</option>
+            <option value="sabado">Sábado</option>
+          </select>
+          <div *ngIf="diaSemana.invalid && (diaSemana.touched || diaSemana.dirty)" class="text-danger small mt-1">
+            <div *ngIf="diaSemana.errors?.['required']">El dia de la semana es obligatorio.</div>
           </div>
         </div>
 
-        <table class="table table-striped mt-4">
-          <thead>
-            <tr>
-              <th>Día</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Modalidad</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let h of horarios">
-              <td>{{h.diaSemana}}</td>
-              <td>{{h.horaInicio}}</td>
-              <td>{{h.horaFin}}</td>
-              <td>{{h.modalidad}}</td>
-              <td>
-                <button class="btn btn-danger btn-sm" type="button" (click)="eliminarHorario(h.id)"> Eliminar </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="col-md-2">
+          <label>Inicio</label>
+          <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaInicio" name="horaInicio" #horaInicio="ngModel" required>
+          <div *ngIf="horaInicio.invalid && (horaInicio.touched || horaInicio.dirty)" class="text-danger small mt-1">
+            <div *ngIf="horaInicio.errors?.['required']">La hora de inicio es obligatoria.</div>
+          </div>
+        </div>
 
-    <!--<div class="d-flex justify-content-end">
-      <button class="btn btn-primary px-5" type="submit" [disabled]="perfilForm.invalid" (click)="guardarDatos(perfilForm)"> Guardar Perfil </button>
-    </div>-->
-  </form>
+        <div class="col-md-2">
+          <label>Fin</label>
+          <input type="time" class="form-control" [(ngModel)]="nuevoHorario.horaFin" name="horaFin" #horaFin="ngModel" required>
+          <div *ngIf="horaFin.invalid && (horaFin.touched || horaFin.dirty)" class="text-danger small mt-1">
+            <div *ngIf="horaFin.errors?.['required']">La hora de fin es obligatoria.</div>
+          </div>
+        </div>
 
+        <div class="col-md-3">
+          <label>Modalidad</label>
+          <select class="form-select" [(ngModel)]="nuevoHorario.modalidad" name="modalidad" #modalidad="ngModel" required>
+            <option value="">Seleccionar</option>
+            <option value="presencial">Presencial</option>
+            <option value="virtual">Virtual</option>
+            <option value="ambas">Ambas</option>
+          </select>
+          <div *ngIf="modalidad.invalid && (modalidad.touched || modalidad.dirty)" class="text-danger small mt-1">
+            <div *ngIf="modalidad.errors?.['required']">La modalidad es obligatoria.</div>
+          </div>
+        </div>
 
+        <div *ngIf="errorHorario" class="text-danger small mt-2">
+          {{ errorHorario }}
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn btn-success w-100" type="button" [disabled]="perfilForm.form.invalid" (click)="agregarHorario(perfilForm)"> Agregar </button>
+        </div>
+      </form>
+
+      <table class="table table-striped mt-4">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Modalidad</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of horarios">
+            <td>{{h.diaSemana}}</td>
+            <td>{{h.horaInicio}}</td>
+            <td>{{h.horaFin}}</td>
+            <td>{{h.modalidad}}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" type="button" (click)="eliminarHorario(h.id)"> Eliminar </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="bg-light p-4 rounded shadow-sm" *ngIf="rolUsuario=='alumno'">
+    <p>Tu perfil ya se encuentra completo.</p>
+    <p>Volver a
+      <a [routerLink]="['home']">inicio</a>
+    </p>
+  </div>
 
 </div>

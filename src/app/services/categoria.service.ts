@@ -2,13 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Categoria } from '../models/categoria.class';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriaService {
 
-  urlHost : string = "http://localhost:3000/";
+  urlHost : string = environment.urlHost;
   urlBase : string = this.urlHost + 'api/categoria/';
 
   constructor(private http: HttpClient){ }
@@ -22,6 +23,7 @@ export class CategoriaService {
     let body = {
       'categoriaId' : categoriaId,
       'profesorId' : profesorId,
+      'estado': 'activo',
     }
     console.log(body);
     return this.http.post(this.urlBase+"profesor", body, httpOptions);

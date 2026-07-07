@@ -48,12 +48,65 @@ export class RegistroComponent implements AfterViewInit {
     setTimeout(() => this.cargarBotonGoogle(), 50);
   }
   
-  // Registro definitivo enviando el token al backend
-  registrarUsuarioGoogle() {
+  async geocodificarUbicacion(): Promise<void> {
+    if (!this.usuario.ubicacion) return;
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.usuario.ubicacion)}&format=json&limit=1`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        this.usuario.lat = parseFloat(data[0].lat);
+        this.usuario.lng = parseFloat(data[0].lon);
+      }
+    } catch (e) {
+      console.error('Error al geocodificar ubicación:', e);
+    }
+  }
+
+  detectarUbicacionGPS() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.usuario.lat = lat;
+          this.usuario.lng = lng;
+
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+            const data = await response.json();
+            if (data && data.address) {
+              const address = data.address;
+              const ciudad = address.city || address.town || address.village || address.suburb || data.display_name;
+              this.usuario.ubicacion = ciudad;
+            } else {
+              this.usuario.ubicacion = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            }
+          } catch (e) {
+            this.usuario.ubicacion = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+          }
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error al obtener geolocalización:', error);
+          alert('No se pudo obtener tu ubicación actual. Por favor escríbela manualmente.');
+        }
+      );
+    } else {
+      alert('Tu navegador no soporta geolocalización.');
+    }
+  }
+
+  async registrarUsuarioGoogle() {
+    if (!this.usuario.lat || !this.usuario.lng) {
+      await this.geocodificarUbicacion();
+    }
+
     const body = {
       token: this.googleToken, 
       rol: this.usuario.rol,
       ubicacion: this.usuario.ubicacion,
+      lat: this.usuario.lat,
+      lng: this.usuario.lng,
       universidad: this.usuario.universidad,
       carrera: this.usuario.carrera,
       genero: this.usuario.genero,
@@ -70,13 +123,16 @@ export class RegistroComponent implements AfterViewInit {
     );
   }
 
-  registrarUsuarioLocal(form: NgForm){
+  async registrarUsuarioLocal(form: NgForm){
+    if (!this.usuario.lat || !this.usuario.lng) {
+      await this.geocodificarUbicacion();
+    }
+
     this.autenticacionService.postRegistroLocal(this.usuario).subscribe(
       ( result : any) => {
         form.reset();
         this.msg = ""
         this.cdr.detectChanges();
-        //this.router.navigate(['/login']);
       },
       ( error : any ) => {
         this.msg = "Error al registrar, este email ya pertenece a un usuario"

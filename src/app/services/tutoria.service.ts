@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TutoriaService {
-  private urlHost = 'http://localhost:3000/';
+  private urlHost = environment.urlHost;
   private apiUrl = this.urlHost + 'api/tutoria'; 
 
   constructor(private http: HttpClient) { }
@@ -36,17 +37,17 @@ export class TutoriaService {
   }
 
   asociarProfesorCategoria(profesorId: number, categoriaId: number): Observable<any> {
-    return this.http.post(this.urlHost + 'api/categoria/profesor', { profesor_id: profesorId, categoria_id: categoriaId });
+    return this.http.post(this.urlHost + 'api/categoria/profesor', { profesorId: profesorId, categoriaId: categoriaId });
   }
 
   desasociarProfesorCategoria(profesorId: number, categoriaId: number): Observable<any> {
     return this.http.delete(this.urlHost + 'api/categoria/profesor', {
-      body: { profesor_id: profesorId, categoria_id: categoriaId }
+      body: { profesorId: profesorId, categoriaId: categoriaId }
     });
   }
 
   agregarHorario(usuarioId: number, diaSemana: string, horaInicio: string, horaFin: string): Observable<any> {
-    return this.http.post(this.urlHost + 'api/usuario/horario', { usuario_id: usuarioId, diaSemana, horaInicio, horaFin });
+    return this.http.post(this.urlHost + 'api/usuario/horario', { usuarioId: usuarioId, diaSemana, horaInicio, horaFin });
   }
 
   eliminarHorario(horarioId: number): Observable<any> {

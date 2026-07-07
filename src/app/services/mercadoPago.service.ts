@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MercadoPagoService {
 
-  private apiUrl = 'http://localhost:3000/api/mercadopago';
+  urlHost: string = environment.urlHost;
+  private apiUrl = this.urlHost + 'api/mercadopago';
 
   constructor(private http: HttpClient) { }
 
@@ -16,7 +18,7 @@ export class MercadoPagoService {
     return this.http.post<any>(
       `${this.apiUrl}/crear-preferencia`,
       {
-        respuesta_id: respuestaId,
+        respuestaId: respuestaId,
         precio: precio ?? 0
       }
     );

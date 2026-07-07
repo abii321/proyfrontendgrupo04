@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Solicitud } from '../models/solicitud.class';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SolicitudService {
 
-  urlHost: string = "http://localhost:3000/";
+  urlHost: string = environment.urlHost;
   urlBase: string = this.urlHost + "api/solicitud/";
 
   constructor(private http: HttpClient) { }

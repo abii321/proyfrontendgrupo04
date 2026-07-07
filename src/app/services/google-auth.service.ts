@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 
 declare const google: any;
+declare var process: any;
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleAuthService {
 
-  private clientId = '1038778061235-g57peqmonfr8tu310id8pfqo479hbs34.apps.googleusercontent.com';
+  private clientId = process.env.NG_APP_GOOGLE_CLIENT_ID || '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com';
 
   inicializar(callback: (response: any) => void) {
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
         client_id: this.clientId,
-        callback: callback // Pasamos la función manejadora
+        callback: callback
       });
     }
   }
