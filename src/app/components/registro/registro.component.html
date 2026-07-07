@@ -103,7 +103,7 @@
                             </div>
                             <ul class="dropdown-menu show w-100 position-absolute start-0" *ngIf="mostrarSugerencias && sugerencias.length > 0" style="max-height: 200px; overflow-y: auto; z-index: 1050; top: 100%;">
                                 <li *ngFor="let sug of sugerencias">
-                                    <button type="button" class="dropdown-item small text-wrap text-start py-2" (click)="seleccionarSugerencia(sug)">
+                                    <button type="button" class="dropdown-item small text-wrap text-start py-2" (mousedown)="seleccionarSugerencia(sug)">
                                         <i class="bi bi-geo-alt-fill text-muted me-2"></i>{{ sug.display_name }}
                                     </button>
                                 </li>
