@@ -79,7 +79,6 @@ export class PerfilComponent implements OnInit {
           this.categoriasSeleccionadas = res.data; 
           this.filtrarCategorias();
           this.cdr.detectChanges();
-          console.log(res.data);
       }
     });
   }
@@ -108,7 +107,7 @@ export class PerfilComponent implements OnInit {
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
+        console.error(error);
       }
     ) 
   }
@@ -155,7 +154,7 @@ export class PerfilComponent implements OnInit {
         this.cdr.detectChanges();
       },
       ( error: any ) => {
-        console.log(error);
+        console.error(error);
       }
     )
   }

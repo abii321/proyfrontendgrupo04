@@ -87,12 +87,10 @@ export class GaleriaProfesoresComponent implements OnInit {
   cargarProfesores() {
     this.tutoriaService.obtenerUsuarios().subscribe({
       next: (res: any) => {
-        console.log("RESPUESTA COMPLETA DEL BACKEND:", res);
         const listado = Array.isArray(res) ? res : (res.data || []);
 
         if (Array.isArray(listado)) {
           this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
-          console.log(" Profesores encontrados:", this.profesores);
           this.cdr.detectChanges();
         }
       },

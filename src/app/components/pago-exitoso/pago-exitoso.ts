@@ -27,8 +27,6 @@ export class PagoExitoso implements OnInit {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
 
-      console.log(params);
-
     });
 
   }

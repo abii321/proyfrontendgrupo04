@@ -31,7 +31,6 @@ export class HorarioDisponibleService {
   }
 
   eliminarHorario( idHorario: number){
-    console.log(idHorario);
     return this.http.delete(this.urlBase + idHorario);
   }
 

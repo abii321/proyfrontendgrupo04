@@ -25,7 +25,6 @@ export class CategoriaService {
       'profesorId' : profesorId,
       'estado': 'activo',
     }
-    console.log(body);
     return this.http.post(this.urlBase+"profesor", body, httpOptions);
   }
 
@@ -34,7 +33,6 @@ export class CategoriaService {
       'categoriaId' : categoriaId,
       'profesorId' : profesorId,
     }
-    console.log(body);
     
     return this.http.delete(this.urlBase + "profesor", {
       headers: new HttpHeaders({

@@ -40,7 +40,6 @@ export class RegistroComponent implements AfterViewInit {
   }
 
   handleGoogleResponse(response: any) {
-    console.log("¡Google respondió con éxito!");
     this.googleToken = response.credential;
     this.banGoogle = true; // para mostrar el resto del formulario
     this.cdr.detectChanges();
@@ -227,7 +226,6 @@ export class RegistroComponent implements AfterViewInit {
 
     this.autenticacionService.postSignUpGoogle(body).subscribe(
       (result: any) => {
-        console.log(result);
         this.router.navigate(['/login']);
       },
       (error: any) => {
