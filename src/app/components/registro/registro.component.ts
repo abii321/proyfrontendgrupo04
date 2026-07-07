@@ -228,7 +228,7 @@ export class RegistroComponent implements AfterViewInit {
     this.autenticacionService.postSignUpGoogle(body).subscribe(
       (result: any) => {
         console.log(result);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/login']);
       },
       (error: any) => {
         console.error("Error al registrar con Google:", error);
@@ -245,6 +245,7 @@ export class RegistroComponent implements AfterViewInit {
       (result: any) => {
         form.reset();
         this.msg = ""
+        this.router.navigate(['/login']);
         this.cdr.detectChanges();
       },
       (error: any) => {

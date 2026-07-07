@@ -37,6 +37,9 @@ export class PerfilComponent implements OnInit {
   rolUsuario = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).rol : 'null';
   profesorId = sessionStorage.getItem("usuario")? JSON.parse(sessionStorage.getItem("usuario")!).id : 0; 
 
+  descripcion : string = '';
+  errorDescripcion : string = '';
+
   constructor( private categoriaService: CategoriaService, private precioService: PrecioService, private cdr: ChangeDetectorRef,
     private profesorService: ProfesorService, private horarioService : HorarioDisponibleService
    ){ 
