@@ -95,6 +95,12 @@ export class PerfilComponent implements OnInit {
     this.categoriaService.asociarProfesor(cat.id, this.profesorId).subscribe(
       ( result: any ) => {
         this.categoriasSeleccionadas.push(cat);
+       const userStr = sessionStorage.getItem("usuario");
+        if (userStr) {
+          const userData = JSON.parse(userStr); // Objeto genérico
+          userData.categorias = this.categoriasSeleccionadas;
+          sessionStorage.setItem("usuario", JSON.stringify(userData));
+        }
         this.filtrarCategorias();
         this.cdr.detectChanges();
       },
@@ -134,6 +140,12 @@ export class PerfilComponent implements OnInit {
     this.horarioService.agregarHorario( this.nuevoHorario, this.profesorId ).subscribe(
       ( result: any ) => {
         this.horarios.push(result.data);
+        const userStr = sessionStorage.getItem("usuario");
+        if (userStr) {
+          const userData = JSON.parse(userStr); // Objeto genérico
+          userData.horarios = this.horarios;
+          sessionStorage.setItem("usuario", JSON.stringify(userData));
+        }
         this.nuevoHorario = new HorarioDisponible();
         form.reset();
         this.cdr.detectChanges();

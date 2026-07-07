@@ -10,6 +10,7 @@ import { PrecioService } from '../../services/precio.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { HorarioDisponibleService } from '../../services/horario-disponible.service';
 import Swal from 'sweetalert2';
+import { Tutoria } from '../../models/tutoria.class';
 
 @Component({
   selector: 'app-gestion-tutoria',
@@ -24,6 +25,7 @@ export class GestionTutoriaComponent implements OnInit {
   alumnoProveedorAuth: string = '';
   alumnoEmail: string = '';
   calendarUrl: SafeResourceUrl | null = null;
+
 
   profesorSeleccionado: any = {
     id: 0,
@@ -54,6 +56,9 @@ export class GestionTutoriaComponent implements OnInit {
 
   errorDisponibilidad: string = '';
 
+  fechaMinima: string = '';
+  fechaMaxima: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -80,7 +85,7 @@ export class GestionTutoriaComponent implements OnInit {
       this.alumnoProveedorAuth = user.proveedorAuth || 'local';
       this.alumnoEmail = user.email || '';
     }
-
+    this.configurarLimitesDeFecha();
     this.cargarPrecios();
 
     const profesorId = parseInt(this.route.snapshot.queryParams['profesorId'] || '0');
@@ -100,6 +105,18 @@ export class GestionTutoriaComponent implements OnInit {
       const rawUrl = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(this.alumnoEmail)}&ctz=America/Argentina/Buenos_Aires`;
       this.calendarUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
     }
+  }
+
+  configurarLimitesDeFecha() {
+    const hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+
+    this.fechaMinima = hoy.toISOString().split('T')[0];
+
+    const limiteMaximo = new Date(hoy);
+    limiteMaximo.setMonth(limiteMaximo.getMonth() + 3);
+
+    this.fechaMaxima = limiteMaximo.toISOString().split('T')[0];
   }
 
   cargarPrecios() {
@@ -182,19 +199,24 @@ export class GestionTutoriaComponent implements OnInit {
 
     if (!this.solicitud.fechaSeleccionada || !this.solicitud.duracion) return;
 
+    const fechaElegidaSeguridad = new Date(this.solicitud.fechaSeleccionada + 'T00:00:00');
+    const minima = new Date(this.fechaMinima + 'T00:00:00');
+    const maxima = new Date(this.fechaMaxima + 'T00:00:00');
+
+    if (fechaElegidaSeguridad < minima || fechaElegidaSeguridad > maxima) {
+      this.errorDisponibilidad = 'La fecha seleccionada está fuera del rango permitido (hasta 3 meses).';
+      return;
+    }
+
     const dateElegida = new Date(this.solicitud.fechaSeleccionada + 'T00:00:00');
     const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
     const diaString = diasSemana[dateElegida.getDay()];
 
-    //Pasamos a minúsculas lo que eligió el alumno para evitar errores de tipeo
     const modalidadElegida = (this.solicitud.modalidad || '').toLowerCase();
 
-    //  FILTRO 
     const horariosDelDia = this.horariosProfesor.filter(h => {
-      // Pasamos a minúsculas lo que guardó el profe
       const modProfe = (h.modalidad || '').toLowerCase();
 
-      // Chequeamos que coincida el día, Y que la modalidad sea la misma o 'ambas'
       return h.diaSemana === diaString &&
         (modProfe === modalidadElegida || modProfe === 'ambas');
     });
@@ -206,7 +228,6 @@ export class GestionTutoriaComponent implements OnInit {
       this.errorDisponibilidad = '';
     }
 
-    // Usamos modalidadElegida acá también para mantener consistencia
     const tiempoBuffer = modalidadElegida === 'presencial' ? 20 : 10;
 
     horariosDelDia.forEach(bloque => {
@@ -252,18 +273,17 @@ export class GestionTutoriaComponent implements OnInit {
       return;
     }
 
-    const data = {
-      alumnoId: this.usuarioId,
-      profesorId: this.profesorSeleccionado.id,
-      categoriaId: parseInt(this.solicitud.categoriaId),
-      modalidad: this.solicitud.modalidad,
-      precioAcordado: this.precioFinal,
-      fechaHora: this.solicitud.fechaHora,
-      estado: 'pendiente',
-      mensaje: this.solicitud.mensaje
-    };
+    const nuevaTutoria = new Tutoria(
+      this.usuarioId,
+      this.profesorSeleccionado.id,
+      parseInt(this.solicitud.categoriaId),
+      this.solicitud.fechaHora,
+      this.precioFinal,
+      this.solicitud.modalidad as 'virtual' | 'presencial',
+      this.solicitud.mensaje
+    );
 
-    this.tutoriaService.solicitarTutoria(data).subscribe({
+    this.tutoriaService.solicitarTutoria(nuevaTutoria).subscribe({
       next: (res: any) => {
         const tutoriaId = res.data?.id || res.id;
 

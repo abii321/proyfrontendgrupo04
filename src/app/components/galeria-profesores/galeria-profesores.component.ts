@@ -1,10 +1,11 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TutoriaService } from '../../services/tutoria.service';
 import { AutenticacionService } from '../../services/autenticacion.service';
-import { CategoriaService } from '../../services/categoria.service'; 
+import { CategoriaService } from '../../services/categoria.service';
+import { HorarioDisponibleService } from '../../services/horario-disponible.service';
 
 @Component({
   selector: 'app-galeria-profesores',
@@ -14,34 +15,59 @@ import { CategoriaService } from '../../services/categoria.service';
   styleUrls: ['./galeria-profesores.component.css']
 })
 export class GaleriaProfesoresComponent implements OnInit {
-  private tutoriaService = inject(TutoriaService);
-  private autenticacionService = inject(AutenticacionService);
-  private categoriaService = inject(CategoriaService); 
-  private cdr = inject(ChangeDetectorRef);
-
+  
   rol: string = '';
   categorias: any[] = [];
   profesores: any[] = [];
   filtroCategoria: string = '';
   profesorSeleccionado: any = null;
   alumnoNivelAcademico: string = 'universitario';
-  perfilIncompleto: boolean = false;  
+  perfilIncompleto: boolean = false;
   criterioOrden: string = 'predeterminado';
   alumnoLat: number | null = null;
   alumnoLng: number | null = null;
+
+  constructor(
+    private tutoriaService: TutoriaService,
+    private autenticacionService: AutenticacionService,
+    private categoriaService: CategoriaService,
+    private horarioService: HorarioDisponibleService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     const userStr = sessionStorage.getItem('usuario');
     if (userStr) {
       const user = JSON.parse(userStr);
-      this.rol = user.rol || '';
+
+      this.rol = user.rol || user.perfil || '';
       this.alumnoNivelAcademico = user.nivelAcademico || 'universitario';
       this.alumnoLat = user.lat || null;
       this.alumnoLng = user.lng || null;
+
       if ((this.rol || '').toLowerCase() === 'profesor') {
-        if (!user.universidad || !user.carrera || !user.biografia) {
-          this.perfilIncompleto = true;
-        }
+        const profesorId = user.id;
+
+        this.perfilIncompleto = true;
+
+        this.categoriaService.obtenerCategoriasdeProfesor(profesorId).subscribe({
+          next: (resCat: any) => {
+            const tieneCategorias = resCat.data && resCat.data.length > 0;
+
+            this.horarioService.obtenerHorarios(profesorId).subscribe({
+              next: (resHor: any) => {
+                const tieneHorarios = resHor.data && resHor.data.length > 0;
+
+                if (tieneCategorias && tieneHorarios) {
+                  this.perfilIncompleto = false;
+                }
+                
+                // Actualizamos la vista
+                this.cdr.detectChanges();
+              }
+            });
+          }
+        });
       }
     }
 
@@ -50,34 +76,24 @@ export class GaleriaProfesoresComponent implements OnInit {
   }
 
   cargarCategorias() {
-    //  Usar el nuevo servicio en vez del viejo tutoriaService
     this.categoriaService.obtenerCategorias().subscribe({
       next: (res: any) => {
-        // Depende de cómo envíe el backend (res o res.data)
-        this.categorias = res.data || res; 
+        this.categorias = res.data || res;
       },
       error: (err: any) => console.error('Error al cargar categorías:', err)
     });
   }
 
-cargarProfesores() {
+  cargarProfesores() {
     this.tutoriaService.obtenerUsuarios().subscribe({
       next: (res: any) => {
         const listado = res.data || res;
-        
-        // Verificamos si realmente es una lista (array)
         if (Array.isArray(listado)) {
-            // Filtramos a los profes y los guardamos
-            this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
-            console.log(" Profesores encontrados y listos para mostrar:", this.profesores);
-            this.cdr.detectChanges();
-        } else {
-            console.error(" El backend no mandó una lista válida:", listado);
+          this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
+          this.cdr.detectChanges();
         }
       },
-      error: (err: any) => {
-        console.error(' Error gigante al cargar profesores desde el backend:', err);
-      }
+      error: (err: any) => console.error('Error al cargar profesores:', err)
     });
   }
 
@@ -88,11 +104,11 @@ cargarProfesores() {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
 
@@ -105,7 +121,6 @@ cargarProfesores() {
           this.cdr.detectChanges();
         },
         (error) => {
-          console.error('Error al obtener ubicación:', error);
           alert('No se pudo obtener tu ubicación para calcular la distancia.');
           this.criterioOrden = 'predeterminado';
           this.cdr.detectChanges();
@@ -125,9 +140,9 @@ cargarProfesores() {
 
   get profesoresFiltrados() {
     let list = this.profesores;
-    
+
     if (this.filtroCategoria) {
-      list = list.filter(p => 
+      list = list.filter(p =>
         (p.categoriasEnseniadas || []).some((c: any) => c.nombre === this.filtroCategoria)
       );
     }
@@ -158,7 +173,7 @@ cargarProfesores() {
 
   esNivelCompatible(profesor: any): boolean {
     if (!profesor.nivelAcademico) return true;
-    
+
     const nivelProfe = profesor.nivelAcademico.toLowerCase();
     const nivelAlumno = this.alumnoNivelAcademico.toLowerCase();
 
