@@ -15,7 +15,7 @@ import { HorarioDisponibleService } from '../../services/horario-disponible.serv
   styleUrls: ['./galeria-profesores.component.css']
 })
 export class GaleriaProfesoresComponent implements OnInit {
-  
+
   rol: string = '';
   categorias: any[] = [];
   profesores: any[] = [];
@@ -33,7 +33,7 @@ export class GaleriaProfesoresComponent implements OnInit {
     private categoriaService: CategoriaService,
     private horarioService: HorarioDisponibleService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     const userStr = sessionStorage.getItem('usuario');
@@ -61,7 +61,7 @@ export class GaleriaProfesoresComponent implements OnInit {
                 if (tieneCategorias && tieneHorarios) {
                   this.perfilIncompleto = false;
                 }
-                
+
                 // Actualizamos la vista
                 this.cdr.detectChanges();
               }
@@ -87,9 +87,12 @@ export class GaleriaProfesoresComponent implements OnInit {
   cargarProfesores() {
     this.tutoriaService.obtenerUsuarios().subscribe({
       next: (res: any) => {
-        const listado = res.data || res;
+        console.log("RESPUESTA COMPLETA DEL BACKEND:", res);
+        const listado = Array.isArray(res) ? res : (res.data || []);
+
         if (Array.isArray(listado)) {
           this.profesores = listado.filter((u: any) => (u.rol || '').toLowerCase() === 'profesor');
+          console.log(" Profesores encontrados:", this.profesores);
           this.cdr.detectChanges();
         }
       },
