@@ -144,7 +144,7 @@ export class GaleriaProfesoresComponent implements OnInit {
 
     if (this.filtroCategoria) {
       list = list.filter(p =>
-        (p.categoriasEnseniadas || []).some((c: any) => c.nombre === this.filtroCategoria)
+        (p.categoriasEnseniadas || []).some((c: any) => c.id === Number(this.filtroCategoria))
       );
     }
 

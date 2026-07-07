@@ -14,7 +14,7 @@
         <select id="categoriaSelect" class="form-select select-sobrio shadow-none" [(ngModel)]="filtroCategoria">
           <option value="">Todas las especialidades</option>
           @for (cat of categorias; track cat.id) {
-          <option [value]="cat.nombre">{{ cat.nombre }}</option>
+          <option [value]="cat.id">{{ cat.nombre }} - {{ cat.nivel }}</option>
           }
         </select>
       </div>
