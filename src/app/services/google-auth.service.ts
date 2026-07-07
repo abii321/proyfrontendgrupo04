@@ -10,7 +10,7 @@ declare var process: any;
 export class GoogleAuthService {
 
   private clientId = (process.env.NG_APP_GOOGLE_CLIENT_ID || '514983060587-l7mo7rrdidk3p0l1skhemau7lmddajvi.apps.googleusercontent.com').replace(/['"]/g, '');
-
+  
   private inicializado = false;
   private currentCallback?: (response: any) => void;
 

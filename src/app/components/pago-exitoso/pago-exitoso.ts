@@ -23,6 +23,10 @@ export class PagoExitoso implements OnInit {
       this.status = params['status'];
       this.externalReference = params['external_reference'];
 
+      if (this.paymentId || this.status || this.externalReference) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
       console.log(params);
 
     });

@@ -14,13 +14,14 @@ import { adminGuard } from './guards/admin.guard';
 import { PagoExitoso } from './components/pago-exitoso/pago-exitoso';
 import { PagoPendiente} from './components/pago-pendiente/pago-pendiente';
 import { PagoError} from './components/pago-error/pago-error';
+import { PagoBridgeComponent } from './components/pago-bridge/pago-bridge.component';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 
 export const routes: Routes = [
-    { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+    { path: 'home', component: HomeComponent },
     { path: 'registro', component: RegistroComponent },
     { path: 'login', component: LoginComponent },
     { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
@@ -34,11 +35,6 @@ export const routes: Routes = [
     { path: 'pago-exitoso', component: PagoExitoso, canActivate: [authGuard] },
     { path: 'pago-pendiente', component: PagoPendiente, canActivate: [authGuard] },
     { path: 'pago-error', component: PagoError, canActivate: [authGuard] },
-
-    
-
-
-
-
+    { path: 'pago-bridge', component: PagoBridgeComponent },
     { path: '**', pathMatch: 'full', redirectTo: 'home' },
 ];
