@@ -83,4 +83,8 @@ export class SolicitudService {
   getCategorias(): Observable<any> {
     return this.http.get(this.urlHost + 'api/categoria');
   }
+
+  getUsuarios(): Observable<any> {
+    return this.http.get(this.urlHost + 'api/usuario');
+  }
 }

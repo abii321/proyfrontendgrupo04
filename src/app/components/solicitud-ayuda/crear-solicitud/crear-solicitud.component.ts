@@ -75,6 +75,10 @@ export class CrearSolicitudComponent implements OnInit {
       return;
     }
 
+    const fechaAhora = new Date();
+    this.solicitud.fechaCreacion = fechaAhora;
+    this.solicitud.fechaActualizacion = fechaAhora;
+
     this.solicitudService.createSolicitud(this.solicitud).subscribe({
       next: (result) => {
         alert(result.msg);
