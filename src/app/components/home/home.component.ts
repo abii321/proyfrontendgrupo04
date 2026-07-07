@@ -6,6 +6,7 @@ import { CategoriaService } from '../../services/categoria.service';
 import { Categoria } from '../../models/categoria.class';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AutenticacionService } from '../../services/autenticacion.service';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 export class HomeComponent implements OnInit {
   categorias: Array<Categoria> = [];
 
-  constructor( private categoriaService: CategoriaService, private cdr: ChangeDetectorRef, private router: Router /*, private authService: AutenticacionService */) { } // authService not used in this component's logic
+  constructor( private categoriaService: CategoriaService, private cdr: ChangeDetectorRef, private router: Router, public authService: AutenticacionService) { } 
   
   ngOnInit(){
     this.categoriaService.obtenerCategorias().subscribe({

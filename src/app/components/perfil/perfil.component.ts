@@ -122,6 +122,7 @@ export class PerfilComponent implements OnInit {
       },
       ( error: any ) => {
         this.errorCategoria = error.error?.msg || 'Ocurrió un error inesperado.';
+        this.cdr.detectChanges();
       } 
     )
   }
@@ -175,6 +176,7 @@ export class PerfilComponent implements OnInit {
       },
       ( error: any ) => {
         this.errorHorario = error.error?.msg || 'Ocurrió un error inesperado.';
+        this.cdr.detectChanges();
       }
     )
   }
