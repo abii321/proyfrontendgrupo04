@@ -27,10 +27,10 @@ export class LoginComponent implements AfterViewInit {
       ( result : any) => {
         if( result.status == 1 ){
           sessionStorage.setItem("usuario", JSON.stringify(result));
-          this.router.navigate(['/home']);
           form.reset()
           this.msg = ""
           this.cdr.detectChanges();
+          this.router.navigate(['/solicitar-tutoria']);
         }
         else this.msglogin="Credenciales incorrectas";
       },
@@ -61,7 +61,7 @@ export class LoginComponent implements AfterViewInit {
       (result: any) => {
         if( result.status == 1 ){
           sessionStorage.setItem("usuario", JSON.stringify(result));
-          this.router.navigate(['/home']);
+          this.router.navigate(['/solicitar-tutoria']);
         }
         else this.msglogin="Credenciales incorrectas";
       },
@@ -72,4 +72,3 @@ export class LoginComponent implements AfterViewInit {
   }
 
 }
-//74

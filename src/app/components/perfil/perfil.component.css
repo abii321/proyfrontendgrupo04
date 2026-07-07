@@ -1,1 +1,6 @@
-/* Estilos locales para el componente de perfil */
+.min-height-custom {
+  min-height: 58px;
+}
+.line-height-0 {
+  line-height: 0;
+}
