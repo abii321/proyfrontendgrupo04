@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, signal, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
@@ -9,12 +9,32 @@ import {
   FullTutorial,
   MonthCount,
   RoleStateCount,
-  StateCount
+  StateCount,
+  FullUsuarioDashboard,
+  FullCategoryDashboard
 } from '../../models/dashboard.class';
+import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import DataTable from 'datatables.net-bs5';
+
+/**
+  ==========================================================
+  FUNCIÓN AUXILIAR: escapeHtml
+  ==========================================================
+  Escapa caracteres especiales HTML para prevenir XSS
+  en celdas de DataTables que usan render() con HTML manual.
+ */
+function escapeHtml(value: string | null | undefined): string {
+  if (!value) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -25,7 +45,35 @@ import DataTable from 'datatables.net-bs5';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  // ==========================================================
+  // 1. PROPIEDADES DE ESTADO Y REFERENCIAS AL DOM
+  // ==========================================================
+
   @ViewChild('tutorialsTable') tutorialsTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('usersTable') usersTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('categoriesTable') categoriesTable!: ElementRef<HTMLTableElement>;
+  @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLDivElement>;
+
+  currentTableView: 'tutorias' | 'usuarios' | 'categorias' = 'tutorias';
+
+  users = signal<FullUsuarioDashboard[]>([]);
+  categories = signal<FullCategoryDashboard[]>([]);
+
+  editingUser: FullUsuarioDashboard | null = null;
+  showUserModal = false;
+
+  editingTutorial: FullTutorial | null = null;
+  showTutorialModal = false;
+
+  editingCategory: FullCategoryDashboard | null = null;
+  showCategoryModal = false;
+
+  itemToDelete: { type: string, id: number } | null = null;
+  showDeleteModal = false;
+
+  // ==========================================================
+  // 2. CONFIGURACIONES DE GRÁFICOS (CHART.JS)
+  // ==========================================================
 
   // --- KPI CARDS ---
   summary: DashboardSummary = {
@@ -108,7 +156,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  // --- DATA TABLE (DataTable.net nativo) ---
+  // ==========================================================
+  // 3. CONFIGURACIONES DE TABLAS (DATATABLES)
+  // ==========================================================
+
   tableReady = false;
   tutorials = signal<FullTutorial[]>([]);
   private dtInstance: any;
@@ -126,8 +177,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Alumno',
         defaultContent: '',
         render: (d: any, type: string, row: FullTutorial) => {
-          const nombre = `${row.alumno?.nombre ?? ''} ${row.alumno?.apellido ?? ''}`.trim();
-          const email = row.alumno?.email ?? '';
+          const nombre = escapeHtml(`${row.alumno?.nombre ?? ''} ${row.alumno?.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.alumno?.email);
           if (type !== 'display') return nombre;
           return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
         }
@@ -137,8 +188,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Profesor',
         defaultContent: '',
         render: (d: any, type: string, row: FullTutorial) => {
-          const nombre = `${row.profesor?.nombre ?? ''} ${row.profesor?.apellido ?? ''}`.trim();
-          const email = row.profesor?.email ?? '';
+          const nombre = escapeHtml(`${row.profesor?.nombre ?? ''} ${row.profesor?.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.profesor?.email);
           if (type !== 'display') return nombre;
           return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
         }
@@ -153,7 +204,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Modalidad',
         render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
-          return `<span class="badge-modalidad badge-modalidad--${(d ?? '').toLowerCase()}">${d}</span>`;
+          const safe = escapeHtml(d);
+          return `<span class="badge-modalidad badge-modalidad--${(d ?? '').toLowerCase()}">${safe}</span>`;
         }
       },
       {
@@ -161,7 +213,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         title: 'Estado',
         render: (d: string, type: string) => {
           if (type !== 'display') return d ?? '';
-          return `<span class="badge-estado badge-estado--${(d ?? '').toLowerCase()}">${d}</span>`;
+          const safe = escapeHtml(d);
+          return `<span class="badge-estado badge-estado--${(d ?? '').toLowerCase()}">${safe}</span>`;
         }
       },
       {
@@ -211,12 +264,117 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (type !== 'display') return d;
           return new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
         }
+      },
+      {
+        data: null,
+        title: 'Acciones',
+        orderable: false,
+        render: (d: any, type: string, row: FullTutorial) => {
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-tutorial me-1" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm btn-outline-danger btn-delete-tutorial" data-id="${row.id}"><i class="bi bi-trash pe-none"></i></button>
+          `;
+        }
       }
     ],
     order: [[10, 'desc'] as [number, 'asc' | 'desc']]   // ordenar por "Registro" DESC
   };
 
-  // --- KPIs FINANCIEROS ---
+  private readonly dtOptionsUsers = {
+    language: {
+      url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-AR.json'
+    },
+    pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
+    columns: [
+      { data: 'id', title: '#', className: 'text-muted small' },
+      {
+        data: null,
+        title: 'Usuario',
+        render: (d: any, type: string, row: FullUsuarioDashboard) => {
+          const nombre = escapeHtml(`${row.nombre ?? ''} ${row.apellido ?? ''}`.trim());
+          const email = escapeHtml(row.email);
+          if (type !== 'display') return nombre;
+          return `<div class="fw-semibold">${nombre}</div><small class="text-muted">${email}</small>`;
+        }
+      },
+      {
+        data: 'rol', title: 'Rol', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const bg = d === 'admin' ? 'bg-danger' : (d === 'profesor' ? 'bg-primary' : 'bg-secondary');
+          return `<span class="badge ${bg}">${escapeHtml(d)}</span>`;
+        }
+      },
+      {
+        data: 'estado', title: 'Estado', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const bg = d === 'activo' ? 'bg-success' : 'bg-warning text-dark';
+          return `<span class="badge ${bg}">${escapeHtml(d)}</span>`;
+        }
+      },
+      { data: 'universidad', title: 'Universidad', defaultContent: '—' },
+      { data: 'carrera', title: 'Carrera', defaultContent: '—' },
+      {
+        data: 'createdAt',
+        title: 'Registro',
+        className: 'text-muted small',
+        render: (d: string, type: string) => {
+          if (!d) return '';
+          if (type !== 'display') return d;
+          return new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+        }
+      },
+      {
+        data: null,
+        title: 'Acciones',
+        orderable: false,
+        render: (d: any, type: string, row: FullUsuarioDashboard) => {
+          const isActivo = row.estado === 'activo';
+          const toggleClass = isActivo ? 'btn-outline-warning' : 'btn-outline-success';
+          const toggleIcon = isActivo ? 'bi-person-fill-slash' : 'bi-person-fill-check';
+          const toggleTitle = isActivo ? 'Inactivar Usuario' : 'Activar Usuario';
+
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-user me-1" data-id="${row.id}" title="Editar"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm ${toggleClass} btn-toggle-user" data-id="${row.id}" title="${toggleTitle}"><i class="bi ${toggleIcon} pe-none"></i></button>
+          `;
+        }
+      }
+    ],
+    order: [[6, 'desc'] as [number, 'asc' | 'desc']]
+  };
+
+  private readonly dtOptionsCategories = {
+    language: { url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-AR.json' },
+    pageLength: 10,
+    lengthMenu: [10, 25, 50, 100],
+    columns: [
+      { data: 'id', title: '#', className: 'text-muted small' },
+      { data: 'nombre', title: 'Nombre', className: 'fw-semibold' },
+      { data: 'nivel', title: 'Nivel' },
+      {
+        data: 'descripcion', title: 'Descripción', render: (d: string, type: string) => {
+          if (type !== 'display') return d ?? '';
+          const safe = escapeHtml(d);
+          return safe.length > 50 ? safe.substring(0, 50) + '...' : safe;
+        }
+      },
+      {
+        data: null, title: 'Acciones', orderable: false, render: (d: any, type: string, row: FullCategoryDashboard) => {
+          return `
+            <button class="btn btn-sm btn-outline-secondary btn-edit-category me-1" data-id="${row.id}"><i class="bi bi-pencil pe-none"></i></button>
+            <button class="btn btn-sm btn-outline-danger btn-delete-category" data-id="${row.id}"><i class="bi bi-trash pe-none"></i></button>
+          `;
+        }
+      }
+    ],
+    order: [[1, 'asc'] as [number, 'asc' | 'desc']]
+  };
+
+  // ==========================================================
+  // 4. GETTERS PARA KPIs FINANCIEROS (calculados en el frontend)
+  // ==========================================================
+
   get totalRevenue(): number {
     return this.tutorials()
       .filter(t => t.pagada)
@@ -243,7 +401,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return (paidCount / list.length) * 100;
   }
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef, private router: Router) { }
+
+  // ==========================================================
+  // 5. CICLO DE VIDA
+  // ==========================================================
 
   ngOnInit(): void {
     this.loadSummary();
@@ -254,11 +416,90 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadFullTutorials();
   }
 
+  // ==========================================================
+  // 6. GESTIÓN DE EVENTOS DE INTERFAZ (CLICKS EN TABLAS Y NAVEGACIÓN)
+  // ==========================================================
+
+  // Escucha los clics globales en la tabla para delegar los eventos a los botones
+  @HostListener('click', ['$event'])
+  onTableClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const actionBtn = target.closest('button');
+    if (!actionBtn) return;
+
+    const id = Number(actionBtn.getAttribute('data-id'));
+    if (!id) return;
+
+    if (actionBtn.classList.contains('btn-edit-user')) {
+      const user = this.users().find(u => u.id === id);
+      if (user) this.openEditUserModal(user);
+    } else if (actionBtn.classList.contains('btn-toggle-user')) {
+      const user = this.users().find(u => u.id === id);
+      if (user) {
+        const newStatus = user.estado === 'activo' ? 'inactivo' : 'activo';
+        this.adminService.updateUser(user.id, { ...user, estado: newStatus }).subscribe({
+          next: (res) => {
+            if (res.status === 1) {
+              this.loadUsers();
+              this.loadSummary();
+              this.loadUsersByRole();
+            }
+          },
+          error: (err) => { console.error(err); alert('Error al cambiar estado.'); }
+        });
+      }
+    } else if (actionBtn.classList.contains('btn-edit-tutorial')) {
+      const tutoria = this.tutorials().find(t => t.id === id);
+      if (tutoria) this.openEditTutorialModal(tutoria);
+    } else if (actionBtn.classList.contains('btn-delete-tutorial')) {
+      this.openDeleteModal('tutorial', id);
+    } else if (actionBtn.classList.contains('btn-edit-category')) {
+      const cat = this.categories().find(c => c.id === id);
+      if (cat) this.openEditCategoryModal(cat);
+    } else if (actionBtn.classList.contains('btn-delete-category')) {
+      this.openDeleteModal('category', id);
+    }
+  }
+
+  goToSolicitudes(): void {
+    this.router.navigate(['/solicitud-ayuda']);
+  }
+
+  switchView(view: 'tutorias' | 'usuarios' | 'categorias'): void {
+    if (this.currentTableView !== view) {
+      this.currentTableView = view;
+      this.tableReady = false;
+
+      if (this.dtInstance) {
+        this.dtInstance.destroy();
+        this.dtInstance = null;
+      }
+
+      if (view === 'tutorias') {
+        this.loadFullTutorials();
+      } else if (view === 'usuarios') {
+        this.loadUsers();
+      } else if (view === 'categorias') {
+        this.loadCategories();
+      }
+    }
+
+    setTimeout(() => {
+      if (this.tableContainer && this.tableContainer.nativeElement) {
+        this.tableContainer.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
   ngOnDestroy(): void {
     if (this.dtInstance) {
       this.dtInstance.destroy();
     }
   }
+
+  // ==========================================================
+  // 7. CARGA DE DATOS PARA KPIs Y GRÁFICOS
+  // ==========================================================
 
   // Carga los contadores generales para las KPI cards
   loadSummary(): void {
@@ -369,6 +610,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ==========================================================
+  // 8. GESTIÓN DE TUTORÍAS (CARGA Y EXPORTACIONES)
+  // ==========================================================
+
   // Carga el listado completo de tutorías; inicializa la tabla una vez cargada en el DOM
   loadFullTutorials(): void {
     this.adminService.getFullTutorials().subscribe({
@@ -454,5 +699,227 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Tutorías');
     XLSX.writeFile(workbook, 'reporte-tutorias.xlsx');
+  }
+
+  // ==========================================================
+  // 9. GESTIÓN Y EDICIÓN DE USUARIOS
+  // ==========================================================
+
+  // Carga usuarios para la vista de usuarios
+  loadUsers(): void {
+    this.adminService.getUsers().subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.users.set(res.data);
+          this.tableReady = true;
+          this.cdr.detectChanges();
+
+          setTimeout(() => {
+            if (this.usersTable && this.usersTable.nativeElement) {
+              if (this.dtInstance) {
+                this.dtInstance.destroy();
+              }
+              this.dtInstance = new DataTable(this.usersTable.nativeElement, {
+                ...this.dtOptionsUsers,
+                data: res.data
+              });
+            }
+          }, 0);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+        this.tableReady = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openEditUserModal(user: FullUsuarioDashboard): void {
+    this.editingUser = { ...user };
+    this.showUserModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeUserModal(): void {
+    this.showUserModal = false;
+    this.editingUser = null;
+  }
+
+  saveUserChanges(): void {
+    if (!this.editingUser) return;
+
+    this.adminService.updateUser(this.editingUser.id, this.editingUser).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeUserModal();
+          this.loadUsers();
+          this.loadSummary();
+          this.loadUsersByRole();
+        } else {
+          alert('Error al actualizar usuario: ' + res.msg);
+        }
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        alert('Ocurrió un error al actualizar el usuario.');
+      }
+    });
+  }
+
+  deleteEditingUser(): void {
+    if (this.editingUser) {
+      this.openDeleteModal('user', this.editingUser.id);
+      this.closeUserModal();
+    }
+  }
+
+  // ==========================================================
+  // 10. EDICIÓN DE TUTORÍAS (MODAL)
+  // ==========================================================
+
+  openEditTutorialModal(tutoria: FullTutorial): void {
+    this.editingTutorial = { ...tutoria };
+    this.showTutorialModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeTutorialModal(): void {
+    this.showTutorialModal = false;
+    this.editingTutorial = null;
+  }
+
+  saveTutorialChanges(): void {
+    if (!this.editingTutorial) return;
+    this.adminService.updateTutorial(this.editingTutorial.id, this.editingTutorial).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeTutorialModal();
+          this.loadFullTutorials();
+          this.loadSummary();
+          this.loadTutorialsByState();
+          this.loadTutorialsByMonth();
+        } else alert('Error: ' + res.msg);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al actualizar tutoría.');
+      }
+    });
+  }
+
+  // ==========================================================
+  // 11. GESTIÓN Y EDICIÓN DE CATEGORÍAS
+  // ==========================================================
+
+  loadCategories(): void {
+    this.adminService.getCategoriesList().subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.categories.set(res.data);
+          this.tableReady = true;
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            if (this.categoriesTable && this.categoriesTable.nativeElement) {
+              if (this.dtInstance) this.dtInstance.destroy();
+              this.dtInstance = new DataTable(this.categoriesTable.nativeElement, {
+                ...this.dtOptionsCategories, data: res.data
+              });
+            }
+          }, 0);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.tableReady = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openEditCategoryModal(cat: FullCategoryDashboard): void {
+    this.editingCategory = { ...cat };
+    this.showCategoryModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeCategoryModal(): void {
+    this.showCategoryModal = false;
+    this.editingCategory = null;
+  }
+
+  saveCategoryChanges(): void {
+    if (!this.editingCategory) return;
+    this.adminService.updateCategory(this.editingCategory.id, this.editingCategory).subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeCategoryModal();
+          this.loadCategories();
+          this.loadSummary();
+        } else alert('Error: ' + res.msg);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al actualizar categoría.');
+      }
+    });
+  }
+
+  // ==========================================================
+  // 12. SISTEMA DE BORRADO UNIFICADO (MODAL DE CONFIRMACIÓN)
+  // ==========================================================
+
+  openDeleteModal(type: string, id: number): void {
+    this.itemToDelete = { type, id };
+    this.showDeleteModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.itemToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.itemToDelete) return;
+    const { type, id } = this.itemToDelete;
+
+    let deleteObs;
+    if (type === 'tutorial') deleteObs = this.adminService.deleteTutorial(id);
+    else if (type === 'category') deleteObs = this.adminService.deleteCategory(id);
+    else if (type === 'user') deleteObs = this.adminService.deleteUser(id);
+    else return;
+
+    deleteObs.subscribe({
+      next: (res) => {
+        if (res.status === 1) {
+          this.closeDeleteModal();
+          this.loadSummary();
+          if (type === 'tutorial') {
+            this.loadFullTutorials();
+            this.loadTutorialsByState();
+            this.loadTutorialsByMonth();
+          }
+          else if (type === 'category') {
+            this.loadCategories();
+          }
+          else if (type === 'user') {
+            this.loadUsers();
+            this.loadUsersByRole();
+          }
+        } else {
+          alert('Error: ' + res.msg);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        if (err.error && err.error.msg) {
+          alert(err.error.msg);
+        } else {
+          alert('Error al eliminar el registro.');
+        }
+        this.closeDeleteModal();
+      }
+    });
   }
 }

@@ -145,13 +145,12 @@ export class PerfilComponent implements OnInit {
   }
 
   haySuperposicion(): boolean {
-    return this.horarios .some(h =>
-      this.nuevoHorario.diaSemana === this.nuevoHorario.diaSemana &&
+    return this.horarios.some(h =>
+      h.diaSemana === this.nuevoHorario.diaSemana &&
       this.nuevoHorario.horaInicio < h.horaFin &&
       this.nuevoHorario.horaFin > h.horaInicio
-  );
-
-}
+    );
+  }
 
   eliminarHorario( horarioId: number ){
     this.horarioService.eliminarHorario( horarioId ).subscribe(

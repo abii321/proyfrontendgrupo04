@@ -9,8 +9,8 @@
 
         <!-- KPI Cards — contadores generales -->
         <div class="row g-4 mb-5">
-            <div class="col-sm-6 col-xl-3">
-                <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+            <div class="col-sm-6 col-md-4 col-xl">
+                <div class="tarjeta-delicada p-4 shadow-sm kpi-card kpi-card-clickable" (click)="switchView('usuarios')" style="cursor: pointer;" title="Ver listado de usuarios">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
                             <i class="bi bi-people fs-3"></i>
@@ -22,8 +22,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+            <div class="col-sm-6 col-md-4 col-xl">
+                <div class="tarjeta-delicada p-4 shadow-sm kpi-card kpi-card-clickable" (click)="switchView('tutorias')" style="cursor: pointer;" title="Ver listado de tutorías">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
                             <i class="bi bi-journal-bookmark fs-3"></i>
@@ -35,27 +35,40 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
+            <div class="col-sm-6 col-md-4 col-xl">
+                <div class="tarjeta-delicada p-4 shadow-sm kpi-card kpi-card-clickable" (click)="goToSolicitudes()" style="cursor: pointer;" title="Ir a Solicitudes de Ayuda">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon">
                             <i class="bi bi-question-circle fs-3"></i>
                         </div>
                         <div>
-                            <p class="text-muted small mb-0">Solicitudes de Ayuda</p>
+                            <p class="text-muted small mb-0">Solicitudes</p>
                             <h3 class="fw-light mb-0">{{ summary.totalHelpRequests }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
+            <div class="col-sm-6 col-md-6 col-xl">
+                <div class="tarjeta-delicada p-4 shadow-sm kpi-card kpi-card-clickable" (click)="switchView('categorias')" style="cursor: pointer;" title="Ver listado de categorías">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="kpi-icon kpi-icon--info">
+                            <i class="bi bi-tags fs-3"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted small mb-0">Categorías</p>
+                            <h3 class="fw-light mb-0">{{ summary.totalCategories }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-xl">
                 <div class="tarjeta-delicada p-4 shadow-sm kpi-card">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon kpi-icon--warning">
                             <i class="bi bi-star-half fs-3"></i>
                         </div>
                         <div>
-                            <p class="text-muted small mb-0">Calificación Promedio</p>
+                            <p class="text-muted small mb-0">Calif. Promedio</p>
                             <h3 class="fw-light mb-0">
                                 {{ summary.avgRating }}
                                 <small class="text-muted fs-6">/ 5</small>
@@ -177,56 +190,294 @@
         </div>
 
         <!-- Data Table Section — ngx-datatables-net -->
-        <div class="tarjeta-delicada p-4 shadow-sm">
-
-            <!-- Table header -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3 mb-3">
-                <h6 class="fw-semibold text-muted mb-0">
-                    <i class="bi bi-table me-2"></i>Listado de Tutorías
-                </h6>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-elegante btn-sm" id="btn-export-pdf" (click)="exportToPDF()">
-                        <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
-                    </button>
-                    <button class="btn btn-elegante btn-sm" id="btn-export-excel" (click)="exportToExcel()">
-                        <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
-                    </button>
+        <div class="tarjeta-delicada p-4 shadow-sm" #tableContainer id="tableContainer">
+            @if (currentTableView === 'tutorias') {
+                <!-- Table header Tutorías -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3 mb-3">
+                    <h6 class="fw-semibold text-muted mb-0">
+                        <i class="bi bi-table me-2"></i>Listado de Tutorías
+                    </h6>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-elegante btn-sm" id="btn-export-pdf" (click)="exportToPDF()">
+                            <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+                        </button>
+                        <button class="btn btn-elegante btn-sm" id="btn-export-excel" (click)="exportToExcel()">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Skeleton loader mientras llegan los datos del backend -->
-            @if (!tableReady) {
-            <div class="py-5 text-center text-muted">
-                <div class="spinner-border spinner-border-sm mb-3" role="status" aria-hidden="true"></div>
-                <p class="small mb-0">Cargando tutorías…</p>
-            </div>
+                <!-- Skeleton loader mientras llegan los datos del backend -->
+                @if (!tableReady) {
+                <div class="py-5 text-center text-muted">
+                    <div class="spinner-border spinner-border-sm mb-3" role="status" aria-hidden="true"></div>
+                    <p class="small mb-0">Cargando tutorías…</p>
+                </div>
+                }
+
+                @if (tableReady) {
+                <div class="table-responsive">
+                    <table #tutorialsTable class="table table-hover table-borderless align-middle w-100"
+                        id="tutorials-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Alumno</th>
+                                <th scope="col">Profesor</th>
+                                <th scope="col">Categoría</th>
+                                <th scope="col">Modalidad</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Pagada</th>
+                                <th scope="col">Calific.</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Fecha de Clase</th>
+                                <th scope="col">Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                }
             }
 
-            @if (tableReady) {
-            <div class="table-responsive">
-                <table #tutorialsTable
-                    class="table table-hover table-borderless align-middle w-100" id="tutorials-table">
-                    <thead class="table-header">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Alumno</th>
-                            <th scope="col">Profesor</th>
-                            <th scope="col">Categoría</th>
-                            <th scope="col">Modalidad</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Pagada</th>
-                            <th scope="col">Calific.</th>
-                            <th scope="col">Precio</th>
-                            <th scope="col">Fecha de Clase</th>
-                            <th scope="col">Registro</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-            }
+            @if (currentTableView === 'usuarios') {
+                <!-- Table header Usuarios -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3 mb-3">
+                    <h6 class="fw-semibold text-muted mb-0">
+                        <i class="bi bi-people me-2"></i>Gestión de Usuarios
+                    </h6>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" (click)="switchView('tutorias')">
+                            <i class="bi bi-arrow-left me-1"></i> Volver a Tutorías
+                        </button>
+                    </div>
+                </div>
 
+                <!-- Skeleton loader -->
+                @if (!tableReady) {
+                <div class="py-5 text-center text-muted">
+                    <div class="spinner-border spinner-border-sm mb-3" role="status" aria-hidden="true"></div>
+                    <p class="small mb-0">Cargando usuarios…</p>
+                </div>
+                }
+
+                @if (tableReady) {
+                <div class="table-responsive">
+                    <table #usersTable class="table table-hover table-borderless align-middle w-100" id="users-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Universidad</th>
+                                <th scope="col">Carrera</th>
+                                <th scope="col">Registro</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                }
+            }
+            @if (currentTableView === 'categorias') {
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-bottom pb-3 mb-3">
+                    <h6 class="fw-semibold text-muted mb-0"><i class="bi bi-tags me-2"></i>Gestión de Categorías</h6>
+                </div>
+                @if (!tableReady) {
+                <div class="py-5 text-center text-muted">
+                    <div class="spinner-border spinner-border-sm mb-3" role="status" aria-hidden="true"></div>
+                    <p class="small mb-0">Cargando categorías…</p>
+                </div>
+                }
+                @if (tableReady) {
+                <div class="table-responsive">
+                    <table #categoriesTable class="table table-hover table-borderless align-middle w-100">
+                        <thead class="table-header"><tr></tr></thead><tbody></tbody>
+                    </table>
+                </div>
+                }
+            }
         </div>
 
+    </div>
+</div>
+
+<!-- Modal Edición Usuario -->
+<div class="modal fade" tabindex="-1" [class.show]="showUserModal" [style.display]="showUserModal ? 'block' : 'none'" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header border-0 bg-light pb-2">
+                <h5 class="modal-title fw-semibold texto-primario">Editar Usuario</h5>
+                <button type="button" class="btn-close" (click)="closeUserModal()"></button>
+            </div>
+            <div class="modal-body pt-3 pb-4 px-4">
+                @if (editingUser) {
+                    <form #editForm="ngForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" [(ngModel)]="editingUser.nombre" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Apellido</label>
+                                <input type="text" class="form-control" name="apellido" [(ngModel)]="editingUser.apellido">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Email</label>
+                                <input type="email" class="form-control" name="email" [(ngModel)]="editingUser.email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Universidad</label>
+                                <input type="text" class="form-control" name="universidad" [(ngModel)]="editingUser.universidad">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Carrera</label>
+                                <input type="text" class="form-control" name="carrera" [(ngModel)]="editingUser.carrera">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Rol</label>
+                                <select class="form-select" name="rol" [(ngModel)]="editingUser.rol">
+                                    <option value="alumno">Alumno</option>
+                                    <option value="profesor">Profesor</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Estado</label>
+                                <select class="form-select" name="estado" [(ngModel)]="editingUser.estado">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-danger px-3 rounded-pill" (click)="deleteEditingUser()" title="Eliminar definitivamente">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill me-2" (click)="closeUserModal()">Cancelar</button>
+                    <button type="button" class="btn btn-elegante px-4 rounded-pill" (click)="saveUserChanges()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edición Tutoría -->
+<div class="modal fade" tabindex="-1" [class.show]="showTutorialModal" [style.display]="showTutorialModal ? 'block' : 'none'" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header border-0 bg-light pb-2">
+                <h5 class="modal-title fw-semibold texto-primario">Editar Tutoría</h5>
+                <button type="button" class="btn-close" (click)="closeTutorialModal()"></button>
+            </div>
+            <div class="modal-body pt-3 pb-4 px-4">
+                @if (editingTutorial) {
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Estado</label>
+                                <select class="form-select" [(ngModel)]="editingTutorial.estado" name="t_estado">
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="aceptada">Aceptada</option>
+                                    <option value="rechazada">Rechazada</option>
+                                    <option value="finalizada">Finalizada</option>
+                                    <option value="completada">Completada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Modalidad</label>
+                                <select class="form-select" [(ngModel)]="editingTutorial.modalidad" name="t_modalidad">
+                                    <option value="virtual">Virtual</option>
+                                    <option value="presencial">Presencial</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Precio Acordado</label>
+                                <input type="number" class="form-control" [(ngModel)]="editingTutorial.precioAcordado" name="t_precio">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Pagada</label>
+                                <select class="form-select" [(ngModel)]="editingTutorial.pagada" name="t_pagada">
+                                    <option [ngValue]="true">Sí</option>
+                                    <option [ngValue]="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" (click)="closeTutorialModal()">Cancelar</button>
+                <button type="button" class="btn btn-elegante px-4 rounded-pill" (click)="saveTutorialChanges()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Edición Categoría -->
+<div class="modal fade" tabindex="-1" [class.show]="showCategoryModal" [style.display]="showCategoryModal ? 'block' : 'none'" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header border-0 bg-light pb-2">
+                <h5 class="modal-title fw-semibold texto-primario">Editar Categoría</h5>
+                <button type="button" class="btn-close" (click)="closeCategoryModal()"></button>
+            </div>
+            <div class="modal-body pt-3 pb-4 px-4">
+                @if (editingCategory) {
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Nombre</label>
+                                <input type="text" class="form-control" [(ngModel)]="editingCategory.nombre" name="c_nombre">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Nivel</label>
+                                <select class="form-select" [(ngModel)]="editingCategory.nivel" name="c_nivel">
+                                    <option value="primario">Primario</option>
+                                    <option value="secundario">Secundario</option>
+                                    <option value="terciario">Terciario</option>
+                                    <option value="universitario">Universitario</option>
+                                    <option value="doctorado">Doctorado</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted mb-1">Descripción</label>
+                                <textarea class="form-control" [(ngModel)]="editingCategory.descripcion" name="c_desc" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" (click)="closeCategoryModal()">Cancelar</button>
+                <button type="button" class="btn btn-elegante px-4 rounded-pill" (click)="saveCategoryChanges()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Borrado -->
+<div class="modal fade" tabindex="-1" [class.show]="showDeleteModal" [style.display]="showDeleteModal ? 'block' : 'none'" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3 text-danger">
+                    <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-3">¿Estás seguro?</h5>
+                <p class="text-muted small mb-4">Esta acción no se puede deshacer. Se eliminará el registro seleccionado de forma permanente.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closeDeleteModal()">Cancelar</button>
+                    <button type="button" class="btn btn-danger rounded-pill px-4" (click)="confirmDelete()">Eliminar</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -1,50 +1,74 @@
-<div class="container py-4 row">
-    <div class="col-md-4">
-        imagen futura
-    </div>
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-10 col-xl-11">
+            <div class="row g-0">
+                <!-- Columna de la imagen -->
+                <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-2">
+                    <img src="iniciosesion.jpg" alt="Ilustración de inicio de sesion"
+                        class="img-fluid mb-4 border rounded-4" style="max-width: 350px;" ngNoOptimize>
+                    <div class="text-center">
+                        <h4 class="fw-bold">Conecta, Aprende, Crece</h4>
+                        <p class="text-muted small">Tu viaje hacia el conocimiento comienza con un solo clic. Encuentra
+                            al tutor perfecto para tus necesidades.</p>
+                    </div>
+                </div>
 
-    <div class="col-md-8">
-        <h3 class="pt-3">Inicia Sesion</h3>
+                <!-- Columna del formulario -->
+                <div class="col-md-6 d-flex flex-column align-items-center justify-content-center p-4">
+                    <div class="w-100" style="max-width: 450px;">
+                        <h2 class="fw-bold mb-2 text-center">¡Hola de nuevo!</h2>
+                        <p class="text-muted mb-4 text-center">Inicia sesión para continuar</p>
 
-        <div id="googleLoginBtn" class="mb-4"></div>
+                        <div id="googleLoginBtn" class="mb-4"></div>
 
-        <form class="form bg-light p-4 rounded shadow-sm" #loginForm="ngForm">
+                        <form class="form" #loginForm="ngForm">
 
-            <!--Email-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="email" class="form-label fw-semibold">Email</label></div>
-                    <div class="col-9 col-md-10"> <input type="email" class="form-control" id="email" name="email" [(ngModel)]="email" #emailM="ngModel" required email>
-                    <div *ngIf="emailM.invalid && (emailM.touched || emailM.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="emailM.errors?.['required']">Campo obligatorio</div>
-                        <div *ngIf="emailM.errors?.['email']">Formato invalido</div>
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-medium">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="nombre@ejemplo.com" [(ngModel)]="email" #emailM="ngModel" required
+                                    email>
+                                <div *ngIf="emailM.invalid && (emailM.touched || emailM.dirty)"
+                                    class="text-danger small mt-1 ps-2">
+                                    <div *ngIf="emailM.errors?.['required']">El correo es obligatorio.</div>
+                                    <div *ngIf="emailM.errors?.['email']">El formato del correo no es válido.</div>
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-medium">Contraseña</label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Contraseña" [(ngModel)]="password" required #passwordM="ngModel"
+                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+_+\-\[\]\\\/]).{8,20}$">
+                                <div *ngIf="passwordM.invalid && (passwordM.touched || passwordM.dirty)"
+                                    class="text-danger small mt-1 ps-2">
+                                    <div *ngIf="passwordM.errors?.['required']">La contraseña es obligatoria.</div>
+                                    <div *ngIf="passwordM.errors?.['pattern']">Debe tener entre 8 y 20 caracteres,
+                                        mayúsculas, minúsculas, números y un símbolo.</div>
+                                </div>
+                            </div>
+
+                            <div class="text-danger text-center mb-3" *ngIf="msg!=''">{{msg}}</div>
+
+                            <!-- Enviar -->
+                            <div class="text-end mt-4">
+                                <button type="button" class="btn btn-primary" [disabled]="loginForm.form.invalid"
+                                    (click)="loginUsuario(loginForm)">
+                                    Iniciar Sesión </button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="mb-0 small">¿¿Aún no te has registrado?<a [routerLink]="['/registro']"
+                                    class="fw-bold">Crea una cuenta</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <!--Password-->
-            <div class="mb-3 row align-items-center">
-                <div class="col-3 col-md-2"><label for="password" class="form-label fw-semibold">Password</label></div>
-                    <div class="col-9 col-md-10"> <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required
-                        #passwordM="ngModel" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+_+\-\[\]\\\/]).{8,20}$">
-                    <div *ngIf="passwordM.invalid && (passwordM.touched || passwordM.dirty)" class="text-danger small mt-1">
-                        <div *ngIf="passwordM.errors?.['required']">Campo obligatorio</div>
-                        <div *ngIf="passwordM.errors?.['pattern']">Debe tener entre 1 y 8 caracteres y al menos un símbolo especial</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-danger" *ngIf="msg!=''">{{msg}}</div>
-
-            <!--Enviar-->
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary mt-3" [disabled]="loginForm.form.invalid"
-                    (click)="loginUsuario(loginForm)">Iniciar Sesion</button>
-            </div>
-        </form>
-
-        <span>¿Aun no te has registrado?
-            <a [routerLink]="['/registro']">Login</a>
-        </span>
-
+        </div>
     </div>
 </div>

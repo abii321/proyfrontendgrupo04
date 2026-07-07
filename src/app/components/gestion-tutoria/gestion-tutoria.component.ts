@@ -183,7 +183,7 @@ export class GestionTutoriaComponent implements OnInit {
     if (!this.solicitud.fechaSeleccionada || !this.solicitud.duracion) return;
 
     const dateElegida = new Date(this.solicitud.fechaSeleccionada + 'T00:00:00');
-    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
     const diaString = diasSemana[dateElegida.getDay()];
 
     //Pasamos a minúsculas lo que eligió el alumno para evitar errores de tipeo

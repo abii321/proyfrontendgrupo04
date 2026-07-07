@@ -8,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
-  imports: [CommonModule, FormsModule, RouterLink ],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })
@@ -18,10 +18,14 @@ export class RegistroComponent implements AfterViewInit {
   banGoogle: boolean = false;
   googleToken: string = '';
   msg: string = "";
+  cargandoUbicacion: boolean = false;
+  sugerencias: any[] = [];
+  mostrarSugerencias: boolean = false;
+  private searchDebounceTimer: any;
 
-  constructor( private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef ) {
+  constructor(private autenticacionService: AutenticacionService, private googleAuthService: GoogleAuthService, private router: Router, private cdr: ChangeDetectorRef) {
     this.usuario = new Usuario();
-    this.usuario.rol = ''; 
+    this.usuario.rol = '';
   }
 
   ngAfterViewInit(): void {
@@ -37,9 +41,9 @@ export class RegistroComponent implements AfterViewInit {
 
   handleGoogleResponse(response: any) {
     console.log("¡Google respondió con éxito!");
-    this.googleToken = response.credential; 
+    this.googleToken = response.credential;
     this.banGoogle = true; // para mostrar el resto del formulario
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
   cancelarGoogle() {
@@ -47,15 +51,22 @@ export class RegistroComponent implements AfterViewInit {
     this.googleToken = '';
     setTimeout(() => this.cargarBotonGoogle(), 50);
   }
-  
+
   async geocodificarUbicacion(): Promise<void> {
     if (!this.usuario.ubicacion) return;
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.usuario.ubicacion)}&format=json&limit=1`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.usuario.ubicacion)}&format=json&limit=1&countrycodes=ar`);
       const data = await response.json();
       if (data && data.length > 0) {
         this.usuario.lat = parseFloat(data[0].lat);
         this.usuario.lng = parseFloat(data[0].lon);
+      } else {
+        const responseFallback = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.usuario.ubicacion)}&format=json&limit=1`);
+        const dataFallback = await responseFallback.json();
+        if (dataFallback && dataFallback.length > 0) {
+          this.usuario.lat = parseFloat(dataFallback[0].lat);
+          this.usuario.lng = parseFloat(dataFallback[0].lon);
+        }
       }
     } catch (e) {
       console.error('Error al geocodificar ubicación:', e);
@@ -64,6 +75,7 @@ export class RegistroComponent implements AfterViewInit {
 
   detectarUbicacionGPS() {
     if (navigator.geolocation) {
+      this.cargandoUbicacion = true;
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const lat = position.coords.latitude;
@@ -84,16 +96,117 @@ export class RegistroComponent implements AfterViewInit {
           } catch (e) {
             this.usuario.ubicacion = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
           }
+          this.cargandoUbicacion = false;
           this.cdr.detectChanges();
         },
-        (error) => {
-          console.error('Error al obtener geolocalización:', error);
-          alert('No se pudo obtener tu ubicación actual. Por favor escríbela manualmente.');
-        }
+        async (error) => {
+          console.warn('[Geolocalización] La geolocalización nativa falló o expiró el tiempo de espera:', error);
+          await this.ejecutarCadenaGeolocalizacionIP();
+        },
+        { enableHighAccuracy: false, timeout: 16000, maximumAge: 60000 }
       );
     } else {
-      alert('Tu navegador no soporta geolocalización.');
+      console.warn('[Geolocalización] El navegador no soporta geolocalización nativa.');
+      this.ejecutarCadenaGeolocalizacionIP();
     }
+  }
+
+  async ejecutarCadenaGeolocalizacionIP(): Promise<void> {
+    this.cargandoUbicacion = true;
+    this.cdr.detectChanges();
+
+    try {
+      const res = await fetch('https://freeipapi.com/api/json');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        this.usuario.lat = data.latitude;
+        this.usuario.lng = data.longitude;
+        const region = data.regionName ? `, ${data.regionName}` : '';
+        this.usuario.ubicacion = `${data.cityName || ''}${region}`;
+        this.cargandoUbicacion = false;
+        this.cdr.detectChanges();
+        return;
+      } else {
+        throw new Error('Coordenadas no encontradas en la respuesta de freeipapi');
+      }
+    } catch (e) {
+      console.warn('[Geolocalización] El servicio primario IP (freeipapi.com) falló:', e);
+    }
+
+    try {
+      const res2 = await fetch('https://ipapi.co/json/');
+      const data2 = await res2.json();
+      if (data2 && data2.latitude && data2.longitude) {
+        this.usuario.lat = data2.latitude;
+        this.usuario.lng = data2.longitude;
+        const region = data2.region ? `, ${data2.region}` : '';
+        this.usuario.ubicacion = `${data2.city || ''}${region}`;
+        this.cargandoUbicacion = false;
+        this.cdr.detectChanges();
+        return;
+      } else {
+        throw new Error('Coordenadas no encontradas en la respuesta de ipapi.co');
+      }
+    } catch (e) {
+      console.error('[Geolocalización] El servicio secundario IP (ipapi.co) falló:', e);
+    }
+
+    alert('No se pudo determinar tu ubicación de forma automática. Por favor, ingrésala manualmente.');
+    this.cargandoUbicacion = false;
+    this.cdr.detectChanges();
+  }
+
+  onUbicacionInput() {
+    this.usuario.lat = null;
+    this.usuario.lng = null;
+    this.sugerencias = [];
+
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+
+    const query = this.usuario.ubicacion;
+    if (!query || query.trim().length < 3) {
+      this.mostrarSugerencias = false;
+      return;
+    }
+
+    this.searchDebounceTimer = setTimeout(async () => {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&countrycodes=ar`);
+        const data = await response.json();
+        if (data && data.length > 0) {
+          this.sugerencias = data.map((item: any) => ({
+            display_name: item.display_name,
+            lat: parseFloat(item.lat),
+            lng: parseFloat(item.lon)
+          }));
+          this.mostrarSugerencias = true;
+        } else {
+          this.sugerencias = [];
+          this.mostrarSugerencias = false;
+        }
+      } catch (error) {
+        console.error('Error fetching autocomplete suggestions:', error);
+      }
+      this.cdr.detectChanges();
+    }, 400);
+  }
+
+  seleccionarSugerencia(sug: any) {
+    this.usuario.ubicacion = sug.display_name;
+    this.usuario.lat = sug.lat;
+    this.usuario.lng = sug.lng;
+    this.sugerencias = [];
+    this.mostrarSugerencias = false;
+    this.cdr.detectChanges();
+  }
+
+  onBlurUbicacion() {
+    setTimeout(() => {
+      this.mostrarSugerencias = false;
+      this.cdr.detectChanges();
+    }, 200);
   }
 
   async registrarUsuarioGoogle() {
@@ -102,7 +215,7 @@ export class RegistroComponent implements AfterViewInit {
     }
 
     const body = {
-      token: this.googleToken, 
+      token: this.googleToken,
       rol: this.usuario.rol,
       ubicacion: this.usuario.ubicacion,
       lat: this.usuario.lat,
@@ -117,24 +230,24 @@ export class RegistroComponent implements AfterViewInit {
         console.log(result);
         this.router.navigate(['/home']);
       },
-      (error : any) => {
+      (error: any) => {
         console.error("Error al registrar con Google:", error);
       }
     );
   }
 
-  async registrarUsuarioLocal(form: NgForm){
+  async registrarUsuarioLocal(form: NgForm) {
     if (!this.usuario.lat || !this.usuario.lng) {
       await this.geocodificarUbicacion();
     }
 
     this.autenticacionService.postRegistroLocal(this.usuario).subscribe(
-      ( result : any) => {
+      (result: any) => {
         form.reset();
         this.msg = ""
         this.cdr.detectChanges();
       },
-      ( error : any ) => {
+      (error: any) => {
         this.msg = "Error al registrar, este email ya pertenece a un usuario"
         this.cdr.detectChanges();
       }
