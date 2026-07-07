@@ -19,10 +19,12 @@
           <a class="nav-link px-3" [routerLink]="['solicitud-ayuda']"
             routerLinkActive="active rounded-pill bg-light">Tareas</a>
         </li>
-        <li class="nav-item" *ngIf="rolUsuario!='admin'">
+        @if (!autenticacionService.isAdmin()) {
+        <li class="nav-item">
           <a class="nav-link px-3" [routerLink]="['mis-solicitudes']"
             routerLinkActive="active rounded-pill bg-light">Mis Solicitudes</a>
         </li>
+        }
         @if (autenticacionService.isAdmin()) {
         <li class="nav-item">
           <a class="nav-link px-3" [routerLink]="['auditoria']"
