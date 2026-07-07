@@ -20,7 +20,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
-    { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+    { path: 'home', component: HomeComponent },
     { path: 'registro', component: RegistroComponent },
     { path: 'login', component: LoginComponent },
     { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
@@ -34,11 +34,5 @@ export const routes: Routes = [
     { path: 'pago-exitoso', component: PagoExitoso, canActivate: [authGuard] },
     { path: 'pago-pendiente', component: PagoPendiente, canActivate: [authGuard] },
     { path: 'pago-error', component: PagoError, canActivate: [authGuard] },
-
-    
-
-
-
-
     { path: '**', pathMatch: 'full', redirectTo: 'home' },
 ];
