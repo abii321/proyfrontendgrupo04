@@ -183,7 +183,7 @@ export class MisSolicitudesComponent implements OnInit {
     
     const proxima = this.misTutorias.find(t => t.estado === 'aprobada' || t.estado === 'aceptada');
     if (proxima) {
-      const fecha = new Date(proxima.fecha_hora);
+      const fecha = new Date(proxima.fechaHora || proxima.fecha_hora);
       this.alumnoProximaTutoria = `${fecha.toLocaleDateString()} a las ${fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${proxima.categoria?.nombre || 'Tutoría'}`;
     } else {
       this.alumnoProximaTutoria = 'Ninguna programada';
@@ -211,7 +211,7 @@ export class MisSolicitudesComponent implements OnInit {
     const meses = ['Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'];
     const countsMes = [0, 0, 0, 0, 0];
     this.misTutorias.forEach(t => {
-      const m = new Date(t.fecha_hora).getMonth();
+      const m = new Date(t.fechaHora || t.fecha_hora).getMonth();
       if (m >= 2 && m <= 6) {
         countsMes[m - 2]++;
       }
@@ -254,7 +254,7 @@ export class MisSolicitudesComponent implements OnInit {
 
     const countsMes = [0, 0, 0, 0, 0];
     this.misTutorias.filter(t => t.estado === 'finalizada' || t.estado === 'completada').forEach(t => {
-      const m = new Date(t.fecha_hora).getMonth();
+      const m = new Date(t.fechaHora || t.fecha_hora).getMonth();
       if (m >= 2 && m <= 6) {
         countsMes[m - 2]++;
       }
@@ -273,11 +273,11 @@ export class MisSolicitudesComponent implements OnInit {
       alumnoId: this.tutoriaSeleccionada.alumnoId,
       profesorId: this.tutoriaSeleccionada.profesorId,
       categoriaId: this.tutoriaSeleccionada.categoriaId,
-      fecha_hora: this.tutoriaSeleccionada.fecha_hora,
+      fechaHora: this.tutoriaSeleccionada.fechaHora || this.tutoriaSeleccionada.fecha_hora,
       estado: nuevoEstado,
       mensaje: this.tutoriaSeleccionada.mensaje,
       modalidad: this.tutoriaSeleccionada.modalidad,
-      precio_acordado: this.tutoriaSeleccionada.precio_acordado
+      precioAcordado: this.tutoriaSeleccionada.precioAcordado || this.tutoriaSeleccionada.precio_acordado
     };
 
     this.tutoriaService.responderTutoria(this.tutoriaSeleccionada.id, body).subscribe({

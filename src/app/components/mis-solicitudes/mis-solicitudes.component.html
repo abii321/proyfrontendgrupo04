@@ -160,7 +160,7 @@
                             </h6>
                             <p class="text-muted small mb-3">
                                 <i class="bi bi-clock me-1 text-primary"></i>
-                                {{ tutoria.fecha_hora | date:'medium' }}
+                                {{ (tutoria.fechaHora || tutoria.fecha_hora) | date:'medium' }}
                             </p>
                             <button class="btn btn-outline-primary btn-sm fw-semibold w-100 mt-auto" (click)="verDetalleTutoria(tutoria)">
                                 <i class="bi bi-eye-fill me-1"></i>Ver Detalle y Acciones
@@ -256,12 +256,12 @@
                             </li>
                             <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
                                 <span class="text-muted small">Fecha y Hora</span>
-                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.fecha_hora | date:'medium' }}</span>
+                                <span class="fw-semibold text-dark">{{ (tutoriaSeleccionada.fechaHora || tutoriaSeleccionada.fecha_hora) | date:'medium' }}</span>
                             </li>
-                            @if (tutoriaSeleccionada.enlace_meet) {
+                            @if (tutoriaSeleccionada.enlaceMeet || tutoriaSeleccionada.enlace_meet) {
                                 <li class="list-group-item bg-transparent px-0 py-2">
                                     <span class="text-muted small d-block mb-1">Enlace de la Clase (Meet)</span>
-                                    <a [href]="tutoriaSeleccionada.enlace_meet" target="_blank" class="btn btn-sm btn-success w-100 fw-semibold">
+                                    <a [href]="tutoriaSeleccionada.enlaceMeet || tutoriaSeleccionada.enlace_meet" target="_blank" class="btn btn-sm btn-success w-100 fw-semibold">
                                         <i class="bi bi-camera-video-fill me-1"></i>Unirse a Google Meet
                                     </a>
                                 </li>
