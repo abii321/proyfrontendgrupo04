@@ -114,6 +114,45 @@ export class RegistroComponent implements AfterViewInit {
     this.cargandoUbicacion = true;
     this.cdr.detectChanges();
 
+    // 1. IPWHO.IS (Primaria CORS-friendly)
+    try {
+      const res = await fetch('https://ipwho.is/');
+      const data = await res.json();
+      if (data && data.success && data.latitude && data.longitude) {
+        this.usuario.lat = data.latitude;
+        this.usuario.lng = data.longitude;
+        const region = data.region ? `, ${data.region}` : '';
+        this.usuario.ubicacion = `${data.city || ''}${region}`;
+        this.cargandoUbicacion = false;
+        this.cdr.detectChanges();
+        return;
+      } else {
+        throw new Error(data.message || 'Respuesta fallida de ipwho.is');
+      }
+    } catch (e) {
+      console.warn('[Geolocalización] El servicio primario IP (ipwho.is) falló:', e);
+    }
+
+    // 2. GEOLOCATION-DB (Secundaria CORS-friendly)
+    try {
+      const res = await fetch('https://geolocation-db.com/json/');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        this.usuario.lat = data.latitude;
+        this.usuario.lng = data.longitude;
+        const state = data.state ? `, ${data.state}` : '';
+        this.usuario.ubicacion = `${data.city || ''}${state}`;
+        this.cargandoUbicacion = false;
+        this.cdr.detectChanges();
+        return;
+      } else {
+        throw new Error('Coordenadas no encontradas en la respuesta de geolocation-db.com');
+      }
+    } catch (e) {
+      console.warn('[Geolocalización] El servicio secundario IP (geolocation-db.com) falló:', e);
+    }
+
+    // 3. FREEIPAPI.COM (Terciaria)
     try {
       const res = await fetch('https://freeipapi.com/api/json');
       const data = await res.json();
@@ -129,17 +168,18 @@ export class RegistroComponent implements AfterViewInit {
         throw new Error('Coordenadas no encontradas en la respuesta de freeipapi');
       }
     } catch (e) {
-      console.warn('[Geolocalización] El servicio primario IP (freeipapi.com) falló:', e);
+      console.warn('[Geolocalización] El servicio terciario IP (freeipapi.com) falló:', e);
     }
 
+    // 4. IPAPI.CO (Cuaternaria)
     try {
-      const res2 = await fetch('https://ipapi.co/json/');
-      const data2 = await res2.json();
-      if (data2 && data2.latitude && data2.longitude) {
-        this.usuario.lat = data2.latitude;
-        this.usuario.lng = data2.longitude;
-        const region = data2.region ? `, ${data2.region}` : '';
-        this.usuario.ubicacion = `${data2.city || ''}${region}`;
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        this.usuario.lat = data.latitude;
+        this.usuario.lng = data.longitude;
+        const region = data.region ? `, ${data.region}` : '';
+        this.usuario.ubicacion = `${data.city || ''}${region}`;
         this.cargandoUbicacion = false;
         this.cdr.detectChanges();
         return;
@@ -147,7 +187,7 @@ export class RegistroComponent implements AfterViewInit {
         throw new Error('Coordenadas no encontradas en la respuesta de ipapi.co');
       }
     } catch (e) {
-      console.error('[Geolocalización] El servicio secundario IP (ipapi.co) falló:', e);
+      console.error('[Geolocalización] El servicio cuaternario IP (ipapi.co) falló:', e);
     }
 
     alert('No se pudo determinar tu ubicación de forma automática. Por favor, ingrésala manualmente.');
