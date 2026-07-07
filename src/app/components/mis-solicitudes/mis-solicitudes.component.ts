@@ -30,12 +30,12 @@ export class MisSolicitudesComponent implements OnInit {
 
   alumnoDonaData: any = {
     labels: ['Programación', 'Matemáticas', 'Inglés', 'Física'],
-    datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#0d6efd', '#ffc107', '#198754', '#6c757d'] }]
+    datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#6C8484', '#A3B19B', '#DDA7A5', '#2D4243'] }]
   };
 
   alumnoBarrasData: any = {
     labels: ['Marzo', 'Abril', 'Mayo', 'Junio'],
-    datasets: [{ data: [0, 0, 0, 0], label: 'Tutorías Solicitadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
+    datasets: [{ data: [0, 0, 0, 0], label: 'Tutorías Solicitadas', backgroundColor: '#6C8484', borderRadius: 4 }]
   };
 
   profesorTutoriasPendientes = 0;
@@ -47,12 +47,12 @@ export class MisSolicitudesComponent implements OnInit {
 
   profesorBarrasData: any = {
     labels: ['Marzo', 'Abril', 'Mayo', 'Junio'],
-    datasets: [{ data: [0, 0, 0, 0], label: 'Horas Dictadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
+    datasets: [{ data: [0, 0, 0, 0], label: 'Horas Dictadas', backgroundColor: '#6C8484', borderRadius: 4 }]
   };
 
   profesorDonaData: any = {
     labels: ['Excelente (5★)', 'Muy Bueno (4★)', 'Regular (3★)'],
-    datasets: [{ data: [5, 0, 0], backgroundColor: ['#198754', '#ffc107', '#dc3545'] }]
+    datasets: [{ data: [5, 0, 0], backgroundColor: ['#A3B19B', '#6C8484', '#DDA7A5'] }]
   };
 
   chartOptionsDoughnut = {
@@ -203,7 +203,7 @@ export class MisSolicitudesComponent implements OnInit {
         labels: labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#0d6efd', '#ffc107', '#198754', '#6c757d', '#dc3545', '#0dcaf0']
+          backgroundColor: ['#6C8484', '#A3B19B', '#DDA7A5', '#2D4243', '#5C6B73', '#DCE0D9']
         }]
       };
     }
@@ -219,7 +219,7 @@ export class MisSolicitudesComponent implements OnInit {
 
     this.alumnoBarrasData = {
       labels: meses,
-      datasets: [{ data: countsMes, label: 'Tutorías Solicitadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
+      datasets: [{ data: countsMes, label: 'Tutorías Solicitadas', backgroundColor: '#6C8484', borderRadius: 4 }]
     };
   }
 
@@ -248,7 +248,7 @@ export class MisSolicitudesComponent implements OnInit {
       labels: ['Excelente (5★)', 'Muy Bueno (4★)', 'Bueno (3★)', 'Regular (2★)', 'Malo (1★)'],
       datasets: [{
         data: estrellaCounts,
-        backgroundColor: ['#198754', '#20c997', '#ffc107', '#fd7e14', '#dc3545']
+        backgroundColor: ['#A3B19B', '#6C8484', '#DDA7A5', '#DCE0D9', '#5C6B73']
       }]
     };
 
@@ -262,7 +262,7 @@ export class MisSolicitudesComponent implements OnInit {
 
     this.profesorBarrasData = {
       labels: ['Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
-      datasets: [{ data: countsMes, label: 'Horas Dictadas', backgroundColor: '#0d6efd', borderRadius: 4 }]
+      datasets: [{ data: countsMes, label: 'Horas Dictadas', backgroundColor: '#6C8484', borderRadius: 4 }]
     };
   }
 

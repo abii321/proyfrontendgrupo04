@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:host {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    background-color: #EFEFE9; /* Fondo hueso/arena mate */
+    min-height: 100vh;
+    color: #2D4243;
+}
+
+/* --- COLORES DE TEXTO --- */
+.texto-primario {
+    color: #2D4243 !important; /* Verde oscuro grisáceo */
+}
+
+.texto-secundario {
+    color: #5C6B73 !important; /* Pizarra */
+}
+
+.texto-mutado {
+    color: #8C999A !important; /* Gris verdoso suave */
+}
+
+.espaciado-letras {
+    letter-spacing: 0.6px;
+}
+
+/* --- TARJETAS --- */
+.tarjeta-delicada {
+    background: #FDFDFD;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    box-shadow: 0 10px 30px rgba(45, 66, 67, 0.04) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarjeta-delicada:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(45, 66, 67, 0.08) !important;
+}
+
+/* --- BADGES --- */
+.badge-materia {
+    background-color: #DDA7A5; /* Rosa polvoriento */
+    color: #ffffff;
+    font-weight: 500;
+    padding: 0.5em 1.2em;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.badge-estado-pendiente {
+    background-color: #FAFAFA;
+    border: 2px solid #fd7e14;
+    color: #fd7e14;
+    font-weight: 600;
+    padding: 0.4em 1em;
+    border-radius: 8px;
+}
+
+.badge-estado-aceptada {
+    background-color: #FAFAFA;
+    border: 2px solid #A3B19B; /* Sage green */
+    color: #2D4243;
+    font-weight: 600;
+    padding: 0.4em 1em;
+    border-radius: 8px;
+}
+
+.badge-estado-rechazada {
+    background-color: #FAFAFA;
+    border: 2px solid #DDA7A5; /* Rosa polvoriento */
+    color: #DDA7A5;
+    font-weight: 600;
+    padding: 0.4em 1em;
+    border-radius: 8px;
+}
+
+.badge-estado-finalizada {
+    background-color: #FAFAFA;
+    border: 2px solid #5C6B73;
+    color: #5C6B73;
+    font-weight: 600;
+    padding: 0.4em 1em;
+    border-radius: 8px;
+}
+
+/* --- BOTONES --- */
+.btn-primary {
+    background-color: #6C8484; /* Turquesa mate */
+    color: #ffffff !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover:not([disabled]) {
+    background-color: #556B6B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 132, 132, 0.25);
+}
+
+.btn-primary:disabled {
+    background-color: #DCE0D9;
+    color: #8C999A;
+}
+
+.btn-outline-primary {
+    color: #6C8484;
+    border: 2px solid #6C8484;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #6C8484;
+    color: #ffffff !important;
+}
+
+.btn-success {
+    background-color: #A3B19B; /* Sage Green */
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #8B9A83;
+}
+
+.btn-danger {
+    background-color: #DDA7A5; /* Dusty Rose */
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #C8908E;
+}
+
+.btn-info {
+    background-color: #6C8484; /* Turquesa mate */
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-info:hover {
+    background-color: #556B6B;
+}
+
+.btn-secondary {
+    background-color: #DCE0D9;
+    border: none;
+    color: #2D4243;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #C7CDC3;
+}
+
+/* Modales */
+.modal-content {
+    background: #FDFDFD;
+    border-radius: 24px;
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: #2D4243 !important;
+    color: #ffffff !important;
+    border: none;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 2rem;
+    color: #2D4243;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border: none;
+    background-color: #FAFAFA;
+}
+
+.list-group-item {
+    border-color: rgba(92, 107, 115, 0.1) !important;
+}
+
+/* Agenda / metrica */
+.caja-agenda-activa {
+    background-color: #EBF0F0;
+    border: 1px solid #E2E8E8;
+    border-radius: 16px;
+}
+
+.caja-agenda-desvinculada {
+    background-color: #F4F5F0;
+    border: 1px solid #EBECE8;
+    border-radius: 16px;
+}
+
+.form-control {
+    border: 2px solid #DCE0D9;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    color: #2D4243;
+    background-color: #FAFAFA;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: #A3B19B;
+    box-shadow: 0 0 0 4px rgba(163, 177, 155, 0.2);
+    background-color: #ffffff;
+}
+
+.section-title-container {
+    border-bottom: 2px solid rgba(45, 66, 67, 0.08);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}

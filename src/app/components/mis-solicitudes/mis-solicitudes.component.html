@@ -1,8 +1,8 @@
 <div class="container py-5">
     <!-- Saludo Principal -->
     <div class="mb-4">
-        <h2 class="fw-bold">Bienvenido, {{ nombreCompleto }}</h2>
-        <p class="text-secondary mb-0">{{ universidad }} &bull; {{ carrera }}</p>
+        <h2 class="fw-bold texto-primario">Bienvenido, {{ nombreCompleto }}</h2>
+        <p class="texto-secundario mb-0">{{ universidad }} &bull; {{ carrera }}</p>
     </div>
 
     @if (rol === 'alumno') {
@@ -10,30 +10,30 @@
     <div class="row g-4 mb-4">
         <!-- Metricas -->
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Tutorías Solicitadas</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ alumnoTutoriasSolicitadas }}</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Tutorías Solicitadas</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ alumnoTutoriasSolicitadas }}</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Clases Completadas</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ alumnoTutoriasCompletadas }}</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Clases Completadas</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ alumnoTutoriasCompletadas }}</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Categorías de Interés</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ alumnoCategoriasConsultadas }}</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Categorías de Interés</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ alumnoCategoriasConsultadas }}</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Próxima Sesión</div>
-                <p class="mb-0 text-secondary small">{{ alumnoProximaTutoria }}</p>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Próxima Sesión</div>
+                <p class="mb-0 texto-secundario small">{{ alumnoProximaTutoria }}</p>
             </div>
         </div>
     </div>
@@ -42,8 +42,8 @@
     <div class="row g-4 mb-5">
         <!-- Gráfico Categorías (Dona) -->
         <div class="col-md-6">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <h5 class="fw-bold mb-3">Tutorías por Categoría</h5>
+            <div class="tarjeta-delicada p-4 h-100">
+                <h5 class="fw-bold mb-3 texto-primario">Tutorías por Categoría</h5>
                 <div style="display: block; height: 220px; position: relative;">
                     <canvas baseChart [data]="alumnoDonaData" [type]="'doughnut'" [options]="chartOptionsDoughnut">
                     </canvas>
@@ -53,8 +53,8 @@
 
         <!-- Gráfico Histórico (Barras) -->
         <div class="col-md-6">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <h5 class="fw-bold mb-3">Solicitudes por Mes</h5>
+            <div class="tarjeta-delicada p-4 h-100">
+                <h5 class="fw-bold mb-3 texto-primario">Solicitudes por Mes</h5>
                 <div style="display: block; height: 220px; position: relative;">
                     <canvas baseChart [data]="alumnoBarrasData" [type]="'bar'" [options]="chartOptionsBar">
                     </canvas>
@@ -69,30 +69,30 @@
     <div class="row g-4 mb-4">
         <!-- Metricas -->
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Tutorías por Dictar</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ profesorTutoriasPendientes }}</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Tutorías por Dictar</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ profesorTutoriasPendientes }}</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Clases Dictadas</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ profesorTutoriasCompletadas }}</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Clases Dictadas</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ profesorTutoriasCompletadas }}</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Horas Acumuladas</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ profesorHorasDictadas }} hs</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Horas Acumuladas</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ profesorHorasDictadas }} hs</h2>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <div class="text-muted small fw-semibold mb-1">Calificación Promedio</div>
-                <h2 class="fw-bold mb-0 text-dark">{{ profesorCalificacionPromedio }} / 5.0</h2>
+            <div class="tarjeta-delicada p-4 h-100">
+                <div class="texto-secundario small fw-semibold mb-1">Calificación Promedio</div>
+                <h2 class="fw-bold mb-0 texto-primario">{{ profesorCalificacionPromedio }} / 5.0</h2>
             </div>
         </div>
     </div>
@@ -101,8 +101,8 @@
     <div class="row g-4 mb-5">
         <!-- Gráfico Horas (Barras) -->
         <div class="col-md-7 col-lg-8">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <h5 class="fw-bold mb-3">Horas Dictadas por Mes</h5>
+            <div class="tarjeta-delicada p-4 h-100">
+                <h5 class="fw-bold mb-3 texto-primario">Horas Dictadas por Mes</h5>
                 <div style="display: block; height: 220px; position: relative;">
                     <canvas baseChart [data]="profesorBarrasData" [type]="'bar'" [options]="chartOptionsBar">
                     </canvas>
@@ -112,8 +112,8 @@
 
         <!-- Gráfico Calificaciones (Dona) -->
         <div class="col-md-5 col-lg-4">
-            <div class="card bg-body-secondary border-0 p-4 shadow-sm h-100">
-                <h5 class="fw-bold mb-3">Distribución de Calificaciones</h5>
+            <div class="tarjeta-delicada p-4 h-100">
+                <h5 class="fw-bold mb-3 texto-primario">Distribución de Calificaciones</h5>
                 <div style="display: block; height: 220px; position: relative;">
                     <canvas baseChart [data]="profesorDonaData" [type]="'doughnut'" [options]="chartOptionsDoughnut">
                     </canvas>
@@ -127,38 +127,38 @@
     <div class="mt-4">
         <!-- Título de la Sección -->
         <div class="d-flex align-items-center mb-4">
-            <h3 class="fw-bold text-dark mb-0">
+            <h3 class="fw-bold texto-primario mb-0">
                 <i class="bi bi-grid-fill text-primary me-2"></i>Mi Galería de Actividades
             </h3>
         </div>
 
         <!-- Mini Galería: Tutorías (Tanto Alumno como Profesor) -->
-        <div class="card border-0 shadow-sm bg-body-secondary p-4 mb-4">
-            <h5 class="fw-bold text-dark mb-3">
+        <div class="tarjeta-delicada border-0 p-4 mb-4">
+            <h5 class="fw-bold texto-primario mb-3">
                 <i class="bi bi-calendar-check-fill text-primary me-2"></i>Mis Tutorías (API)
             </h5>
             <div class="row g-3">
                 @for (tutoria of misTutorias; track tutoria.id) {
                     <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 border-0 shadow-sm bg-white p-3">
+                        <div class="card tarjeta-delicada border-0 p-3 h-100 bg-white">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                                <span class="badge badge-materia px-2 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">
                                     {{ tutoria.categoria?.nombre || 'Tutoría' }}
                                 </span>
-                                <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold" 
+                                <span class="badge text-uppercase fw-semibold" 
                                       [ngClass]="{
-                                        'bg-warning-subtle text-warning border border-warning-subtle': tutoria.estado === 'pendiente',
-                                        'bg-success-subtle text-success border border-success-subtle': tutoria.estado === 'aceptada' || tutoria.estado === 'aprobada',
-                                        'bg-danger-subtle text-danger border border-danger-subtle': tutoria.estado === 'rechazada',
-                                        'bg-info-subtle text-info border border-info-subtle': tutoria.estado === 'finalizada' || tutoria.estado === 'completada'
+                                        'badge-estado-pendiente': tutoria.estado === 'pendiente',
+                                        'badge-estado-aceptada': tutoria.estado === 'aceptada' || tutoria.estado === 'aprobada',
+                                        'badge-estado-rechazada': tutoria.estado === 'rechazada',
+                                        'badge-estado-finalizada': tutoria.estado === 'finalizada' || tutoria.estado === 'completada'
                                       }" style="font-size: 0.75rem;">
                                     {{ tutoria.estado }}
                                 </span>
                             </div>
-                            <h6 class="fw-bold text-dark mb-1">
+                            <h6 class="fw-bold texto-primario mb-1">
                                 {{ rol === 'alumno' ? 'Docente: ' + (tutoria.profesor?.nombre + ' ' + tutoria.profesor?.apellido) : 'Estudiante: ' + (tutoria.alumno?.nombre + ' ' + tutoria.alumno?.apellido) }}
                             </h6>
-                            <p class="text-muted small mb-3">
+                            <p class="texto-mutado small mb-3">
                                 <i class="bi bi-clock me-1 text-primary"></i>
                                 {{ (tutoria.fechaHora || tutoria.fecha_hora) | date:'medium' }}
                             </p>
@@ -168,7 +168,7 @@
                         </div>
                     </div>
                 } @empty {
-                    <div class="col-12 text-muted py-4 text-center">
+                    <div class="col-12 texto-mutado py-4 text-center">
                         <i class="bi bi-calendar-x text-muted display-6 d-block mb-2"></i>
                         No tienes tutorías registradas.
                     </div>
@@ -178,28 +178,28 @@
 
         <!-- Mini Galería: Tareas (Sólo Alumno) -->
         @if (rol === 'alumno') {
-            <div class="card border-0 shadow-sm bg-body-secondary p-4 mb-4">
-                <h5 class="fw-bold text-dark mb-3">
+            <div class="tarjeta-delicada border-0 p-4 mb-4">
+                <h5 class="fw-bold texto-primario mb-3">
                     <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>Mis Tareas Académicas
                 </h5>
                 <div class="row g-3">
                     @for (tarea of misTareas; track tarea.id) {
                         <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 border-0 shadow-sm bg-white p-3">
+                            <div class="card tarjeta-delicada border-0 p-3 h-100 bg-white">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2.5 py-1 rounded text-uppercase fw-semibold" style="font-size: 0.75rem;">
                                         {{ getNombreCategoria(tarea.categoriaId) }}
                                     </span>
-                                    <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold"
+                                    <span class="badge text-uppercase fw-semibold"
                                           [ngClass]="{
-                                            'bg-warning-subtle text-warning border border-warning-subtle': tarea.estado === 'ABIERTA',
-                                            'bg-success-subtle text-success border border-success-subtle': tarea.estado === 'CERRADA'
+                                            'badge-estado-pendiente': tarea.estado === 'ABIERTA',
+                                            'badge-estado-aceptada': tarea.estado === 'CERRADA'
                                           }" style="font-size: 0.75rem;">
                                         {{ tarea.estado }}
                                     </span>
                                 </div>
-                                <h6 class="fw-bold text-dark mb-1">{{ tarea.titulo }}</h6>
-                                <p class="text-muted small mb-3">
+                                <h6 class="fw-bold texto-primario mb-1">{{ tarea.titulo }}</h6>
+                                <p class="texto-mutado small mb-3">
                                     <i class="bi bi-currency-dollar me-1 text-primary"></i>
                                     Presupuesto: ${{ tarea.precio }}
                                 </p>
@@ -209,7 +209,7 @@
                             </div>
                         </div>
                     } @empty {
-                        <div class="col-12 text-muted py-4 text-center">
+                        <div class="col-12 texto-mutado py-4 text-center">
                             <i class="bi bi-bookmark-x text-muted display-6 d-block mb-2"></i>
                             No tienes tareas registradas.
                         </div>
@@ -224,7 +224,7 @@
         <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px);">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-primary text-white border-0 py-3">
+                    <div class="modal-header text-white border-0 py-3">
                         <h5 class="modal-title fw-bold">
                             <i class="bi bi-calendar-check me-2"></i>Detalle de Tutoría
                         </h5>
@@ -232,50 +232,50 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="mb-3">
-                            <span class="badge bg-primary text-white px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">
+                            <span class="badge badge-materia px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.75rem;">
                                 {{ tutoriaSeleccionada.categoria?.nombre || 'Tutoría' }}
                             </span>
-                            <span class="badge rounded px-2.5 py-1 text-uppercase fw-semibold ms-2"
+                            <span class="badge text-uppercase fw-semibold ms-2"
                                   [ngClass]="{
-                                    'bg-warning-subtle text-warning border border-warning-subtle': tutoriaSeleccionada.estado === 'pendiente',
-                                    'bg-success-subtle text-success border border-success-subtle': tutoriaSeleccionada.estado === 'aceptada' || tutoriaSeleccionada.estado === 'aprobada',
-                                    'bg-danger-subtle text-danger border border-danger-subtle': tutoriaSeleccionada.estado === 'rechazada',
-                                    'bg-info-subtle text-info border border-info-subtle': tutoriaSeleccionada.estado === 'finalizada' || tutoriaSeleccionada.estado === 'completada'
+                                    'badge-estado-pendiente': tutoriaSeleccionada.estado === 'pendiente',
+                                    'badge-estado-aceptada': tutoriaSeleccionada.estado === 'aceptada' || tutoriaSeleccionada.estado === 'aprobada',
+                                    'badge-estado-rechazada': tutoriaSeleccionada.estado === 'rechazada',
+                                    'badge-estado-finalizada': tutoriaSeleccionada.estado === 'finalizada' || tutoriaSeleccionada.estado === 'completada'
                                   }" style="font-size: 0.75rem;">
                                 {{ tutoriaSeleccionada.estado }}
                             </span>
                         </div>
                         <ul class="list-group list-group-flush mb-3">
                             <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
-                                <span class="text-muted small">Profesor</span>
-                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.profesor?.nombre }} {{ tutoriaSeleccionada.profesor?.apellido }}</span>
+                                <span class="texto-secundario small">Profesor</span>
+                                <span class="fw-semibold texto-primario">{{ tutoriaSeleccionada.profesor?.nombre }} {{ tutoriaSeleccionada.profesor?.apellido }}</span>
                             </li>
                             <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
-                                <span class="text-muted small">Alumno</span>
-                                <span class="fw-semibold text-dark">{{ tutoriaSeleccionada.alumno?.nombre }} {{ tutoriaSeleccionada.alumno?.apellido }}</span>
+                                <span class="texto-secundario small">Alumno</span>
+                                <span class="fw-semibold texto-primario">{{ tutoriaSeleccionada.alumno?.nombre }} {{ tutoriaSeleccionada.alumno?.apellido }}</span>
                             </li>
                             <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
-                                <span class="text-muted small">Fecha y Hora</span>
-                                <span class="fw-semibold text-dark">{{ (tutoriaSeleccionada.fechaHora || tutoriaSeleccionada.fecha_hora) | date:'medium' }}</span>
+                                <span class="texto-secundario small">Fecha y Hora</span>
+                                <span class="fw-semibold texto-primario">{{ (tutoriaSeleccionada.fechaHora || tutoriaSeleccionada.fecha_hora) | date:'medium' }}</span>
                             </li>
                             @if (tutoriaSeleccionada.enlaceMeet || tutoriaSeleccionada.enlace_meet) {
                                 <li class="list-group-item bg-transparent px-0 py-2">
-                                    <span class="text-muted small d-block mb-1">Enlace de la Clase (Meet)</span>
+                                    <span class="texto-secundario small d-block mb-1">Enlace de la Clase (Meet)</span>
                                     <a [href]="tutoriaSeleccionada.enlaceMeet || tutoriaSeleccionada.enlace_meet" target="_blank" class="btn btn-sm btn-success w-100 fw-semibold">
                                         <i class="bi bi-camera-video-fill me-1"></i>Unirse a Google Meet
                                     </a>
                                 </li>
                             }
                         </ul>
-                        <div class="bg-light p-3 rounded-3 border">
-                            <span class="text-muted small d-block mb-1 fw-semibold">Mensaje / Consulta:</span>
-                            <p class="mb-0 text-dark small" style="white-space: pre-wrap;">{{ tutoriaSeleccionada.mensaje || 'Sin mensaje de consulta.' }}</p>
+                        <div class="caja-agenda-desvinculada p-3 rounded-3 border">
+                            <span class="texto-secundario small d-block mb-1 fw-semibold">Mensaje / Consulta:</span>
+                            <p class="mb-0 texto-primario small" style="white-space: pre-wrap;">{{ tutoriaSeleccionada.mensaje || 'Sin mensaje de consulta.' }}</p>
                         </div>
 
                         <!-- ACCIONES EXCLUSIVAS DEL PROFESOR -->
                         @if (rol === 'profesor') {
                             <div class="mt-4 pt-3 border-top">
-                                <h6 class="fw-bold text-dark mb-2">Acciones del Profesor</h6>
+                                <h6 class="fw-bold texto-primario mb-2">Acciones del Profesor</h6>
                                 
                                 @if (tutoriaSeleccionada.estado === 'pendiente') {
                                     <div class="d-flex gap-2">
@@ -299,11 +299,11 @@
                         } @else if (rol === 'alumno') {
                             @if (tutoriaSeleccionada.estado === 'finalizada' || tutoriaSeleccionada.estado === 'completada') {
                                 <div class="mt-4 pt-3 border-top">
-                                    <h6 class="fw-bold text-dark mb-2">Calificación de la Tutoría</h6>
+                                    <h6 class="fw-bold texto-primario mb-2">Calificación de la Tutoría</h6>
                                     @if (!tutoriaSeleccionada.calificacion) {
-                                        <div class="bg-light p-3 rounded-3 border">
+                                        <div class="caja-agenda-desvinculada p-3 rounded-3 border">
                                             <div class="mb-2">
-                                                <label class="form-label small fw-semibold text-muted d-block mb-1">Puntuación:</label>
+                                                <label class="form-label small fw-semibold texto-secundario d-block mb-1">Puntuación:</label>
                                                 <div class="d-flex gap-1">
                                                     @for (star of [1, 2, 3, 4, 5]; track star) {
                                                         <button type="button" class="btn btn-sm btn-outline-warning border-0 fs-5 p-0" 
@@ -314,7 +314,7 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="nuevoComentario" class="form-label small fw-semibold text-muted">Comentario (Opcional):</label>
+                                                <label for="nuevoComentario" class="form-label small fw-semibold texto-secundario">Comentario (Opcional):</label>
                                                 <textarea id="nuevoComentario" class="form-control form-control-sm" rows="2" 
                                                           [(ngModel)]="nuevoComentario" placeholder="Deja tu comentario sobre la tutoría..."></textarea>
                                             </div>
@@ -374,22 +374,22 @@
                                 {{ tareaSeleccionada.estado }}
                             </span>
                         </div>
-                        <h5 class="fw-bold text-dark mb-3">{{ tareaSeleccionada.titulo }}</h5>
+                        <h5 class="fw-bold texto-primario mb-3">{{ tareaSeleccionada.titulo }}</h5>
                         <ul class="list-group list-group-flush mb-3">
                             <li class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between">
-                                <span class="text-muted small">Presupuesto</span>
+                                <span class="texto-secundario small">Presupuesto</span>
                                 <span class="fw-semibold text-success">${{ tareaSeleccionada.precio }}</span>
                             </li>
                             @if (tareaSeleccionada.archivoAdjunto) {
                                 <li class="list-group-item bg-transparent px-0 py-2">
-                                    <span class="text-muted small d-block mb-1">Archivo Adjunto</span>
-                                    <span class="text-dark small">{{ tareaSeleccionada.archivoAdjunto }}</span>
+                                    <span class="texto-secundario small d-block mb-1">Archivo Adjunto</span>
+                                    <span class="texto-primario small">{{ tareaSeleccionada.archivoAdjunto }}</span>
                                 </li>
                             }
                         </ul>
-                        <div class="bg-light p-3 rounded-3 border">
-                            <span class="text-muted small d-block mb-1 fw-semibold">Descripción del Práctico:</span>
-                            <p class="mb-0 text-dark small" style="white-space: pre-wrap;">{{ tareaSeleccionada.descripcion }}</p>
+                        <div class="caja-agenda-desvinculada p-3 rounded-3 border">
+                            <span class="texto-secundario small d-block mb-1 fw-semibold">Descripción del Práctico:</span>
+                            <p class="mb-0 texto-primario small" style="white-space: pre-wrap;">{{ tareaSeleccionada.descripcion }}</p>
                         </div>
                     </div>
                     <div class="modal-footer border-0 bg-light">
