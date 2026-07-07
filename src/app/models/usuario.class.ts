@@ -1,5 +1,5 @@
 export class Usuario {
-    usuarioId!: number;
+    id!: number;
     rol!: string;
     nombre!: string;
     apellido!: string;
@@ -13,12 +13,9 @@ export class Usuario {
     universidad!: string;
     carrera!: string;
     biografia?: string;
-    nivelAcademico?: string;
-    tarifaBase?: number;
-    id?: number;
+    //nivelAcademico?: string;
+    //tarifaBase?: number;
     
     constructor(){
     }
 }
-
-//16
