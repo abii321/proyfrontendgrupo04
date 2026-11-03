@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AutenticacionService } from '../../services/autenticacion.service';
 import { TutoriaService } from '../../services/tutoria.service';
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-mis-solicitudes',
   standalone: true,
-  imports: [CommonModule, RouterLink, BaseChartDirective, FormsModule],
+  imports: [CommonModule, BaseChartDirective, FormsModule],
   templateUrl: './mis-solicitudes.component.html',
   styleUrl: './mis-solicitudes.component.css',
 })
